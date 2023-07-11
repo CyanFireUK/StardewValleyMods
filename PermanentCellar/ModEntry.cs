@@ -286,7 +286,7 @@ namespace PermanentCellar
                 }, AssetEditPriority.Early + -1000);
 
             }
-            if (e.Name.IsEquivalentTo("Maps/FarmHouse1"))
+            if (e.Name.IsEquivalentTo("Maps/FarmHouse1") || e.Name.IsEquivalentTo("Maps/FarmHouse1_marriage"))
             {
                 e.Edit(asset =>
                 {
