@@ -11,6 +11,10 @@ using StardewValley.Menus;
 using StardewValley.Objects;
 using xTile;
 using xTile.ObjectModel;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.IO;
+
 
 
 namespace PermanentCellar
@@ -20,10 +24,47 @@ namespace PermanentCellar
         event EventHandler AfterLoad;
     }
 
+
+    public class FlooringData
+    {
+        public Rectangle area;
+        public string id;
+        public bool ignore;
+    }
+
+
+    public static class ModHelperExtensions
+    {
+        public static JObject ReadContentPackConfig(IModHelper helper)
+        {
+            var modInfo = helper.ModRegistry.Get("aedenthorn.DynamicFlooring");
+            if (modInfo is null)
+            {
+                return null;
+            }
+
+            var modPath = (string)modInfo.GetType().GetProperty("DirectoryPath")!.GetValue(modInfo)!;
+            try
+            {
+                var config = JObject.Parse(File.ReadAllText(Path.Combine(modPath, "config.json")));
+                return config;
+            }
+            catch (FileNotFoundException)
+            {
+
+                return null;
+            }
+        }
+    }
+
+
+
     public class ModEntry : Mod
     {
         private ModConfig config_;
         private string saveGameName_;
+        private bool isDFLoaded;
+        private List<FlooringData> list = new();
         private PropertyValue Cellar0ExitFH;
         private PropertyValue Cellar1ExitFH;
         private PropertyValue Cellar0ExitCB;
@@ -69,6 +110,10 @@ namespace PermanentCellar
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.Content.AssetRequested += OnAssetRequested;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
+            Helper.Events.Input.ButtonPressed += OnButtonPressed;
+
+
+            isDFLoaded = Helper.ModRegistry.IsLoaded("aedenthorn.DynamicFlooring");
 
         }
 
@@ -155,6 +200,18 @@ namespace PermanentCellar
                     CreateCellarEntranceCB(cabin);
                     CreateCellarToCabinWarps(cabin);
                 }
+        }
+
+        [EventPriority((EventPriority)int.MinValue)]
+        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
+        {
+            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+
+            if (Context.IsWorldReady && isDFLoaded == true && (Game1.player.currentLocation == farmHouse || Game1.player.currentLocation == Game1.getLocationFromName("Cabin")) && Game1.player.currentLocation.modData.TryGetValue("aedenthorn.DynamicFlooring/flooring", out string listString) && e.IsMultipleOf(30))
+            {
+                list = JsonConvert.DeserializeObject<List<FlooringData>>(listString);
+            }
+
         }
 
 
@@ -262,6 +319,51 @@ namespace PermanentCellar
                     upgrade.responseKey = "CommunityUpgrade";
                     upgrade.responseText = Game1.content.LoadString("Strings\\Locations:ScienceHouse_CarpenterMenu_CommunityUpgrade");
                 }
+            }
+        }
+
+        [EventPriority((EventPriority)int.MinValue)]
+        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
+        {
+            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+
+            if (Context.IsWorldReady && isDFLoaded == true && e.Button == ModHelperExtensions.ReadContentPackConfig(Helper).GetValue("RemoveButton").ToObject<SButton>() && Game1.player.currentLocation == farmHouse)
+            {
+
+                var point = Utility.Vector2ToPoint(Game1.currentCursorTile);
+
+                if (list.Any())
+                {
+                    for (int i = list.Count - 1; i >= 0; i--)
+                    {
+                        if (list[i].area.Contains(point))
+                        {
+                            CreateCellarEntranceFH(farmHouse);
+                        }
+                    }
+
+                }
+
+            }
+            if (Context.IsWorldReady && isDFLoaded == true && e.Button == ModHelperExtensions.ReadContentPackConfig(Helper).GetValue("RemoveButton").ToObject<SButton>() && Game1.player.currentLocation == Game1.getLocationFromName("Cabin"))
+            {
+                var point = Utility.Vector2ToPoint(Game1.currentCursorTile);
+
+                if (list.Any())
+                {
+                    for (int i = list.Count - 1; i >= 0; i--)
+                    {
+                        if (list[i].area.Contains(point))
+                        {
+                            foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                            {
+                                CreateCellarEntranceCB(cabin);
+                            }
+                        }
+                    }
+
+                }
+
             }
         }
 
