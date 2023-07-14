@@ -133,13 +133,13 @@ namespace PermanentCellar
             config_ = Helper.ReadConfig<ModConfig>();
 
             saveGameName_ = $"{Game1.GetSaveGameName()}_{Game1.uniqueIDForThisGame}";
-            if (!config_.SaveGame.ContainsKey(saveGameName_))
+            if (!config_.SaveGame.ContainsKey(saveGameName_) && Game1.IsMasterGame)
             {
                 config_.SaveGame.Add(saveGameName_, new ConfigEntry());
                 Helper.WriteConfig(config_);
             }
 
-            if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks)
+            if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks && Game1.IsMasterGame)
             {
                 FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.player);
                 GameLocation cellar = Game1.getLocationFromName(farmHouse.GetCellarName());
@@ -151,7 +151,7 @@ namespace PermanentCellar
                       .ToList()
                       .ForEach(key => cellar.Objects.Remove(key));
             }
-            if (config_.SaveGame[saveGameName_].RemoveCabinCasks)
+            if (config_.SaveGame[saveGameName_].RemoveCabinCasks && Game1.IsMasterGame)
             {
                 foreach (Cabin cabin in GetLocations().OfType<Cabin>())
                 {
@@ -169,12 +169,12 @@ namespace PermanentCellar
 
         private void OnSaving(object sender, SavingEventArgs e)
         {
-            if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks)
+            if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks && Game1.IsMasterGame)
             {
                 config_.SaveGame[saveGameName_].RemoveFarmHouseCasks = false;
                 Helper.WriteConfig(config_);
             }
-            if (config_.SaveGame[saveGameName_].RemoveCabinCasks)
+            if (config_.SaveGame[saveGameName_].RemoveCabinCasks && Game1.IsMasterGame)
             {
                 config_.SaveGame[saveGameName_].RemoveCabinCasks = false;
                 Helper.WriteConfig(config_);
