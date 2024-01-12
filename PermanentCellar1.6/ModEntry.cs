@@ -274,10 +274,7 @@ namespace PermanentCellar
                 CreateCellarEntranceFH(farmHouse);
                 CreateCellarToFarmHouseWarps(farmHouse);
             }
-            else if (e.NewLocation.Name.StartsWith("Cellar"))
-            {
-                e.NewLocation.updateWarps();
-            }
+
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
                 if (e.NewLocation == cabin || e.NewLocation.Name.StartsWith("Cellar") && cabin.upgradeLevel < 3)
@@ -407,7 +404,7 @@ namespace PermanentCellar
         {
             return Game1.locations
                 .Concat(
-                    from location in Game1.locations.OfType<BuildableGameLocation>()
+                    from location in Game1.locations
                     from building in location.buildings
                     where building.indoors.Value != null
                     select building.indoors.Value
