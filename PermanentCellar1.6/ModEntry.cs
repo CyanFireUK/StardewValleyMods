@@ -326,9 +326,7 @@ namespace PermanentCellar
         [EventPriority((EventPriority)int.MinValue)]
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
-
-            if (Context.IsWorldReady && isDFLoaded == true && e.Button == ModHelperExtensions.ReadContentPackConfig(Helper).GetValue("RemoveButton").ToObject<SButton>() && Game1.player.currentLocation == farmHouse && farmHouse.upgradeLevel < 3)
+            if (Context.IsWorldReady && isDFLoaded == true && e.Button == ModHelperExtensions.ReadContentPackConfig(Helper).GetValue("RemoveButton").ToObject<SButton>() && Game1.player.currentLocation == Utility.getHomeOfFarmer(Game1.MasterPlayer) && Utility.getHomeOfFarmer(Game1.MasterPlayer).upgradeLevel < 3)
             {
 
                 var point = Utility.Vector2ToPoint(Game1.currentCursorTile);
@@ -339,7 +337,7 @@ namespace PermanentCellar
                     {
                         if (list[i].area.Contains(point))
                         {
-                            CreateCellarEntranceFH(farmHouse);
+                            CreateCellarEntranceFH(Utility.getHomeOfFarmer(Game1.MasterPlayer));
                         }
                     }
 
