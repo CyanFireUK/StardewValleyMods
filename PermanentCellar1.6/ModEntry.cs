@@ -195,7 +195,7 @@ namespace PermanentCellar
             }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-                if (!Game1.newDay && Game1.player.currentLocation == cabin || Game1.player.currentLocation.Name.StartsWith("Cellar") && cabin.upgradeLevel < 3)
+                if (!Game1.newDay && Game1.player.currentLocation == cabin || Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
                 {
                     CreateCellarEntranceCB(cabin);
                     CreateCellarToCabinWarps(cabin);
@@ -257,7 +257,7 @@ namespace PermanentCellar
             }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-            if (Game1.player.currentLocation == cabin || Game1.player.currentLocation.Name.StartsWith("Cellar") && Game1.timeOfDay != 600 && cabin.upgradeLevel < 3)
+            if (Game1.player.currentLocation == cabin || Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && Game1.timeOfDay != 600 && cabin.upgradeLevel < 3)
             {
                 CreateCellarEntranceCB(cabin);
             }
@@ -269,7 +269,7 @@ namespace PermanentCellar
         {
             FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
 
-            if (e.NewLocation == farmHouse && farmHouse.upgradeLevel < 3)
+            if (e.NewLocation == farmHouse || e.NewLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
             {
                 CreateCellarEntranceFH(farmHouse);
                 CreateCellarToFarmHouseWarps(farmHouse);
@@ -277,7 +277,7 @@ namespace PermanentCellar
 
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-                if (e.NewLocation == cabin || e.NewLocation.Name.StartsWith("Cellar") && cabin.upgradeLevel < 3)
+                if (e.NewLocation == cabin || e.NewLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
                 {
                     CreateCellarEntranceCB(cabin);
                     CreateCellarToCabinWarps(cabin);
@@ -667,8 +667,6 @@ namespace PermanentCellar
 
         private static Tuple<Warp, Warp> GetCellarToFarmHouseWarps(FarmHouse farmHouse)
         {
-            if (farmHouse.upgradeLevel < 3)
-            {
                 GameLocation cellar = Game1.getLocationFromName(farmHouse.GetCellarName());
 
                 try
@@ -689,14 +687,10 @@ namespace PermanentCellar
                 {
                     throw new Exception($"The farmhouse cellar map doesn't have the required warp points.");
                 }
-            }
-            return null;
         }
 
         private static Tuple<Warp, Warp> GetCellarToCabinWarps(Cabin cabin)
         {
-            if (Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
-            {
                 GameLocation cellar = Game1.getLocationFromName(cabin.GetCellarName());
 
                 try
@@ -717,8 +711,6 @@ namespace PermanentCellar
                 {
                     throw new Exception($"The cabin cellar map doesn't have the required warp points.");
                 }
-            }
-            return null;
         }
 
     }
