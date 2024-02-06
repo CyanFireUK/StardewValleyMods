@@ -275,6 +275,10 @@ namespace PermanentCellar
                 CreateCellarEntranceFH(farmHouse);
                 CreateCellarToFarmHouseWarps(farmHouse);
             }
+            else if (e.NewLocation.Name.StartsWith("Cellar"))
+            {
+                e.NewLocation.updateWarps();
+            }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
                 if (e.NewLocation == cabin || e.NewLocation.Name.StartsWith("Cellar") && cabin.upgradeLevel < 3)
