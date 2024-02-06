@@ -14,6 +14,7 @@ using xTile.ObjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using static StardewValley.Minigames.MineCart;
 
 
 
@@ -668,50 +669,58 @@ namespace PermanentCellar
 
         private static Tuple<Warp, Warp> GetCellarToFarmHouseWarps(FarmHouse farmHouse)
         {
-            GameLocation cellar = Game1.getLocationFromName(farmHouse.GetCellarName());
-
-            try
+            if (farmHouse.upgradeLevel < 3)
             {
-                Warp warp1 = cellar.warps.First(warp =>
-                {
-                    return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse");
-                });
+                GameLocation cellar = Game1.getLocationFromName(farmHouse.GetCellarName());
 
-                Warp warp2 = cellar.warps.Skip(1).First(warp =>
+                try
                 {
-                    return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse");
-                });
+                    Warp warp1 = cellar.warps.First(warp =>
+                    {
+                        return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse");
+                    });
 
-                return Tuple.Create(warp1, warp2);
+                    Warp warp2 = cellar.warps.Skip(1).First(warp =>
+                    {
+                        return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse");
+                    });
+
+                    return Tuple.Create(warp1, warp2);
+                }
+                catch
+                {
+                    throw new Exception($"The farmhouse cellar map doesn't have the required warp points.");
+                }
             }
-            catch
-            {
-                throw new Exception($"The farmhouse cellar map doesn't have the required warp points.");
-            }
+            return null;
         }
 
         private static Tuple<Warp, Warp> GetCellarToCabinWarps(Cabin cabin)
         {
-            GameLocation cellar = Game1.getLocationFromName(cabin.GetCellarName());
-
-            try
+            if (Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
             {
-                Warp warp1 = cellar.warps.First(warp =>
-                {
-                    return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse") || OrdinalIgnoreCase.Equals(warp.TargetName, cabin.NameOrUniqueName);
-                });
+                GameLocation cellar = Game1.getLocationFromName(cabin.GetCellarName());
 
-                Warp warp2 = cellar.warps.Skip(1).First(warp =>
+                try
                 {
-                    return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse") || OrdinalIgnoreCase.Equals(warp.TargetName, cabin.NameOrUniqueName);
-                });
+                    Warp warp1 = cellar.warps.First(warp =>
+                    {
+                        return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse") || OrdinalIgnoreCase.Equals(warp.TargetName, cabin.NameOrUniqueName);
+                    });
 
-                return Tuple.Create(warp1, warp2);
+                    Warp warp2 = cellar.warps.Skip(1).First(warp =>
+                    {
+                        return OrdinalIgnoreCase.Equals(warp.TargetName, "FarmHouse") || OrdinalIgnoreCase.Equals(warp.TargetName, cabin.NameOrUniqueName);
+                    });
+
+                    return Tuple.Create(warp1, warp2);
+                }
+                catch
+                {
+                    throw new Exception($"The cabin cellar map doesn't have the required warp points.");
+                }
             }
-            catch
-            {
-                throw new Exception($"The cabin cellar map doesn't have the required warp points.");
-            }
+            return null;
         }
 
     }
