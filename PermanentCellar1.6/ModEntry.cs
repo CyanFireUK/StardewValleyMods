@@ -63,6 +63,7 @@ namespace PermanentCellar
     public class ModEntry : Mod
     {
         private ModConfig config_;
+        private static IMonitor SMonitor;
         private string saveGameName_;
         private bool isDFLoaded;
         private List<FlooringData> list = new();
@@ -113,6 +114,7 @@ namespace PermanentCellar
             Helper.Events.Display.MenuChanged += OnMenuChanged;
             Helper.Events.Input.ButtonPressed += OnButtonPressed;
 
+            SMonitor = Monitor;
 
             isDFLoaded = Helper.ModRegistry.IsLoaded("aedenthorn.DynamicFlooring");
 
@@ -686,7 +688,8 @@ namespace PermanentCellar
                 }
                 catch
                 {
-                    throw new WarningException($"The farmhouse cellar map doesn't have the required warp points.");
+                    SMonitor.Log("The farmhouse cellar map doesn't have the required warp points.", LogLevel.Warn);
+                    return null;
                 }
         }
 
@@ -710,7 +713,8 @@ namespace PermanentCellar
                 }
                 catch
                 {
-                    throw new WarningException($"The cabin cellar map doesn't have the required warp points.");
+                    SMonitor.Log("The cabin cellar map doesn't have the required warp points.", LogLevel.Warn);
+                    return null;
                 }
         }
 
