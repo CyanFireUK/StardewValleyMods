@@ -14,6 +14,7 @@ using xTile.ObjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
+using System.ComponentModel;
 
 
 
@@ -685,7 +686,7 @@ namespace PermanentCellar
                 }
                 catch
                 {
-                    throw new Exception($"The farmhouse cellar map doesn't have the required warp points.");
+                    throw new WarningException($"The farmhouse cellar map doesn't have the required warp points.");
                 }
         }
 
@@ -709,7 +710,7 @@ namespace PermanentCellar
                 }
                 catch
                 {
-                    throw new Exception($"The cabin cellar map doesn't have the required warp points.");
+                    throw new WarningException($"The cabin cellar map doesn't have the required warp points.");
                 }
         }
 
