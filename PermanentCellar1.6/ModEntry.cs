@@ -14,7 +14,6 @@ using xTile.ObjectModel;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.IO;
-using System.ComponentModel;
 
 
 
@@ -191,16 +190,22 @@ namespace PermanentCellar
             FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
 
 
-            if (!Game1.newDay && Game1.player.currentLocation == farmHouse || Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == farmHouse && farmHouse.upgradeLevel < 3)
             {
                 CreateCellarEntranceFH(farmHouse);
+            }
+            else if (Context.IsWorldReady &&!Game1.newDay && Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            {
                 CreateCellarToFarmHouseWarps(farmHouse);
             }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-                if (!Game1.newDay && Game1.player.currentLocation == cabin || Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+                if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == cabin && cabin.upgradeLevel < 3)
                 {
                     CreateCellarEntranceCB(cabin);
+                }
+                else if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+                {
                     CreateCellarToCabinWarps(cabin);
                 }
         }
@@ -236,6 +241,9 @@ namespace PermanentCellar
             if (Game1.player.currentLocation == farmHouse && farmHouse.upgradeLevel < 3)
             {
                 CreateCellarEntranceFH(farmHouse);
+            }
+            else if (Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            {
                 CreateCellarToFarmHouseWarps(farmHouse);
             }
 
@@ -243,6 +251,9 @@ namespace PermanentCellar
             if (Game1.player.currentLocation == cabin && cabin.upgradeLevel < 3)
             {
                 CreateCellarEntranceCB(cabin);
+            }
+            else if (Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+            {
                 CreateCellarToCabinWarps(cabin);
             }
 
@@ -272,17 +283,23 @@ namespace PermanentCellar
         {
             FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
 
-            if (e.NewLocation == farmHouse || e.NewLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            if (e.NewLocation == farmHouse && farmHouse.upgradeLevel < 3)
             {
                 CreateCellarEntranceFH(farmHouse);
+            }
+            else if (e.NewLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            {
                 CreateCellarToFarmHouseWarps(farmHouse);
             }
 
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-                if (e.NewLocation == cabin || e.NewLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+                if (e.NewLocation == cabin && cabin.upgradeLevel < 3)
                 {
                     CreateCellarEntranceCB(cabin);
+                }
+                else if (e.NewLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+                {
                     CreateCellarToCabinWarps(cabin);
                 }
         }
@@ -504,79 +521,82 @@ namespace PermanentCellar
         [EventPriority((EventPriority)int.MinValue)]
         private void CreateCellarToFarmHouseWarps(FarmHouse farmHouse)
         {
-            Tuple<Warp, Warp> warps = GetCellarToFarmHouseWarps(farmHouse);
-
-            Map Cellar0Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
-            Map Cellar1Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
-
-            Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitFH);
-            Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitFH);
-
-            if (Cellar0ExitFH != null && Cellar0ExitFH != "")
+            if (GetCellarToFarmHouseWarps(farmHouse) != null)
             {
-                string[] CE0xyVals = Cellar0ExitFH.ToString().Split();
-                CE0XPositionFH1 = float.Parse(CE0xyVals[0]);
-                CE0YPositionFH1 = float.Parse(CE0xyVals[1]);
-                try
+                Tuple<Warp, Warp> warps = GetCellarToFarmHouseWarps(farmHouse);
+
+                Map Cellar0Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
+                Map Cellar1Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
+
+                Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitFH);
+                Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitFH);
+
+                if (Cellar0ExitFH != null && Cellar0ExitFH != "")
                 {
-                    CE0XPositionFH2 = float.Parse(CE0xyVals[2]);
-                    CE0YPositionFH2 = float.Parse(CE0xyVals[3]);
-                }
-                catch { }
-            }
-
-            if (Cellar1ExitFH != null && Cellar1ExitFH != "")
-            {
-                string[] CE1xyVals = Cellar1ExitFH.ToString().Split();
-                CE1XPositionFH1 = float.Parse(CE1xyVals[0]);
-                CE1YPositionFH1 = float.Parse(CE1xyVals[1]);
-                try
-                {
-                    CE1XPositionFH2 = float.Parse(CE1xyVals[2]);
-                    CE1YPositionFH2 = float.Parse(CE1xyVals[3]);
-                }
-                catch { }
-
-            }
-
-
-
-            if (farmHouse.upgradeLevel == 0)
-            {
-                if (CE0XPositionFH1 != 0 && CE0YPositionFH1 != 0)
-                {
-                    warps.Item1.TargetX = (int)CE0XPositionFH1;
-                    warps.Item1.TargetY = (int)CE0YPositionFH1;
+                    string[] CE0xyVals = Cellar0ExitFH.ToString().Split();
+                    CE0XPositionFH1 = float.Parse(CE0xyVals[0]);
+                    CE0YPositionFH1 = float.Parse(CE0xyVals[1]);
+                    try
+                    {
+                        CE0XPositionFH2 = float.Parse(CE0xyVals[2]);
+                        CE0YPositionFH2 = float.Parse(CE0xyVals[3]);
+                    }
+                    catch { }
                 }
 
-                if (CE0XPositionFH2 == 0 && CE0YPositionFH2 == 0 && CE0XPositionFH1 != 0 && CE0YPositionFH1 != 0)
+                if (Cellar1ExitFH != null && Cellar1ExitFH != "")
                 {
-                    warps.Item2.TargetX = (int)CE0XPositionFH1;
-                    warps.Item2.TargetY = (int)CE0YPositionFH1;
-                }
-                else if (CE0XPositionFH2 != 0 && CE0YPositionFH2 != 0)
-                {
-                    warps.Item2.TargetX = (int)CE0XPositionFH2;
-                    warps.Item2.TargetY = (int)CE0YPositionFH2;
-                }
-            }
-            else if (farmHouse.upgradeLevel == 1)
-            {
-                if (CE1XPositionFH1 != 0 && CE1YPositionFH1 != 0)
-                {
-                    warps.Item1.TargetX = (int)CE1XPositionFH1;
-                    warps.Item1.TargetY = (int)CE1YPositionFH1;
+                    string[] CE1xyVals = Cellar1ExitFH.ToString().Split();
+                    CE1XPositionFH1 = float.Parse(CE1xyVals[0]);
+                    CE1YPositionFH1 = float.Parse(CE1xyVals[1]);
+                    try
+                    {
+                        CE1XPositionFH2 = float.Parse(CE1xyVals[2]);
+                        CE1YPositionFH2 = float.Parse(CE1xyVals[3]);
+                    }
+                    catch { }
+
                 }
 
-                if (CE1XPositionFH2 == 0 && CE1YPositionFH2 == 0 && CE1XPositionFH1 != 0 && CE1YPositionFH1 != 0)
+
+
+                if (farmHouse.upgradeLevel == 0)
                 {
-                    warps.Item2.TargetX = (int)CE1XPositionFH1;
-                    warps.Item2.TargetY = (int)CE1YPositionFH1;
+                    if (CE0XPositionFH1 != 0 && CE0YPositionFH1 != 0)
+                    {
+                        warps.Item1.TargetX = (int)CE0XPositionFH1;
+                        warps.Item1.TargetY = (int)CE0YPositionFH1;
+                    }
+
+                    if (CE0XPositionFH2 == 0 && CE0YPositionFH2 == 0 && CE0XPositionFH1 != 0 && CE0YPositionFH1 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE0XPositionFH1;
+                        warps.Item2.TargetY = (int)CE0YPositionFH1;
+                    }
+                    else if (CE0XPositionFH2 != 0 && CE0YPositionFH2 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE0XPositionFH2;
+                        warps.Item2.TargetY = (int)CE0YPositionFH2;
+                    }
                 }
-                else if (CE1XPositionFH2 != 0 && CE1YPositionFH2 != 0)
+                else if (farmHouse.upgradeLevel == 1)
                 {
-                    warps.Item2.TargetX = (int)CE1XPositionFH2;
-                    warps.Item2.TargetY = (int)CE1YPositionFH2;
+                    if (CE1XPositionFH1 != 0 && CE1YPositionFH1 != 0)
+                    {
+                        warps.Item1.TargetX = (int)CE1XPositionFH1;
+                        warps.Item1.TargetY = (int)CE1YPositionFH1;
+                    }
+
+                    if (CE1XPositionFH2 == 0 && CE1YPositionFH2 == 0 && CE1XPositionFH1 != 0 && CE1YPositionFH1 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE1XPositionFH1;
+                        warps.Item2.TargetY = (int)CE1YPositionFH1;
+                    }
+                    else if (CE1XPositionFH2 != 0 && CE1YPositionFH2 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE1XPositionFH2;
+                        warps.Item2.TargetY = (int)CE1YPositionFH2;
+                    }
                 }
             }
         }
@@ -585,84 +605,87 @@ namespace PermanentCellar
         [EventPriority((EventPriority)int.MinValue)]
         private void CreateCellarToCabinWarps(Cabin cabin)
         {
-            Tuple<Warp, Warp> warps = GetCellarToCabinWarps(cabin);
-
-            Map Cellar0Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
-            Map Cellar1Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
-
-            Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitCB);
-            Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitCB);
-
-            if (Cellar0ExitCB != null && Cellar0ExitCB != "")
+            if (GetCellarToCabinWarps(cabin) != null)
             {
-                string[] CE0xyVals = Cellar0ExitCB.ToString().Split();
-                CE0XPositionCB1 = float.Parse(CE0xyVals[0]);
-                CE0YPositionCB1 = float.Parse(CE0xyVals[1]);
-                try
+                Tuple<Warp, Warp> warps = GetCellarToCabinWarps(cabin);
+
+                Map Cellar0Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
+                Map Cellar1Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
+
+                Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitCB);
+                Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitCB);
+
+                if (Cellar0ExitCB != null && Cellar0ExitCB != "")
                 {
-                    CE0XPositionCB2 = float.Parse(CE0xyVals[2]);
-                    CE0YPositionCB2 = float.Parse(CE0xyVals[3]);
-                }
-                catch { }
-            }
-
-            if (Cellar1ExitCB != null && Cellar1ExitCB != "")
-            {
-                string[] CE1xyVals = Cellar1ExitCB.ToString().Split();
-                CE1XPositionCB1 = float.Parse(CE1xyVals[0]);
-                CE1YPositionCB1 = float.Parse(CE1xyVals[1]);
-                try
-                {
-                    CE1XPositionCB2 = float.Parse(CE1xyVals[2]);
-                    CE1YPositionCB2 = float.Parse(CE1xyVals[3]);
-                }
-                catch { }
-
-            }
-
-
-
-            if (cabin.upgradeLevel >= 2)
-            {
-                return;
-            }
-
-            if (cabin.upgradeLevel == 0)
-            {
-                if (CE0XPositionCB1 != 0 && CE0YPositionCB1 != 0)
-                {
-                    warps.Item1.TargetX = (int)CE0XPositionCB1;
-                    warps.Item1.TargetY = (int)CE0YPositionCB1;
+                    string[] CE0xyVals = Cellar0ExitCB.ToString().Split();
+                    CE0XPositionCB1 = float.Parse(CE0xyVals[0]);
+                    CE0YPositionCB1 = float.Parse(CE0xyVals[1]);
+                    try
+                    {
+                        CE0XPositionCB2 = float.Parse(CE0xyVals[2]);
+                        CE0YPositionCB2 = float.Parse(CE0xyVals[3]);
+                    }
+                    catch { }
                 }
 
-                if (CE0XPositionCB2 == 0 && CE0YPositionCB2 == 0 && CE0XPositionCB1 != 0 && CE0YPositionCB1 != 0)
+                if (Cellar1ExitCB != null && Cellar1ExitCB != "")
                 {
-                    warps.Item2.TargetX = (int)CE0XPositionCB1;
-                    warps.Item2.TargetY = (int)CE0YPositionCB1;
-                }
-                else if (CE0XPositionCB2 != 0 && CE0YPositionCB2 != 0)
-                {
-                    warps.Item2.TargetX = (int)CE0XPositionCB2;
-                    warps.Item2.TargetY = (int)CE0YPositionCB2;
-                }
-            }
-            else if (cabin.upgradeLevel == 1)
-            {
-                if (CE1XPositionCB1 != 0 && CE1YPositionCB1 != 0)
-                {
-                    warps.Item1.TargetX = (int)CE1XPositionCB1;
-                    warps.Item1.TargetY = (int)CE1YPositionCB1;
+                    string[] CE1xyVals = Cellar1ExitCB.ToString().Split();
+                    CE1XPositionCB1 = float.Parse(CE1xyVals[0]);
+                    CE1YPositionCB1 = float.Parse(CE1xyVals[1]);
+                    try
+                    {
+                        CE1XPositionCB2 = float.Parse(CE1xyVals[2]);
+                        CE1YPositionCB2 = float.Parse(CE1xyVals[3]);
+                    }
+                    catch { }
+
                 }
 
-                if (CE1XPositionCB2 == 0 && CE1YPositionCB2 == 0 && CE1XPositionCB1 != 0 && CE1YPositionCB1 != 0)
+
+
+                if (cabin.upgradeLevel >= 2)
                 {
-                    warps.Item2.TargetX = (int)CE1XPositionCB1;
-                    warps.Item2.TargetY = (int)CE1YPositionCB1;
+                    return;
                 }
-                else if (CE1XPositionCB2 != 0 && CE1YPositionCB2 != 0)
+
+                if (cabin.upgradeLevel == 0)
                 {
-                    warps.Item2.TargetX = (int)CE1XPositionCB2;
-                    warps.Item2.TargetY = (int)CE1YPositionCB2;
+                    if (CE0XPositionCB1 != 0 && CE0YPositionCB1 != 0)
+                    {
+                        warps.Item1.TargetX = (int)CE0XPositionCB1;
+                        warps.Item1.TargetY = (int)CE0YPositionCB1;
+                    }
+
+                    if (CE0XPositionCB2 == 0 && CE0YPositionCB2 == 0 && CE0XPositionCB1 != 0 && CE0YPositionCB1 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE0XPositionCB1;
+                        warps.Item2.TargetY = (int)CE0YPositionCB1;
+                    }
+                    else if (CE0XPositionCB2 != 0 && CE0YPositionCB2 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE0XPositionCB2;
+                        warps.Item2.TargetY = (int)CE0YPositionCB2;
+                    }
+                }
+                else if (cabin.upgradeLevel == 1)
+                {
+                    if (CE1XPositionCB1 != 0 && CE1YPositionCB1 != 0)
+                    {
+                        warps.Item1.TargetX = (int)CE1XPositionCB1;
+                        warps.Item1.TargetY = (int)CE1YPositionCB1;
+                    }
+
+                    if (CE1XPositionCB2 == 0 && CE1YPositionCB2 == 0 && CE1XPositionCB1 != 0 && CE1YPositionCB1 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE1XPositionCB1;
+                        warps.Item2.TargetY = (int)CE1YPositionCB1;
+                    }
+                    else if (CE1XPositionCB2 != 0 && CE1YPositionCB2 != 0)
+                    {
+                        warps.Item2.TargetX = (int)CE1XPositionCB2;
+                        warps.Item2.TargetY = (int)CE1YPositionCB2;
+                    }
                 }
             }
         }
@@ -688,7 +711,7 @@ namespace PermanentCellar
                 }
                 catch
                 {
-                    SMonitor.Log("The farmhouse cellar map doesn't have the required warp points.", LogLevel.Warn);
+                    SMonitor.Log("The farmhouse cellar map doesn't have the required warp points. Unable to alter target co-ordinates", LogLevel.Warn);
                     return null;
                 }
         }
@@ -713,7 +736,7 @@ namespace PermanentCellar
                 }
                 catch
                 {
-                    SMonitor.Log("The cabin cellar map doesn't have the required warp points.", LogLevel.Warn);
+                    SMonitor.Log("The cabin cellar map doesn't have the required warp points. Unable to alter target co-ordinates", LogLevel.Warn);
                     return null;
                 }
         }
