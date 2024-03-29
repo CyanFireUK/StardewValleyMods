@@ -107,8 +107,10 @@ namespace PermanentCellar
             Helper.Events.GameLoop.SaveLoaded += OnSaveLoaded;
             Helper.Events.GameLoop.Saving += OnSaving;
             Helper.Events.GameLoop.DayStarted += OnDayStarted;
+            Helper.Events.GameLoop.DayStarted += OnDayStarted2;
             Helper.Events.GameLoop.TimeChanged += OnTimeChanged;
             Helper.Events.Player.Warped += OnWarped;
+            Helper.Events.Player.Warped += OnWarped2;
             Helper.Events.Content.AssetRequested += OnAssetRequested;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
             Helper.Events.Input.ButtonPressed += OnButtonPressed;
@@ -127,6 +129,7 @@ namespace PermanentCellar
             if (saveAnywhereApi != null)
             {
                 saveAnywhereApi.AfterLoad += OnAfterLoad;
+                saveAnywhereApi.AfterLoad += OnAfterLoad2;
             }
         }
 
@@ -194,17 +197,28 @@ namespace PermanentCellar
             {
                 CreateCellarEntranceFH(farmHouse);
             }
-            else if (Context.IsWorldReady &&!Game1.newDay && Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
-            {
-                CreateCellarToFarmHouseWarps(farmHouse);
-            }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
                 if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == cabin && cabin.upgradeLevel < 3)
                 {
                     CreateCellarEntranceCB(cabin);
                 }
-                else if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+        }
+
+
+        [EventPriority(EventPriority.Normal)]
+        private void OnAfterLoad2(object sender, EventArgs e)
+        {
+            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+
+
+            if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            {
+                CreateCellarToFarmHouseWarps(farmHouse);
+            }
+
+            foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                if (Context.IsWorldReady && !Game1.newDay && Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
                 {
                     CreateCellarToCabinWarps(cabin);
                 }
@@ -242,20 +256,29 @@ namespace PermanentCellar
             {
                 CreateCellarEntranceFH(farmHouse);
             }
-            else if (Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
-            {
-                CreateCellarToFarmHouseWarps(farmHouse);
-            }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
             if (Game1.player.currentLocation == cabin && cabin.upgradeLevel < 3)
             {
                 CreateCellarEntranceCB(cabin);
             }
-            else if (Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+        }
+
+        [EventPriority(EventPriority.Normal)]
+        private void OnDayStarted2(object sender, DayStartedEventArgs e)
+        {
+            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+
+            if (Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
             {
-                CreateCellarToCabinWarps(cabin);
+                CreateCellarToFarmHouseWarps(farmHouse);
             }
+
+            foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                if (Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+                {
+                    CreateCellarToCabinWarps(cabin);
+                }
 
         }
 
@@ -265,13 +288,13 @@ namespace PermanentCellar
         {
             FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
 
-            if (Game1.player.currentLocation == farmHouse || Game1.player.currentLocation == Game1.getLocationFromName("Cellar") && Game1.timeOfDay != 600 && farmHouse.upgradeLevel < 3)
+            if (Game1.player.currentLocation == farmHouse && Game1.timeOfDay != 600 && farmHouse.upgradeLevel < 3)
             {
                 CreateCellarEntranceFH(farmHouse);
             }
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-            if (Game1.player.currentLocation == cabin || Game1.player.currentLocation == Game1.getLocationFromName(cabin.GetCellarName()) && Game1.timeOfDay != 600 && cabin.upgradeLevel < 3)
+            if (Game1.player.currentLocation == cabin && Game1.timeOfDay != 600 && cabin.upgradeLevel < 3)
             {
                 CreateCellarEntranceCB(cabin);
             }
@@ -287,10 +310,6 @@ namespace PermanentCellar
             {
                 CreateCellarEntranceFH(farmHouse);
             }
-            else if (e.NewLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
-            {
-                CreateCellarToFarmHouseWarps(farmHouse);
-            }
 
 
             foreach (Cabin cabin in GetLocations().OfType<Cabin>())
@@ -298,7 +317,21 @@ namespace PermanentCellar
                 {
                     CreateCellarEntranceCB(cabin);
                 }
-                else if (e.NewLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
+        }
+
+        [EventPriority(EventPriority.Normal)]
+        private void OnWarped2(object sender, WarpedEventArgs e)
+        {
+            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+
+            if (e.NewLocation == Game1.getLocationFromName("Cellar") && farmHouse.upgradeLevel < 3)
+            {
+                CreateCellarToFarmHouseWarps(farmHouse);
+            }
+
+
+            foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                if (e.NewLocation == Game1.getLocationFromName(cabin.GetCellarName()) && cabin.upgradeLevel < 3)
                 {
                     CreateCellarToCabinWarps(cabin);
                 }
