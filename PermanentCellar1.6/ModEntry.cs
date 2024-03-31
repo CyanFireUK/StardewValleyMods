@@ -99,6 +99,8 @@ namespace PermanentCellar
             public bool ShowCommunityUpgrade { get; set; } = false;
             public bool RemoveFarmHouseCasks { get; set; } = false;
             public bool RemoveCabinCasks { get; set; } = false;
+            public bool AddFarmHouseCasks { get; set; } = false;
+            public bool AddCabinCasks { get; set; } = false;
         }
 
         public override void Entry(IModHelper helper)
@@ -170,6 +172,19 @@ namespace PermanentCellar
                           .ForEach(key => cellar.Objects.Remove(key));
                 }
             }
+            if (config_.SaveGame[saveGameName_].AddFarmHouseCasks && Game1.IsMasterGame)
+            {
+                FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.player);
+
+                farmHouse.GetCellar().setUpAgingBoards();
+            }
+            if (config_.SaveGame[saveGameName_].AddCabinCasks && Game1.IsMasterGame)
+            {
+                foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                {
+                    cabin.GetCellar().setUpAgingBoards();               
+                }
+            }
         }
 
         private void OnSaving(object sender, SavingEventArgs e)
@@ -182,6 +197,17 @@ namespace PermanentCellar
             if (config_.SaveGame[saveGameName_].RemoveCabinCasks && Game1.IsMasterGame)
             {
                 config_.SaveGame[saveGameName_].RemoveCabinCasks = false;
+                Helper.WriteConfig(config_);
+            }
+
+            if (config_.SaveGame[saveGameName_].AddFarmHouseCasks && Game1.IsMasterGame)
+            {
+                config_.SaveGame[saveGameName_].AddFarmHouseCasks = false;
+                Helper.WriteConfig(config_);
+            }
+            if (config_.SaveGame[saveGameName_].AddCabinCasks && Game1.IsMasterGame)
+            {
+                config_.SaveGame[saveGameName_].AddCabinCasks = false;
                 Helper.WriteConfig(config_);
             }
         }
