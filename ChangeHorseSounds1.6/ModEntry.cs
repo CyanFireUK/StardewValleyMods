@@ -11,6 +11,9 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.GameData;
 using Microsoft.Xna.Framework.Audio;
+using StardewValley.Extensions;
+using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 
 
 
@@ -143,51 +146,26 @@ namespace ChangeHorseSounds
         [HarmonyPatch(typeof(GameLocation), "localSound")]
         public class SoundPatches
         {
-            public static IEnumerable<Horse> GetHorsesIn(GameLocation location)
-            {
-                if (!Context.IsMultiplayer)
-                {
-                    return from h in location.characters.OfType<Horse>()
-                           select h;
-                }
-                return (from h in location.characters.OfType<Horse>()
-                        select h).Concat(from player in (IEnumerable<Farmer>)location.farmers
-                                         where player.mount != null
-                                         select player.mount).Distinct();
-            }
-
 
             public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position)
-            {    
-                if (!Context.IsMultiplayer && config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customStone") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && Game1.player.mount.Tile == position && Game1.player.mount.rider != null)
+            {
+
+                foreach (Farmer who in __instance.farmers)
                 {
-                    audioName = "CF.ChangeHorseSounds_customStone";
-                }
-                if (!Context.IsMultiplayer && config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customWoody") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && Game1.player.mount.Tile == position && Game1.player.mount.rider != null)
-                {
-                    audioName = "CF.ChangeHorseSounds_customWoody";
-                }
-                if (!Context.IsMultiplayer && config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customThud") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && Game1.player.mount.Tile == position && Game1.player.mount.rider != null)
-                {
-                    audioName = "CF.ChangeHorseSounds_customThud";
-                }
-                foreach (Horse horse1 in GetHorsesIn(__instance))
-                {
-                    if (Context.IsMultiplayer && config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customStone") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && horse1.Tile == position && horse1.rider != null & !horse1.Name.Equals(""))
+                    if (config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customStone") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && who.mount != null && who.mount.rider != null && position != null && who.mount.Tile == position)
                     {
                         audioName = "CF.ChangeHorseSounds_customStone";
                     }
-                    if (Context.IsMultiplayer && config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customWoody") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && horse1.Tile == position && horse1.rider != null & !horse1.Name.Equals(""))
+                    if (config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customWoody") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && who.mount != null && who.mount.rider != null && position != null && who.mount.Tile == position)
                     {
                         audioName = "CF.ChangeHorseSounds_customWoody";
                     }
-                    if (Context.IsMultiplayer && config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customThud") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && horse1.Tile == position && horse1.rider != null & !horse1.Name.Equals(""))
+                    if (config.Enabled == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customThud") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && who.mount != null && who.mount.rider != null && position != null && who.mount.Tile == position)
                     {
                         audioName = "CF.ChangeHorseSounds_customThud";
                     }
-                }
+                }            
             }
         }
-
     }
 }
