@@ -495,7 +495,7 @@ namespace PermanentCellar
         {
 
 
-            if (Cellar1ExitFH != null && Cellar1ExitFH != "")
+            if (!string.IsNullOrEmpty(Cellar1ExitFH))
             {
                 string[] CE1xyVals = Cellar1ExitFH.ToString().Split();
                 CE1XPositionFH1 = float.Parse(CE1xyVals[0]);
@@ -591,7 +591,7 @@ namespace PermanentCellar
                 Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitFH);
                 Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitFH);
 
-                if (Cellar0ExitFH != null && Cellar0ExitFH != "")
+                if (!string.IsNullOrEmpty(Cellar0ExitFH))
                 {
                     string[] CE0xyVals = Cellar0ExitFH.ToString().Split();
                     CE0XPositionFH1 = float.Parse(CE0xyVals[0]);
@@ -604,7 +604,7 @@ namespace PermanentCellar
                     catch { }
                 }
 
-                if (Cellar1ExitFH != null && Cellar1ExitFH != "")
+                if (!string.IsNullOrEmpty(Cellar1ExitFH))
                 {
                     string[] CE1xyVals = Cellar1ExitFH.ToString().Split();
                     CE1XPositionFH1 = float.Parse(CE1xyVals[0]);
@@ -675,7 +675,7 @@ namespace PermanentCellar
                 Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitCB);
                 Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitCB);
 
-                if (Cellar0ExitCB != null && Cellar0ExitCB != "")
+                if (!string.IsNullOrEmpty(Cellar0ExitCB))
                 {
                     string[] CE0xyVals = Cellar0ExitCB.ToString().Split();
                     CE0XPositionCB1 = float.Parse(CE0xyVals[0]);
@@ -688,7 +688,7 @@ namespace PermanentCellar
                     catch { }
                 }
 
-                if (Cellar1ExitCB != null && Cellar1ExitCB != "")
+                if (!string.IsNullOrEmpty(Cellar1ExitCB))
                 {
                     string[] CE1xyVals = Cellar1ExitCB.ToString().Split();
                     CE1XPositionCB1 = float.Parse(CE1xyVals[0]);

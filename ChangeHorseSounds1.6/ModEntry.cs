@@ -12,6 +12,7 @@ using Microsoft.Xna.Framework.Audio;
 using StardewValley.Extensions;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
+using System.Linq;
 
 
 
@@ -23,13 +24,14 @@ namespace ChangeHorseSounds
     {
      public bool ReplaceSounds { get; set; } = true;
      public bool PlayOnce { get; set; } = false;
+     public List<string> IncludedHorseNames { get; set; } = new List<string> { };
 
     }
     public class ModEntry : Mod
     {
         public static IModHelper SHelper { get; private set; }
+        public static IManifest SModManifest { get; private set; }
         private static ChangeHorseSoundsModConfig config;
-
 
         public override void Entry(IModHelper helper)
         {
@@ -38,6 +40,7 @@ namespace ChangeHorseSounds
             helper.Events.Content.AssetRequested += Content_AssetRequested;
 
             SHelper = helper;
+            SModManifest = ModManifest;
 
             config = SHelper.ReadConfig<ChangeHorseSoundsModConfig>();
 
@@ -85,24 +88,27 @@ namespace ChangeHorseSounds
                     setValue: value => config.PlayOnce = value
                     );
 
+                configMenu.AddParagraph(
+                    mod: ModManifest,
+                    text: () => "To specify which horses have their sounds replaced please open the config file. This is achieved by adding a list of the comma seperated names to IncludedHorseNames"
+                    );
         }
 
         private void GameLoop_SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
             if (config.PlayOnce == true)
             {
-               Game1.soundBank.GetCueDefinition(ModManifest.UniqueID + "_customStone").instanceLimit = 1;
-               Game1.soundBank.GetCueDefinition(ModManifest.UniqueID + "_customStone").limitBehavior = CueDefinition.LimitBehavior.FailToPlay;
+               Game1.soundBank.GetCueDefinition($"{ModManifest.UniqueID}_customStone").instanceLimit = 1;
+               Game1.soundBank.GetCueDefinition($"{ModManifest.UniqueID}_customStone").limitBehavior = CueDefinition.LimitBehavior.FailToPlay;
 
-               Game1.soundBank.GetCueDefinition(ModManifest.UniqueID + "_customWoody").instanceLimit = 1;
-               Game1.soundBank.GetCueDefinition(ModManifest.UniqueID + "_customWoody").limitBehavior = CueDefinition.LimitBehavior.FailToPlay;
+               Game1.soundBank.GetCueDefinition($"{ModManifest.UniqueID}_customWoody").instanceLimit = 1;
+               Game1.soundBank.GetCueDefinition($"{ModManifest.UniqueID}_customWoody").limitBehavior = CueDefinition.LimitBehavior.FailToPlay;
 
-               Game1.soundBank.GetCueDefinition(ModManifest.UniqueID + "_customThud").instanceLimit = 1;
-               Game1.soundBank.GetCueDefinition(ModManifest.UniqueID + "_customThud").limitBehavior = CueDefinition.LimitBehavior.FailToPlay;
+               Game1.soundBank.GetCueDefinition($"{ModManifest.UniqueID}_customThud").instanceLimit = 1;
+               Game1.soundBank.GetCueDefinition($"{ModManifest.UniqueID}_customThud").limitBehavior = CueDefinition.LimitBehavior.FailToPlay;
             }
 
         }
-
 
         public void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
         {
@@ -116,15 +122,15 @@ namespace ChangeHorseSounds
                     {
                         if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "horsecustomstone.wav")))
                         {
-                            AddCueData(data, ModManifest.UniqueID + "_customStone", "horsecustomstone.wav", loop: false);
+                            AddCueData(data, $"{ModManifest.UniqueID}_customStone", "horsecustomstone.wav", loop: false);
                         }
                         if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "horsecustomwoody.wav")))
                         {
-                            AddCueData(data, ModManifest.UniqueID + "_customWoody", "horsecustomwoody.wav", loop: false);
+                            AddCueData(data, $"{ModManifest.UniqueID}_customWoody", "horsecustomwoody.wav", loop: false);
                         }
                         if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "horsecustomthud.wav")))
                         {
-                            AddCueData(data, ModManifest.UniqueID + "_customThud", "horsecustomthud.wav", loop: false);
+                            AddCueData(data, $"{ModManifest.UniqueID}_customThud", "horsecustomthud.wav", loop: false);
                         }
                     }
                 });
@@ -154,21 +160,38 @@ namespace ChangeHorseSounds
             public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position)
             {
 
-                foreach (Farmer who in __instance.farmers)
+                foreach (string horseName in config.IncludedHorseNames)
+                    foreach (Farmer farmer in __instance.farmers)
+                    {
+                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_customStone") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && string.Equals(farmer.mount.Name, horseName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            audioName = "CF.ChangeHorseSounds_customStone";
+                        }
+                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_customWoody") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && string.Equals(farmer.mount.Name, horseName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            audioName = "CF.ChangeHorseSounds_customWoody";
+                        }
+                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_customThud") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && string.Equals(farmer.mount.Name, horseName, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            audioName = "CF.ChangeHorseSounds_customThud";
+                        }
+                    }
+
+                foreach (Farmer farmer in __instance.farmers)
                 {
-                    if (config.ReplaceSounds == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customStone") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && who.mount != null && who.mount.rider != null && position != null && who.mount.Tile == position)
+                    if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_customStone") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && !config.IncludedHorseNames.Any())
                     {
                         audioName = "CF.ChangeHorseSounds_customStone";
                     }
-                    if (config.ReplaceSounds == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customWoody") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && who.mount != null && who.mount.rider != null && position != null && who.mount.Tile == position)
+                    if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_customWoody") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && !config.IncludedHorseNames.Any())
                     {
                         audioName = "CF.ChangeHorseSounds_customWoody";
                     }
-                    if (config.ReplaceSounds == true && Game1.soundBank.Exists("CF.ChangeHorseSounds_customThud") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && who.mount != null && who.mount.rider != null && position != null && who.mount.Tile == position)
+                    if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_customThud") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && !config.IncludedHorseNames.Any())
                     {
                         audioName = "CF.ChangeHorseSounds_customThud";
                     }
-                }            
+                }
             }
         }
 
@@ -221,8 +244,7 @@ namespace ChangeHorseSounds
                             cueName = "thudStep";
                         owner.bridge?.OnFootstep(owner.Position);
                     }
-                    TerrainFeature terrainFeature;
-                    if (Game1.currentLocation.terrainFeatures.TryGetValue(key, out terrainFeature) && terrainFeature is Flooring flooring)
+                    if (Game1.currentLocation.terrainFeatures.TryGetValue(key, out TerrainFeature terrainFeature) && terrainFeature is Flooring flooring)
                         cueName = flooring.getFootstepSound();
                     Vector2 position = owner.Position;
                     if (owner.shouldShadowBeOffset)
