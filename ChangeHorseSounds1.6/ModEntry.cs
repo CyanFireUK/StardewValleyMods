@@ -101,14 +101,14 @@ namespace ChangeHorseSounds
                     SoundEffect audio;
                     string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(thudStep[i])}.wav");
                     using (var stream = new FileStream(filePathCombined, FileMode.Open))
-                    {
-                        audio = SoundEffect.FromStream(stream);
-                    }
+                        if (stream != null)
+                        {
+                            audio = SoundEffect.FromStream(stream, false);
 
-                    namedthudStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                            namedthudStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-                    Game1.soundBank.AddCue(namedthudStepCueDefinition);
-
+                            Game1.soundBank.AddCue(namedthudStepCueDefinition);
+                        }
                 }
 
                 for (var i = 0; i < stoneStep.Length; i++)
@@ -120,14 +120,14 @@ namespace ChangeHorseSounds
                     SoundEffect audio;
                     string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(stoneStep[i])}.wav");
                     using (var stream = new FileStream(filePathCombined, FileMode.Open))
-                    {
-                        audio = SoundEffect.FromStream(stream);
-                    }
+                        if (stream != null)
+                        {
+                            audio = SoundEffect.FromStream(stream, false);
 
-                    namedstoneStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                            namedstoneStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-                    Game1.soundBank.AddCue(namedstoneStepCueDefinition);
-
+                            Game1.soundBank.AddCue(namedstoneStepCueDefinition);
+                        }
                 }
 
                 for (var i = 0; i < woodyStep.Length; i++)
@@ -139,14 +139,14 @@ namespace ChangeHorseSounds
                     SoundEffect audio;
                     string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(woodyStep[i])}.wav");
                     using (var stream = new FileStream(filePathCombined, FileMode.Open))
-                    {
-                        audio = SoundEffect.FromStream(stream);
-                    }
+                        if (stream != null)
+                        {
+                            audio = SoundEffect.FromStream(stream, false);
 
-                    namedwoodyStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                            namedwoodyStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-                    Game1.soundBank.AddCue(namedwoodyStepCueDefinition);
-
+                            Game1.soundBank.AddCue(namedwoodyStepCueDefinition);
+                        }
                 }
 
                 if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "thudstep.wav")))
@@ -156,15 +156,16 @@ namespace ChangeHorseSounds
                     thudStepCueDefinition.name = $"{ModManifest.UniqueID}_{FileName(Path.Combine(Helper.DirectoryPath, "assets", "thudstep.wav"))}";
 
                     SoundEffect audio;
-                    string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(Path.Combine(Helper.DirectoryPath, "assets", "thudstep.wav"))}.wav");
+                    string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", "thudstep.wav");
                     using (var stream = new FileStream(filePathCombined, FileMode.Open))
-                    {
-                        audio = SoundEffect.FromStream(stream);
-                    }
+                        if (stream != null)
+                        {
+                            audio = SoundEffect.FromStream(stream, false);
 
-                    thudStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                            thudStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-                    Game1.soundBank.AddCue(thudStepCueDefinition);
+                            Game1.soundBank.AddCue(thudStepCueDefinition);
+                        }
                 }
 
                 if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "stonestep.wav")))
@@ -174,15 +175,16 @@ namespace ChangeHorseSounds
                     stoneStepCueDefinition.name = $"{ModManifest.UniqueID}_{FileName(Path.Combine(Helper.DirectoryPath, "assets", "stonestep.wav"))}";
 
                     SoundEffect audio;
-                    string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(Path.Combine(Helper.DirectoryPath, "assets", "stonestep.wav"))}.wav");
+                    string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", "stonestep.wav");
                     using (var stream = new FileStream(filePathCombined, FileMode.Open))
-                    {
-                        audio = SoundEffect.FromStream(stream);
-                    }
+                        if (stream != null)
+                        {
+                            audio = SoundEffect.FromStream(stream, false);
 
-                    stoneStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                            stoneStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-                    Game1.soundBank.AddCue(stoneStepCueDefinition);
+                            Game1.soundBank.AddCue(stoneStepCueDefinition);
+                        }
                 }
 
                 if (File.Exists(Path.Combine(Helper.DirectoryPath, "assets", "woodystep.wav")))
@@ -192,15 +194,16 @@ namespace ChangeHorseSounds
                     woodyStepCueDefinition.name = $"{ModManifest.UniqueID}_{FileName(Path.Combine(Helper.DirectoryPath, "assets", "woodystep.wav"))}";
 
                     SoundEffect audio;
-                    string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(Path.Combine(Helper.DirectoryPath, "assets", "woodystep.wav"))}.wav");
+                    string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", "woodystep.wav");
                     using (var stream = new FileStream(filePathCombined, FileMode.Open))
-                    {
-                        audio = SoundEffect.FromStream(stream);
-                    }
+                        if (stream != null)
+                        {
+                            audio = SoundEffect.FromStream(stream, false);
 
-                    woodyStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                            woodyStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
 
-                    Game1.soundBank.AddCue(woodyStepCueDefinition);
+                            Game1.soundBank.AddCue(woodyStepCueDefinition);
+                        }
                 }
 
 
