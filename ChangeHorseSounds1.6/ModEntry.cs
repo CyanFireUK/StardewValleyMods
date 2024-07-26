@@ -71,15 +71,15 @@ namespace ChangeHorseSounds
 
                 configMenu.AddBoolOption(
                     mod: ModManifest,
-                    name: () => "Replace Horse Footstep Sounds\n",
-                    tooltip: () => "Select whether to replace horse footstep sounds or not",
+                    name: () => Helper.Translation.Get("config.ReplaceSounds.name"),
+                    tooltip: () => Helper.Translation.Get("config.ReplaceSounds.description"),
                     getValue: () => config.ReplaceSounds,
                     setValue: value => config.ReplaceSounds = value
                     );
 
                 configMenu.AddParagraph(
                     mod: ModManifest,
-                    text: () => "Please open the config file to set PlayOnce to selected files. This is achieved by adding a list of the desired filenames, comma seperated to the SoundsToPlayOnce section."
+                    text: () => Helper.Translation.Get("config.PlayOnce.text")
                     );
         }
 
