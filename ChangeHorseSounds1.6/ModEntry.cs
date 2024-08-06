@@ -39,7 +39,7 @@ namespace ChangeHorseSounds
             SHelper = helper;
             SModManifest = ModManifest;
 
-            config = SHelper.ReadConfig<ChangeHorseSoundsModConfig>();
+            config = Helper.ReadConfig<ChangeHorseSoundsModConfig>();
 
 
             var harmony = new Harmony(ModManifest.UniqueID);
@@ -260,6 +260,7 @@ namespace ChangeHorseSounds
 
             public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position)
             {
+                config = SHelper.ReadConfig<ChangeHorseSoundsModConfig>();
                 var thudStep = Directory.GetFiles(Path.Combine(SHelper.DirectoryPath, "assets"), "*_thudstep.wav");
                 var stoneStep = Directory.GetFiles(Path.Combine(SHelper.DirectoryPath, "assets"), "*_stonestep.wav");
                 var woodyStep = Directory.GetFiles(Path.Combine(SHelper.DirectoryPath, "assets"), "*_woodystep.wav");
