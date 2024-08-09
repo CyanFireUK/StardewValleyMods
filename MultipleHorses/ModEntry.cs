@@ -237,7 +237,7 @@ namespace MultipleHorses
                 return;
 
 
-                    if (e.Button == Config.HorseWhistleKey)
+                    if (e.Button == Config.HorseWhistleKey && !Game1.IsChatting)
                     {
                         if (CallHorse())
                            return;
@@ -249,12 +249,12 @@ namespace MultipleHorses
                         SMonitor.Log(SHelper.Translation.Get("command.horse_whistle.nohorse"), LogLevel.Error);
                     }
 
-                    if (e.Button == Config.DefaultHorseKey)
+                    if (e.Button == Config.DefaultHorseKey && !Game1.IsChatting)
                     {
                         SetDefaultHorse();
                     }
 
-            if (e.Button == Config.CorralKey)
+            if (e.Button == Config.CorralKey && !Game1.IsChatting)
             {
                 CorralHorses();
             }
