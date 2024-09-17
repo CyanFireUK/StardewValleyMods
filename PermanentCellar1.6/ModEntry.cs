@@ -185,6 +185,10 @@ namespace PermanentCellar
                     cabin.GetCellar().setUpAgingBoards();               
                 }
             }
+
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
         }
 
         private void OnSaving(object sender, SavingEventArgs e)

@@ -173,6 +173,8 @@ namespace MultipleHorses
                                 horse.ownerId.Value = stable.owner.Value;
                             }
                         }
+
+            Helper.GameContent.InvalidateCache("Data\\Buildings");
         }
 
         private void OnAfterLoad(object sender, EventArgs e)
