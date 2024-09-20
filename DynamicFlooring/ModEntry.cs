@@ -39,7 +39,7 @@ namespace DynamicFlooring
             Helper.Events.Input.ButtonReleased += Input_ButtonReleased;
 
             var harmony = new Harmony(ModManifest.UniqueID);
-            harmony.PatchAll();
+            harmony.PatchAll(typeof(ModEntry).Assembly);
             
             
         }
