@@ -1,0 +1,10 @@
+﻿{
+  "Name": "Train Tracks",
+  "Author": "aedenthorn & CyanFire",
+  "Version": "1.0.0",
+  "Description": "Train Tracks.",
+  "UniqueID": "aedenthorn.TrainTracks",
+  "EntryDll": "TrainTracks.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:10927" ]
+}
