@@ -95,7 +95,7 @@ namespace TrainTracks
             if (!Config.EnableMod)
                 return;
 
-            if (e.Name.IsEquivalentTo("Mods/aedenthorn.TrainTracks/TrainInternal"))
+            if (e.Name.IsEquivalentTo("Mods/aedenthorn.TrainTracks/Train"))
             {
                 e.LoadFromModFile<Texture2D>("assets/horse.png", AssetLoadPriority.Medium);
 
@@ -128,7 +128,7 @@ namespace TrainTracks
 
              frontTexture = Game1.content.Load<Texture2D>("Mods/aedenthorn.TrainTracks/TrainFront");
 
-             backTexture = Game1.content.Load<Texture2D>("Mods/aedenthorn.TrainTracks/TrainInternal");
+             backTexture = Game1.content.Load<Texture2D>("Mods/aedenthorn.TrainTracks/Train");
 
         }
 
@@ -251,7 +251,7 @@ namespace TrainTracks
                 horse.modData.Remove("AlternativeTextureName");
                 horse.modData.Remove("AlternativeTextureOwner");
                 horse.modData.Remove("AlternativeTextureVariation");
-                horse.Sprite = new AnimatedSprite("Mods/aedenthorn.TrainTracks/TrainInternal", 0, 32, 32);
+                horse.Sprite = new AnimatedSprite("Mods/aedenthorn.TrainTracks/Train", 0, 32, 32);
                 int facing;
                 switch (index)
                 {
