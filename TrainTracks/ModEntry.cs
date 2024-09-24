@@ -256,13 +256,21 @@ namespace TrainTracks
                 switch (index)
                 {
                     case 0:
-                    case 2:
-                    case 8:
                     case 9:
-                        facing = 2;
+                        facing = 0;
                         break;
                     default:
+                    case 3:
+                    case 11:
                         facing = 1;
+                        break;
+                    case 2:
+                    case 8:
+                        facing = 2;
+                        break;
+                    case 1:
+                    case 10:
+                        facing = 3;
                         break;
                 }
                 horse.FacingDirection = facing;

@@ -7,6 +7,7 @@ using StardewValley;
 using StardewValley.Characters;
 using StardewValley.TerrainFeatures;
 using StardewValley.Tools;
+using System;
 
 namespace TrainTracks
 {
@@ -22,10 +23,8 @@ namespace TrainTracks
             if (__instance.rider != null)
             {
                 b.Draw(frontTexture, Game1.GlobalToLocal(Game1.viewport, __instance.Position + new Vector2(__instance.flip ? 0 : -16, -80)), new Rectangle?(__instance.Sprite.sourceRect), Color.White, 0f, Vector2.Zero, 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (__instance.Position.Y + 64f) / 10000f + 0.01f);
-                b.Draw(backTexture, Game1.GlobalToLocal(Game1.viewport, __instance.Position + new Vector2(__instance.flip ? 0 : -16, -80)), new Rectangle?(__instance.Sprite.sourceRect), Color.White, 0f, Vector2.Zero, 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (__instance.Position.Y + 64f) / 10000f - 0.01f);
-
-                if (__instance.FacingDirection == 2)
-                    __instance.Sprite = new AnimatedSprite("Mods/aedenthorn.TrainTracks/Blank", 0, 32, 32);
+                b.Draw(backTexture, Game1.GlobalToLocal(Game1.viewport, __instance.Position + new Vector2(__instance.flip ? 0 : -16, -80)), new Rectangle?(__instance.Sprite.sourceRect), Color.White, 0f, Vector2.Zero, 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, MathF.BitDecrement(__instance.rider.getDrawLayer()));
+                __instance.Sprite = new AnimatedSprite("Mods/aedenthorn.TrainTracks/Blank", __instance.Sprite.CurrentFrame, 32, 32);
             }
         }
         private static void Horse_draw_Postfix(Horse __instance, SpriteBatch b)
@@ -36,10 +35,8 @@ namespace TrainTracks
             if (__instance.rider != null)
             {
                 b.Draw(frontTexture, Game1.GlobalToLocal(Game1.viewport, __instance.Position + new Vector2(__instance.flip ? 0 : -16, -80)), new Rectangle?(__instance.Sprite.sourceRect), Color.White, 0f, Vector2.Zero, 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (__instance.Position.Y + 64f) / 10000f + 0.01f);
-                b.Draw(backTexture, Game1.GlobalToLocal(Game1.viewport, __instance.Position + new Vector2(__instance.flip ? 0 : -16, -80)), new Rectangle?(__instance.Sprite.sourceRect), Color.White, 0f, Vector2.Zero, 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, (__instance.Position.Y + 64f) / 10000f - 0.01f);
-
-                if (__instance.FacingDirection == 2)
-                    __instance.Sprite = new AnimatedSprite("Mods/aedenthorn.TrainTracks/Blank", 0, 32, 32);
+                b.Draw(backTexture, Game1.GlobalToLocal(Game1.viewport, __instance.Position + new Vector2(__instance.flip ? 0 : -16, -80)), new Rectangle?(__instance.Sprite.sourceRect), Color.White, 0f, Vector2.Zero, 4f, __instance.flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, MathF.BitDecrement(__instance.rider.getDrawLayer()));
+                __instance.Sprite = new AnimatedSprite("Mods/aedenthorn.TrainTracks/Blank", __instance.Sprite.CurrentFrame, 32, 32);
             }
         }
         private static bool Flooring_draw_Prefix(Flooring __instance, SpriteBatch spriteBatch)
