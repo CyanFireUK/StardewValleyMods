@@ -91,7 +91,7 @@ namespace TrainTracks
                     if (warp != null)
                     {
                         Monitor.Log($"warping to {warp.TargetName}");
-                        Game1.player.warpFarmer(warp);
+                        Game1.player.warpFarmer(warp, Game1.player.FacingDirection);
                         return;
                     }
                 }
@@ -123,32 +123,48 @@ namespace TrainTracks
                         break;
                 }
                 Game1.player.Position = pos + move;
-            }
 
-            switch (trackIndex)
-            {
-                default:
-                case 0:
-                case 1:
-                case 2:
-                case 3:
-                    facing = Game1.player.mount.modData.TryGetValue(trainKey, out string isTrain) ? Game1.player.mount.FacingDirection : Game1.player.FacingDirection;
-                    break;
-                case 8:
-                    facing = 2;
-                    break;
-                case 9:
-                    facing = 0;
-                    break;
-                case 10:
-                    facing = 3;
-                    break;
-                case 11:
-                    facing = 1;
-                    break;
+                switch (trackIndex)
+                {
+                    case 0:
+                        if (Game1.player.FacingDirection == 1)
+                            facing = 0;
+                        if (Game1.player.FacingDirection == 3)
+                            facing = 0;
+                        break;
+                    case 1:
+                        if (Game1.player.FacingDirection == 0)
+                            facing = 3;
+                        if (Game1.player.FacingDirection == 2)
+                            facing = 3;
+                        break;
+                    case 2:
+                        if (Game1.player.FacingDirection == 1)
+                            facing = 2;
+                        if (Game1.player.FacingDirection == 3)
+                            facing = 2;
+                        break;
+                    case 3:
+                        if (Game1.player.FacingDirection == 0)
+                            facing = 1;
+                        if (Game1.player.FacingDirection == 2)
+                            facing = 1;
+                        break;
+                    case 8:
+                        facing = 2;
+                        break;
+                    case 9:
+                        facing = 0;
+                        break;
+                    case 10:
+                        facing = 3;
+                        break;
+                    case 11:
+                        facing = 1;
+                        break;
+                }
+                Game1.player.FacingDirection = facing;
             }
-            Game1.player.FacingDirection = facing;
-            Game1.player.faceDirection(facing);
         }
 
         private void GetDirection(ref Vector2 pos, Vector2 tPos, ref int dir, ref int facing, TerrainFeature feature, bool[] trackData)

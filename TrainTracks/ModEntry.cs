@@ -424,8 +424,6 @@ namespace TrainTracks
             }
             if (Game1.player.mount != null && Game1.player.mount.modData.ContainsKey(trainKey) && !Game1.isWarping)
                 MoveOnTrack();
-
-
         }
     }
 }
