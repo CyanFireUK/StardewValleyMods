@@ -12,7 +12,7 @@ namespace TrainTracks
 
         public static bool TryPlaceTrack(GameLocation location, Vector2 tile, int index, string switchData = null, int speed = -1, bool force = false)
         {
-            if (!location.terrainFeatures.TryGetValue(tile, out TerrainFeature oldFeature) || (force && oldFeature is not Flooring) || (oldFeature is Flooring && oldFeature.modData.ContainsKey(trackKey)))
+            if (!location.terrainFeatures.TryGetValue(tile, out TerrainFeature oldFeature) || (force && oldFeature is not Flooring) || (oldFeature is Flooring or HoeDirt && oldFeature.modData.ContainsKey(trackKey)))
             {
                 if (Config.PlaceTrackSound.Length > 0)
                     location.playSound(Config.PlaceTrackSound);
@@ -29,6 +29,14 @@ namespace TrainTracks
             else if (oldFeature != null && oldFeature is Flooring)
             {
                 location.terrainFeatures[tile].modData[trackKey] = index + "";
+                if (Config.PlaceTrackSound.Length > 0)
+                    location.playSound(Config.PlaceTrackSound);
+            }
+            else if (oldFeature != null && oldFeature is HoeDirt)
+            {
+                Flooring f = new Flooring("-42") { modData = { [trackKey] = index + "" } };
+                location.terrainFeatures[tile] = f;
+
                 if (Config.PlaceTrackSound.Length > 0)
                     location.playSound(Config.PlaceTrackSound);
             }
