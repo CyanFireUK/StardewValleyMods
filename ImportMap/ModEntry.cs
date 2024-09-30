@@ -62,20 +62,25 @@ namespace ImportMap
 
         public static bool ChatBox_runCommand_Prefix(string command)
         {
+            string[] array = ArgUtility.SplitBySpace(command);
+            var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
+
             if (!Config.EnableMod)
                 return true;
 
-            if (command.Equals("nukemap"))
+            switch (array[0])
             {
-                Game1.chatBox.clickAway();
-                NukeMap(null, null);
-                return false;
-            }
-            if (command.Equals("importmap"))
-            {
-                Game1.chatBox.clickAway();
-                DoImport();
-                return false;
+                case "nukemap":
+                    Game1.chatBox.clickAway();
+                    NukeMap(null, null);
+                    history.Insert(0, "/" + command);
+                    return false;
+
+                case "importmap":
+                    Game1.chatBox.clickAway();
+                    DoImport();
+                    history.Insert(0, "/" + command);
+                    return false;
             }
             return true;
         }
