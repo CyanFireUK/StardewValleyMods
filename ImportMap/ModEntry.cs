@@ -13,6 +13,7 @@ using System.Linq;
 using xTile;
 using xTile.Layers;
 using xTile.ObjectModel;
+using static System.Net.Mime.MediaTypeNames;
 using Object = StardewValley.Object;
 
 namespace ImportMap
@@ -73,12 +74,14 @@ namespace ImportMap
                 case "nukemap":
                     Game1.chatBox.clickAway();
                     NukeMap(null, null);
+                    Game1.chatBox.addInfoMessage("/" + command);
                     history.Insert(0, "/" + command);
                     return false;
 
                 case "importmap":
                     Game1.chatBox.clickAway();
                     DoImport();
+                    Game1.chatBox.addInfoMessage("/" + command);
                     history.Insert(0, "/" + command);
                     return false;
             }
