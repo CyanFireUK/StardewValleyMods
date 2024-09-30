@@ -10,6 +10,7 @@ using StardewValley.GameData.Buildings;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 
 
@@ -69,8 +70,10 @@ namespace MultipleHorses
                               original: AccessTools.Method(typeof(NPC), "findPlayer", Array.Empty<Type>()),
                               prefix: new HarmonyMethod(typeof(NPCPatches), nameof(NPCPatches.findPlayer_prefix))
                                 );
-
-
+            harmony.Patch(
+               original: AccessTools.Method(typeof(ChatBox), "runCommand"),
+               prefix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.ChatBox_runCommand_Prefix))
+            );
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -711,6 +714,93 @@ namespace MultipleHorses
 
 
             DelayedAction.functionAfterDelay(() => tryMountHorse(who, horse, location, retryCount - 1), 200);
+        }
+
+        public static bool ChatBox_runCommand_Prefix(string command)
+        {
+                string[] array = ArgUtility.SplitBySpace(command);
+                var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
+
+                switch (array[0])
+                {
+                    case "horse_whistle":
+                        Game1.chatBox.clickAway();
+                        if (array.Length > 1)
+                        {
+                        if (CallHorse(array[1]))
+                        {
+                            history.Insert(0, "/" + command);
+                            return false;
+                        }
+                        else
+                        {
+                            history.Insert(0, "/" + command);
+                            SMonitor.Log(SHelper.Translation.Get("command.horse_whistle.noname", new { mountName = array[1] }), LogLevel.Error);
+                            return false;
+                        }
+                        }
+                        else
+                        {
+                        if (CallHorse())
+                        {
+                            history.Insert(0, "/" + command);
+                            return false;
+                        }
+                        else
+                        {
+                            history.Insert(0, "/" + command);
+                            Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HorseFlute_NoHorse"));
+                            SMonitor.Log(SHelper.Translation.Get("command.horse_whistle.nohorse"), LogLevel.Error);
+                            return false;
+                        }
+                        }
+                    case "corral_horses":
+                        Game1.chatBox.clickAway();
+                        if (array.Length > 1)
+                        {
+                            CorralHorses(array[1]);
+                            history.Insert(0, "/" + command);
+                            return false;
+                        }
+                        else
+                        {
+                            CorralHorses();
+                            history.Insert(0, "/" + command);
+                            return false;
+                        }
+                    case "default_horse":
+                        Game1.chatBox.clickAway();
+                        if (array.Length > 1)
+                        {
+                        if (SetDefaultHorse(array[1]))
+                        {
+                            history.Insert(0, "/" + command);
+                            return false;
+                        }
+                        else
+                        {
+                            history.Insert(0, "/" + command);
+                            SMonitor.Log(SHelper.Translation.Get("command.default_horse.unable"), LogLevel.Error);
+                            return false;
+                        }
+                        }
+                        else
+                        {
+                        if (SetDefaultHorse())
+                        {
+                            history.Insert(0, "/" + command);
+                            return false;
+                        }
+                        else
+                        {
+                            history.Insert(0, "/" + command);
+                            SMonitor.Log(SHelper.Translation.Get("command.default_horse.unable"), LogLevel.Error);
+                            return false;
+                        }
+                        }
+                
+                }
+                return true;
         }
 
         internal void OnCommandReceived(string command, string[] args)
