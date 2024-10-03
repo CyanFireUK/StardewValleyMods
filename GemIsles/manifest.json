@@ -1,0 +1,16 @@
+﻿{
+  "Name": "Gem Isles",
+  "Author": "aedenthorn & CyanFire",
+  "Version": "1.0.0",
+  "Description": "Swim to procedurally generated islands in the Gem Sea",
+  "UniqueID": "aedenthorn.GemIsles",
+  "EntryDll": "GemIsles.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:6692" ],
+  "Dependencies": [
+    {
+      "UniqueID": "aedenthorn.Swim",
+      "IsRequired": false
+    }
+  ]
+}
