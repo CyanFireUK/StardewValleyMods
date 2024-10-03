@@ -6,7 +6,7 @@
   "UniqueID": "aedenthorn.GemIsles",
   "EntryDll": "GemIsles.dll",
   "MinimumApiVersion": "4.0.0",
-  "UpdateKeys": [ "Nexus:6692" ],
+  "UpdateKeys": [ "Nexus:28324" ],
   "Dependencies": [
     {
       "UniqueID": "aedenthorn.Swim",
