@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using xTile;
 using xTile.Layers;
 using xTile.ObjectModel;
@@ -22,6 +23,7 @@ namespace ImportMap
     public partial class ModEntry : Mod
     {
 
+        public static IManifest SModManifest;
         public static IMonitor SMonitor;
         public static IModHelper SHelper;
         public static ModConfig Config;
@@ -29,6 +31,7 @@ namespace ImportMap
         public static ModEntry context;
         private static IAdvancedFluteBlocksApi fluteBlockApi;
         private static ITrainTracksApi trainTrackApi;
+        private static bool inGame = false;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -41,6 +44,7 @@ namespace ImportMap
 
             context = this;
 
+            SModManifest = ModManifest;
             SMonitor = Monitor;
             SHelper = helper;
 
@@ -72,17 +76,19 @@ namespace ImportMap
             switch (array[0])
             {
                 case "nukemap":
+                    inGame = true;
                     Game1.chatBox.clickAway();
-                    NukeMap(null, null);
                     Game1.chatBox.addInfoMessage("/" + command);
                     history.Insert(0, "/" + command);
+                    NukeMap(null, null);
                     return false;
 
                 case "importmap":
+                    inGame = true;
                     Game1.chatBox.clickAway();
-                    DoImport();
                     Game1.chatBox.addInfoMessage("/" + command);
                     history.Insert(0, "/" + command);
+                    DoImport();
                     return false;
             }
             return true;
@@ -101,6 +107,7 @@ namespace ImportMap
         {
             if (Config.EnableMod && Config.ImportKey.JustPressed())
             {
+                inGame = true;
                 Monitor.Log("importing map");
                 DoImport();
             }
@@ -111,12 +118,22 @@ namespace ImportMap
             if (!File.Exists(Path.Combine(SHelper.DirectoryPath, "assets", "import.tmx")))
             {
                 SMonitor.Log("import file not found", LogLevel.Error);
+                if (inGame == true)
+                {
+                    inGame = false;
+                    Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + "import file not found", Color.Red);
+                }
                 return;
             }
             Map map = SHelper.ModContent.Load<Map>("assets/import.tmx");
             if (map == null)
             {
                 SMonitor.Log("map is null", LogLevel.Error);
+                if (inGame == true)
+                {
+                    inGame = false;
+                    Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + "map is null", Color.Red);
+                }
                 return;
             }
             Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
