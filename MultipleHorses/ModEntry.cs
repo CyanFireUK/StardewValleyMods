@@ -252,7 +252,7 @@ namespace MultipleHorses
                            return;
 
                         Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HorseFlute_NoHorse"));
-                        SMonitor.Log($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.horse_whistle.nohorse"), LogLevel.Error);
+                        SMonitor.Log(SHelper.Translation.Get("command.horse_whistle.nohorse"), LogLevel.Error);
                     }
 
                     if (e.Button == Config.DefaultHorseKey && !Game1.IsChatting)
