@@ -136,8 +136,9 @@ namespace PermanentCellar
         {
             config_ = Helper.ReadConfig<ModConfig>();
 
-            if (Game1.IsMasterGame)
-            {
+            if (!Game1.IsMasterGame)
+                return;
+   
                 saveGameName_ = $"{Game1.GetSaveGameName()}_{Game1.uniqueIDForThisGame}";
 
                 if (!config_.SaveGame.ContainsKey(saveGameName_))
@@ -185,13 +186,13 @@ namespace PermanentCellar
                         cabin.GetCellar().setUpAgingBoards();
                     }
                 }
-            }
         }
 
         private void OnSaving(object sender, SavingEventArgs e)
         {
-            if (Game1.IsMasterGame)
-            {
+            if (!Game1.IsMasterGame)
+                return;
+            
                 if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks)
                 {
                     config_.SaveGame[saveGameName_].RemoveFarmHouseCasks = false;
@@ -213,7 +214,6 @@ namespace PermanentCellar
                     config_.SaveGame[saveGameName_].AddCabinCasks = false;
                     Helper.WriteConfig(config_);
                 }
-            }
         }
 
 
@@ -361,6 +361,9 @@ namespace PermanentCellar
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
+            if (!Game1.IsMasterGame)
+                return;
+
             if (config_ == null || !config_.SaveGame[saveGameName_].ShowCommunityUpgrade)
             {
                 return;
