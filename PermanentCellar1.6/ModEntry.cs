@@ -115,12 +115,9 @@ namespace PermanentCellar
             Helper.Events.Player.Warped += OnWarped2;
             Helper.Events.Content.AssetRequested += OnAssetRequested;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
-            Helper.Events.Input.ButtonPressed += OnButtonPressed;
+
 
             SMonitor = Monitor;
-
-            isDFLoaded = Helper.ModRegistry.IsLoaded("aedenthorn.DynamicFlooring");
-
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -139,30 +136,20 @@ namespace PermanentCellar
         {
             config_ = Helper.ReadConfig<ModConfig>();
 
-            saveGameName_ = $"{Game1.GetSaveGameName()}_{Game1.uniqueIDForThisGame}";
-            if (!config_.SaveGame.ContainsKey(saveGameName_) && Game1.IsMasterGame)
+            if (Game1.IsMasterGame)
             {
-                config_.SaveGame.Add(saveGameName_, new ConfigEntry());
-                Helper.WriteConfig(config_);
-            }
+                saveGameName_ = $"{Game1.GetSaveGameName()}_{Game1.uniqueIDForThisGame}";
 
-            if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks && Game1.IsMasterGame)
-            {
-                FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
-                GameLocation cellar = farmHouse.GetCellar();
-
-                cellar.Objects
-                      .Pairs
-                      .Where(item => item.Value is Cask)
-                      .Select(item => item.Key)
-                      .ToList()
-                      .ForEach(key => cellar.Objects.Remove(key));
-            }
-            if (config_.SaveGame[saveGameName_].RemoveCabinCasks && Game1.IsMasterGame)
-            {
-                foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                if (!config_.SaveGame.ContainsKey(saveGameName_))
                 {
-                    GameLocation cellar = cabin.GetCellar();
+                    config_.SaveGame.Add(saveGameName_, new ConfigEntry());
+                    Helper.WriteConfig(config_);
+                }
+
+                if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks)
+                {
+                    FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+                    GameLocation cellar = farmHouse.GetCellar();
 
                     cellar.Objects
                           .Pairs
@@ -171,48 +158,61 @@ namespace PermanentCellar
                           .ToList()
                           .ForEach(key => cellar.Objects.Remove(key));
                 }
-            }
-            if (config_.SaveGame[saveGameName_].AddFarmHouseCasks && Game1.IsMasterGame)
-            {
-                FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
-
-                farmHouse.GetCellar().setUpAgingBoards();
-            }
-            if (config_.SaveGame[saveGameName_].AddCabinCasks && Game1.IsMasterGame)
-            {
-                foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                if (config_.SaveGame[saveGameName_].RemoveCabinCasks)
                 {
-                    cabin.GetCellar().setUpAgingBoards();               
+                    foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                    {
+                        GameLocation cellar = cabin.GetCellar();
+
+                        cellar.Objects
+                              .Pairs
+                              .Where(item => item.Value is Cask)
+                              .Select(item => item.Key)
+                              .ToList()
+                              .ForEach(key => cellar.Objects.Remove(key));
+                    }
+                }
+                if (config_.SaveGame[saveGameName_].AddFarmHouseCasks)
+                {
+                    FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
+
+                    farmHouse.GetCellar().setUpAgingBoards();
+                }
+                if (config_.SaveGame[saveGameName_].AddCabinCasks)
+                {
+                    foreach (Cabin cabin in GetLocations().OfType<Cabin>())
+                    {
+                        cabin.GetCellar().setUpAgingBoards();
+                    }
                 }
             }
-
-            Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
-            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
-            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
         }
 
         private void OnSaving(object sender, SavingEventArgs e)
         {
-            if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks && Game1.IsMasterGame)
+            if (Game1.IsMasterGame)
             {
-                config_.SaveGame[saveGameName_].RemoveFarmHouseCasks = false;
-                Helper.WriteConfig(config_);
-            }
-            if (config_.SaveGame[saveGameName_].RemoveCabinCasks && Game1.IsMasterGame)
-            {
-                config_.SaveGame[saveGameName_].RemoveCabinCasks = false;
-                Helper.WriteConfig(config_);
-            }
+                if (config_.SaveGame[saveGameName_].RemoveFarmHouseCasks)
+                {
+                    config_.SaveGame[saveGameName_].RemoveFarmHouseCasks = false;
+                    Helper.WriteConfig(config_);
+                }
+                if (config_.SaveGame[saveGameName_].RemoveCabinCasks)
+                {
+                    config_.SaveGame[saveGameName_].RemoveCabinCasks = false;
+                    Helper.WriteConfig(config_);
+                }
 
-            if (config_.SaveGame[saveGameName_].AddFarmHouseCasks && Game1.IsMasterGame)
-            {
-                config_.SaveGame[saveGameName_].AddFarmHouseCasks = false;
-                Helper.WriteConfig(config_);
-            }
-            if (config_.SaveGame[saveGameName_].AddCabinCasks && Game1.IsMasterGame)
-            {
-                config_.SaveGame[saveGameName_].AddCabinCasks = false;
-                Helper.WriteConfig(config_);
+                if (config_.SaveGame[saveGameName_].AddFarmHouseCasks)
+                {
+                    config_.SaveGame[saveGameName_].AddFarmHouseCasks = false;
+                    Helper.WriteConfig(config_);
+                }
+                if (config_.SaveGame[saveGameName_].AddCabinCasks)
+                {
+                    config_.SaveGame[saveGameName_].AddCabinCasks = false;
+                    Helper.WriteConfig(config_);
+                }
             }
         }
 
@@ -254,19 +254,6 @@ namespace PermanentCellar
                 }
         }
 
-        [EventPriority((EventPriority)int.MinValue)]
-        private void OnUpdateTicked(object sender, UpdateTickedEventArgs e)
-        {
-            FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
-
-            foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-            if (Context.IsWorldReady && isDFLoaded == true && (Game1.player.currentLocation == farmHouse || Game1.player.currentLocation == cabin) && Game1.player.currentLocation.modData.TryGetValue("aedenthorn.DynamicFlooring/flooring", out string listString) && e.IsMultipleOf(30))
-            {
-                list = JsonConvert.DeserializeObject<List<FlooringData>>(listString);
-            }
-
-        }
-
 
         [EventPriority((EventPriority)int.MinValue)]
         private void OnDayStarted(object sender, DayStartedEventArgs e)
@@ -294,6 +281,7 @@ namespace PermanentCellar
                 CreateCellarEntranceCB(cabin);
             }
         }
+
 
         [EventPriority(EventPriority.Normal)]
         private void OnDayStarted2(object sender, DayStartedEventArgs e)
@@ -332,6 +320,7 @@ namespace PermanentCellar
 
         }
 
+
         [EventPriority((EventPriority)int.MinValue)]
         private void OnWarped(object sender, WarpedEventArgs e)
         {
@@ -350,6 +339,7 @@ namespace PermanentCellar
                 }
         }
 
+
         [EventPriority(EventPriority.Normal)]
         private void OnWarped2(object sender, WarpedEventArgs e)
         {
@@ -367,6 +357,7 @@ namespace PermanentCellar
                     CreateCellarToCabinWarps(cabin);
                 }
         }
+
 
         private void OnMenuChanged(object sender, MenuChangedEventArgs e)
         {
@@ -407,46 +398,6 @@ namespace PermanentCellar
             }
         }
 
-        [EventPriority((EventPriority)int.MinValue)]
-        private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
-        {
-            if (Context.IsWorldReady && isDFLoaded == true && e.Button == ModHelperExtensions.ReadContentPackConfig(Helper).GetValue("RemoveButton").ToObject<SButton>() && Game1.player.currentLocation == Utility.getHomeOfFarmer(Game1.MasterPlayer) && Utility.getHomeOfFarmer(Game1.MasterPlayer).upgradeLevel < 3)
-            {
-
-                var point = Utility.Vector2ToPoint(Game1.currentCursorTile);
-
-                if (list.Any())
-                {
-                    for (int i = list.Count - 1; i >= 0; i--)
-                    {
-                        if (list[i].area.Contains(point))
-                        {
-                            CreateCellarEntranceFH(Utility.getHomeOfFarmer(Game1.MasterPlayer));
-                        }
-                    }
-
-                }
-
-            }
-            foreach (Cabin cabin in GetLocations().OfType<Cabin>())
-            if (Context.IsWorldReady && isDFLoaded == true && e.Button == ModHelperExtensions.ReadContentPackConfig(Helper).GetValue("RemoveButton").ToObject<SButton>() && Game1.player.currentLocation == cabin && cabin.upgradeLevel < 3)
-            {
-                var point = Utility.Vector2ToPoint(Game1.currentCursorTile);
-
-                if (list.Any())
-                {
-                    for (int i = list.Count - 1; i >= 0; i--)
-                    {
-                        if (list[i].area.Contains(point))
-                        {
-                           CreateCellarEntranceCB(cabin);
-                        }
-                    }
-
-                }
-
-            }
-        }
 
         private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
@@ -466,6 +417,8 @@ namespace PermanentCellar
                     var editor = asset.AsMap();
 
                     editor.ExtendMap(minHeight: 13);
+
+                    Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
                 }, AssetEditPriority.Early + -1000);
 
             }
@@ -476,11 +429,15 @@ namespace PermanentCellar
                     var editor = asset.AsMap();
 
                     editor.ExtendMap(minHeight: 13);
+
+                    Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
+                    Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
                 }, AssetEditPriority.Early + -1000);
 
             }
 
         }
+
 
         public static IEnumerable<GameLocation> GetLocations()
         {
@@ -547,6 +504,7 @@ namespace PermanentCellar
             }
         }
 
+
         [EventPriority((EventPriority)int.MinValue)]
         private void CreateCellarEntranceCB(Cabin cabin)
         {
@@ -581,6 +539,7 @@ namespace PermanentCellar
                 cabin.updateFarmLayout();
             }
         }
+
 
         [EventPriority((EventPriority)int.MinValue)]
         private void CreateCellarToFarmHouseWarps(FarmHouse farmHouse)
