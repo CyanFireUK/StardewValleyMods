@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.Locations;
 using StardewValley.Monsters;
 using StardewValley.Objects;
@@ -540,7 +541,7 @@ namespace GemIsles
                         {
                             if (Game1.random.NextDouble() < 0.1)
                             {
-                                location.objects.Add(position, new Object("Stone", 1, false, -1, 0)
+                                location.objects.Add(position, new Object("46", 1)
                                 {
                                     MinutesUntilReady = 12,
                                     CanBeGrabbed = false,
@@ -550,7 +551,7 @@ namespace GemIsles
                             }
                             else
                             {
-                                location.objects.Add(position, new Object("Stone", 1, false, -1, 0)
+                                location.objects.Add(position, new Object($"{(Game1.random.Next(7) + 1) * 2}", 1)
                                 {
                                     MinutesUntilReady = 5,
                                     CanBeGrabbed = false,
@@ -559,45 +560,50 @@ namespace GemIsles
                                 });
                             }
                         }
-                        else if (Game1.random.NextDouble() < 0.1)
+                        else if (Game1.random.NextDouble() < 0.15)
                         {
                             if (Game1.random.NextDouble() < 0.001)
                             {
-                                location.objects.Add(position, new Object("764", 1, false, -1, 0)
+                                location.objects.Add(position, new Object("765", 1)
                                 {
                                     MinutesUntilReady = 16
                                 });
                             }
                             else if (Game1.random.NextDouble() < 0.1)
                             {
-                                location.objects.Add(position, new Object("764", 1, false, -1, 0)
+                                location.objects.Add(position, new Object("764", 1)
                                 {
                                     MinutesUntilReady = 8
                                 });
                             }
                             else if (Game1.random.NextDouble() < 0.33)
                             {
-                                location.objects.Add(position, new Object("290", 1, false, -1, 0)
+                                location.objects.Add(position, new Object("290", 1)
                                 {
                                     MinutesUntilReady = 5
                                 });
                             }
                             else
                             {
-                                location.objects.Add(position, new Object("751", 1, false, -1, 0)
+                                location.objects.Add(position, new Object("751", 1)
                                 {
                                     MinutesUntilReady = 3
                                 });
                             }
                         }
+                        else if (Game1.random.NextDouble() < 0.1)
+                        {
+                            location.objects.Add(position, new Object(Game1.random.Choose<string>("BasicCoalNode0", "BasicCoalNode1"), 1)
+                            {
+                                MinutesUntilReady = 5
+                            });
+                        }
                         else
                         {
-                            var index = (Game1.random.NextDouble() < 0.25) ? 32 : ((Game1.random.NextDouble() < 0.33) ? 38 : ((Game1.random.NextDouble() < 0.5) ? 40 : 42));
-                            Object obj = new Object(index.ToString(), 1, false, -1, 0);
-                            obj.MinutesUntilReady = 2;
-                            obj.Name = "Stone";
-                            obj.TileLocation = position;
-                            location.objects.Add(position, obj);
+                            location.objects.Add(position, new Object(Game1.random.Choose<string>("32", "38", "40", "42", "668", "670"), 1)
+                            {
+                                MinutesUntilReady = 2
+                            });
                         }
                     }
                     taken += minerals;
