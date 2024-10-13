@@ -12,6 +12,12 @@ using xTile;
 
 namespace GemIsles
 {
+
+    public static class MessageId
+    {
+        public const string AddLocation = nameof(MessageId.AddLocation);
+    }
+
     public class ModEntry : Mod
     {
 
@@ -26,9 +32,40 @@ namespace GemIsles
         public static string mapAssetKey;
         private string locationPrefix;
 
+        private static ModEntry mod;
+        private static Multiplayer multiplayer;
+
+
+
+        public static void Log(string message, LogLevel level = LogLevel.Trace)
+        {
+            ModEntry.mod?.Monitor?.Log(message, level);
+        }
+
+        public static void SendMessage<T>(T message, string messageType, long playerID)
+        {
+            ModEntry.mod.Helper.Multiplayer.SendMessage(message, messageType, modIDs: new[] { ModEntry.mod.ModManifest.UniqueID }, playerIDs: new[] { playerID });
+        }
+
+        public static void SendMessage(string messageType, long playerID)
+        {
+            ModEntry.SendMessage(true, messageType, playerID);
+        }
+
+        public static IModHelper GetHelper()
+        {
+            return ModEntry.mod?.Helper;
+        }
+
+        public static Multiplayer GetMultiplayer()
+        {
+            return ModEntry.multiplayer;
+        }
+
         public override void Entry(IModHelper helper)
         {
             context = this;
+            ModEntry.mod = this;
             Config = Helper.ReadConfig<ModConfig>();
             SMonitor = Monitor;
 
@@ -36,13 +73,43 @@ namespace GemIsles
 
             locationPrefix = $"{ModManifest.UniqueID}_GemIsles_";
 
+            helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             helper.Events.GameLoop.DayEnding += GameLoop_DayEnding;
             helper.Events.GameLoop.SaveLoaded += GameLoop_SaveLoaded;
             helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
             helper.Events.Content.AssetRequested += Content_AssetRequested;
+            helper.Events.Multiplayer.ModMessageReceived += Multiplayer_ModMessageReceived;
         }
 
-        private void GameLoop_DayEnding(object sender, DayEndingEventArgs e)
+
+        private void GameLoop_GameLaunched(object sender, GameLaunchedEventArgs args)
+        {
+            ModEntry.multiplayer = Helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
+        }
+
+        private void Multiplayer_ModMessageReceived(object sender, ModMessageReceivedEventArgs e)
+        {
+            if (e.FromModID != ModManifest.UniqueID)
+                return;
+
+            ModEntry.Log($"[{(Context.IsMainPlayer ? "host" : "farmhand")}] Received {e.Type} from {e.FromPlayerID}.", LogLevel.Trace);
+
+            switch (e.Type)
+            {
+                case MessageId.AddLocation:
+                    if (Context.IsMainPlayer)
+                    {
+                        string name = e.ReadAs<string>();
+                        GameLocation location = new GameLocation(mapAssetKey, name) { IsOutdoors = true, IsFarm = false };
+                        Game1.locations.Add(location);
+                        Helper.GameContent.InvalidateCache("Data/Locations");
+                        Utils.CreateIslesMap(location);
+                    }
+                    break;
+            }
+        }
+
+            private void GameLoop_DayEnding(object sender, DayEndingEventArgs e)
         {
             for (int i = Game1.locations.Count - 1; i >= 0; i--)
             {
@@ -155,12 +222,17 @@ namespace GemIsles
             if (Game1.eventUp)
                 return;
             string name = $"{locationPrefix}{mapX}_{mapY}";
-            if (Game1.getLocationFromName(name) == null)
+            if (Game1.IsMasterGame && Game1.getLocationFromName(name) == null)
             {
                 GameLocation location = new GameLocation(mapAssetKey, name) { IsOutdoors = true, IsFarm = false };
                 Game1.locations.Add(location);
                 Helper.GameContent.InvalidateCache("Data/Locations");
                 Utils.CreateIslesMap(location);
+            }
+            if (!Game1.IsMasterGame && Game1.getLocationFromName(name) == null)
+            {
+                ModEntry.SendMessage(name, MessageId.AddLocation, Game1.MasterPlayer.UniqueMultiplayerID);
+
             }
             Game1.warpFarmer(name, x, y, false);
         }
