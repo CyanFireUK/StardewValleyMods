@@ -25,47 +25,11 @@ namespace PermanentCellar
     }
 
 
-    public class FlooringData
-    {
-        public Rectangle area;
-        public string id;
-        public bool ignore;
-    }
-
-
-    public static class ModHelperExtensions
-    {
-        public static JObject ReadContentPackConfig(IModHelper helper)
-        {
-            var modInfo = helper.ModRegistry.Get("aedenthorn.DynamicFlooring");
-            if (modInfo is null)
-            {
-                return null;
-            }
-
-            var modPath = (string)modInfo.GetType().GetProperty("DirectoryPath")!.GetValue(modInfo)!;
-            try
-            {
-                var config = JObject.Parse(File.ReadAllText(Path.Combine(modPath, "config.json")));
-                return config;
-            }
-            catch (FileNotFoundException)
-            {
-
-                return null;
-            }
-        }
-    }
-
-
-
     public class ModEntry : Mod
     {
         private ModConfig config_;
         private static IMonitor SMonitor;
         private string saveGameName_;
-        private bool isDFLoaded;
-        private List<FlooringData> list = new();
         private PropertyValue Cellar0ExitFH;
         private PropertyValue Cellar1ExitFH;
         private PropertyValue Cellar0ExitCB;
@@ -186,6 +150,10 @@ namespace PermanentCellar
                         cabin.GetCellar().setUpAgingBoards();
                     }
                 }
+
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
         }
 
         private void OnSaving(object sender, SavingEventArgs e)
@@ -214,6 +182,10 @@ namespace PermanentCellar
                     config_.SaveGame[saveGameName_].AddCabinCasks = false;
                     Helper.WriteConfig(config_);
                 }
+
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
         }
 
 
@@ -233,6 +205,10 @@ namespace PermanentCellar
                 {
                     CreateCellarEntranceCB(cabin);
                 }
+
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
+            Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
         }
 
 
@@ -421,9 +397,7 @@ namespace PermanentCellar
 
                     editor.ExtendMap(minHeight: 13);
 
-                    Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
                 }, AssetEditPriority.Early + -1000);
-
             }
             if (e.Name.IsEquivalentTo("Maps/FarmHouse1") || e.Name.IsEquivalentTo("Maps/FarmHouse1_marriage"))
             {
@@ -432,13 +406,8 @@ namespace PermanentCellar
                     var editor = asset.AsMap();
 
                     editor.ExtendMap(minHeight: 13);
-
-                    Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
-                    Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
                 }, AssetEditPriority.Early + -1000);
-
             }
-
         }
 
 
