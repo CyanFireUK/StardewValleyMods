@@ -33,7 +33,7 @@ namespace GemIsles
         }
         internal static void CreateIslesMap(GameLocation location)
         {
-            location.loadMap(ModEntry.mapAssetKey, true);
+
             TileSheet sheet = location.map.TileSheets[0];
 
             int isles = Game1.random.Next(1, Math.Max(1, Config.MaxIsles) + 1);
