@@ -105,10 +105,10 @@ namespace GemIsles
 
                     string name = $"{locationPrefix}{mapX}_{mapY}";
 
-                        if (editor.TryGetValue("Beach", out var beachData) && !string.IsNullOrWhiteSpace(name) && !editor.ContainsKey(name))
-                        {
-                            editor.Add(name, beachData);
-                        }
+                    if (editor.TryGetValue("Beach", out var beachData) && !string.IsNullOrWhiteSpace(name) && !editor.ContainsKey(name))
+                    {
+                        editor.Add(name, beachData);
+                    }
                 }, AssetEditPriority.Late);
             }       
         }
