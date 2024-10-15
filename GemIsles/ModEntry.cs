@@ -1,5 +1,4 @@
-﻿using Force.DeepCloner;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -51,6 +50,7 @@ namespace GemIsles
             locationPrefix = $"{ModManifest.UniqueID}_GemIsles_";
 
             helper.Events.GameLoop.DayEnding += GameLoop_DayEnding;
+            helper.Events.GameLoop.SaveLoaded += GameLoop_SaveLoaded;
             helper.Events.GameLoop.UpdateTicked += GameLoop_UpdateTicked;
             helper.Events.Content.AssetRequested += Content_AssetRequested;
             helper.Events.Multiplayer.ModMessageReceived += Multiplayer_ModMessageReceived;
@@ -70,7 +70,7 @@ namespace GemIsles
                     if (Context.IsMainPlayer)
                     {
                         string name = e.ReadAs<string>();
-                        GameLocation location = new GameLocation($"Maps/{ModManifest.UniqueID}_GemIsles", name) { IsOutdoors = true, IsFarm = false };
+                        GameLocation location = new GameLocation(mapAssetKey, name) { IsOutdoors = true, IsFarm = false };
                         Game1.locations.Add(location);
                         Helper.GameContent.InvalidateCache("Data/Locations");
                         Utils.CreateIslesMap(location);
@@ -94,12 +94,6 @@ namespace GemIsles
         private void Content_AssetRequested(object sender, AssetRequestedEventArgs e)
         {
 
-            if (e.Name.IsEquivalentTo($"Maps/{ModManifest.UniqueID}_GemIsles"))
-            {
-                e.LoadFromModFile<Map>("assets/isles.tbin", AssetLoadPriority.Medium);
-
-            }
-
             if (e.NameWithoutLocale.IsEquivalentTo("Data/Locations"))
             {
                 e.Edit(asset =>
@@ -117,6 +111,11 @@ namespace GemIsles
                         }
                 }, AssetEditPriority.Late);
             }       
+        }
+
+        private void GameLoop_SaveLoaded(object sender, SaveLoadedEventArgs e)
+        {
+            mapAssetKey = Helper.ModContent.GetInternalAssetName("assets/isles.tbin").Name;
         }
 
 
@@ -194,7 +193,7 @@ namespace GemIsles
             string name = $"{locationPrefix}{mapX}_{mapY}";
             if (Context.IsMainPlayer && Game1.getLocationFromName(name) == null)
             {
-                GameLocation location = new GameLocation($"Maps/{ModManifest.UniqueID}_GemIsles", name) { IsOutdoors = true, IsFarm = false };
+                GameLocation location = new GameLocation(mapAssetKey, name) { IsOutdoors = true, IsFarm = false };
                 Game1.locations.Add(location);
                 Helper.GameContent.InvalidateCache("Data/Locations");
                 Utils.CreateIslesMap(location);
