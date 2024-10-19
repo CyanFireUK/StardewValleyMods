@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using static System.StringComparer;
-using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -11,10 +10,7 @@ using StardewValley.Menus;
 using StardewValley.Objects;
 using xTile;
 using xTile.ObjectModel;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using xTile.Tiles;
+
 
 
 
@@ -38,6 +34,8 @@ namespace PermanentCellar
         private ModConfigClient clientConfig_;
         private static IMonitor SMonitor;
         private string saveGameName_;
+        private Map cellarStairsMap0;
+        private Map cellarStairsMap1;
         private PropertyValue Cellar0ExitFH;
         private PropertyValue Cellar1ExitFH;
         private PropertyValue Cellar0ExitCB;
@@ -95,6 +93,7 @@ namespace PermanentCellar
             Helper.Events.Player.Warped += OnWarped;
             Helper.Events.Player.Warped += OnWarped2;
             Helper.Events.Content.AssetRequested += OnAssetRequested;
+            Helper.Events.Content.AssetReady += OnAssetReady;
             Helper.Events.Display.MenuChanged += OnMenuChanged;
             Helper.Events.Multiplayer.ModMessageReceived += OnModMessageReceived;
 
@@ -156,7 +155,7 @@ namespace PermanentCellar
 
         private void OnSaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            if (Game1.IsMasterGame)
+            if (Game1.IsMasterGame && Context.ScreenId == 0)
             {
                 hostConfig_ = Helper.ReadConfig<ModConfigHost>();
 
@@ -179,18 +178,12 @@ namespace PermanentCellar
                           .Select(item => item.Key)
                           .ToList()
                           .ForEach(key => cellar.Objects.Remove(key));
-
-                    hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
-                    Helper.WriteConfig(hostConfig_);
                 }
                 if (hostConfig_.SaveGame[saveGameName_].AddCellarCasks)
                 {
                     FarmHouse farmHouse = Utility.getHomeOfFarmer(Game1.MasterPlayer);
 
                     farmHouse.GetCellar().setUpAgingBoards();
-
-                    hostConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
-                    Helper.WriteConfig(hostConfig_);
                 }
             }
 
@@ -223,6 +216,35 @@ namespace PermanentCellar
 
             }
 
+            if (Context.IsSplitScreen && Context.ScreenId > 0)
+            {
+                hostConfig_ = Helper.ReadConfig<ModConfigHost>();
+
+                saveGameName_ = $"{Constants.SaveFolderName}";
+
+                if (!hostConfig_.SaveGame.ContainsKey(saveGameName_))
+                {
+                    hostConfig_.SaveGame.Add(saveGameName_, new ConfigEntryHost());
+                    Helper.WriteConfig(hostConfig_);
+                }
+
+                if (hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
+                {
+                    Helper.Multiplayer.SendMessage("RemoveCabinCasks", MessageId.RemoveCabinCasks, modIDs: new[] { ModManifest.UniqueID }, playerIDs: new[] { Game1.MasterPlayer.UniqueMultiplayerID });
+
+                }
+                if (hostConfig_.SaveGame[saveGameName_].AddCellarCasks)
+                {
+                    Helper.Multiplayer.SendMessage("AddCabinCasks", MessageId.AddCabinCasks, modIDs: new[] { ModManifest.UniqueID }, playerIDs: new[] { Game1.MasterPlayer.UniqueMultiplayerID });
+
+                }
+
+            }
+
+            cellarStairsMap0 = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");    
+            cellarStairsMap1 = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
+            
+
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
@@ -230,6 +252,31 @@ namespace PermanentCellar
 
         private void OnSaving(object sender, SavingEventArgs e)
         {
+
+            if (hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
+            {
+                hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
+                Helper.WriteConfig(hostConfig_);
+            }
+
+            if (hostConfig_.SaveGame[saveGameName_].AddCellarCasks)
+            {
+                hostConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
+                Helper.WriteConfig(hostConfig_);
+            }
+
+            if (clientConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
+            {
+                clientConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
+                Helper.WriteConfig(clientConfig_);
+            }
+
+            if (clientConfig_.SaveGame[saveGameName_].AddCellarCasks)
+            {
+                clientConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
+                Helper.WriteConfig(clientConfig_);
+            }
+
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse1_marriage");
@@ -454,6 +501,19 @@ namespace PermanentCellar
             }
         }
 
+        private void OnAssetReady(object sender, AssetReadyEventArgs e)
+        {
+            if (e.Name.IsEquivalentTo("Maps/FarmHouse_Cellar0"))
+            {
+                cellarStairsMap0 = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
+            }
+
+            if (e.Name.IsEquivalentTo("Maps/FarmHouse_Cellar1"))
+            {
+                cellarStairsMap1 = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
+            }
+        }
+
 
         public static IEnumerable<GameLocation> GetLocations()
         {
@@ -577,11 +637,8 @@ namespace PermanentCellar
             {
                 Tuple<Warp, Warp> warps = GetCellarToFarmHouseWarps(farmHouse);
 
-                Map Cellar0Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
-                Map Cellar1Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
-
-                Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitFH);
-                Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitFH);
+                Helper.ModContent.GetPatchHelper(cellarStairsMap0).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitFH);
+                Helper.ModContent.GetPatchHelper(cellarStairsMap1).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitFH);
 
                 if (Cellar0ExitFH != null && Cellar0ExitFH != "" && Cellar0ExitFH != " ")
                 {
@@ -661,11 +718,8 @@ namespace PermanentCellar
             {
                 Tuple<Warp, Warp> warps = GetCellarToCabinWarps(cabin);
 
-                Map Cellar0Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar0");
-                Map Cellar1Stairs = Game1.content.Load<Map>("Maps/FarmHouse_Cellar1");
-
-                Helper.ModContent.GetPatchHelper(Cellar0Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitCB);
-                Helper.ModContent.GetPatchHelper(Cellar1Stairs).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitCB);
+                Helper.ModContent.GetPatchHelper(cellarStairsMap0).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0ExitCB);
+                Helper.ModContent.GetPatchHelper(cellarStairsMap1).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1ExitCB);
 
                 if (Cellar0ExitCB != null && Cellar0ExitCB != "" && Cellar0ExitCB != " ")
                 {
