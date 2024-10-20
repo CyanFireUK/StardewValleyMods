@@ -1,0 +1,10 @@
+﻿{
+  "Name": "Robin Work Hours",
+  "Author": "aedenthorn & CyanFire",
+  "Version": "1.0.0",
+  "Description": "Robin Work Hours.",
+  "UniqueID": "aedenthorn.RobinWorkHours",
+  "EntryDll": "RobinWorkHours.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:28712" ]
+}
