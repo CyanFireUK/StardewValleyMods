@@ -1,0 +1,10 @@
+﻿{
+  "Name": "Restauranteer",
+  "Author": "aedenthorn & CyanFire",
+  "Version": "1.0.0",
+  "Description": "Restauranteer.",
+  "UniqueID": "aedenthorn.Restauranteer",
+  "EntryDll": "Restauranteer.dll",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:28750" ]
+}
