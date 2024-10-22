@@ -5,6 +5,7 @@ using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using System;
@@ -50,6 +51,7 @@ namespace Restauranteer
 
             Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             Helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
+            Helper.Events.GameLoop.DayEnding += GameLoop_DayEnding;
             Helper.Events.GameLoop.OneSecondUpdateTicked += GameLoop_OneSecondUpdateTicked;
             Helper.Events.Content.AssetRequested += Content_AssetRequested;
 
@@ -96,6 +98,20 @@ namespace Restauranteer
                     }
                 }
             }
+        }
+        private void GameLoop_DayEnding(object sender, StardewModdingAPI.Events.DayEndingEventArgs e)
+        {
+            foreach (var name in Config.RestaurantLocations)
+            {
+                var fridge = GetFridge(Game1.getLocationFromName(name));
+
+                fridge.Value.Items.Clear();
+
+                foreach (Object value in Game1.getLocationFromName(name).objects.Values)
+                    if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
+                        chest.Items.Clear();
+            }
+            Helper.GameContent.InvalidateCache("Data/Shops");
         }
 
         private void GameLoop_OneSecondUpdateTicked(object sender, StardewModdingAPI.Events.OneSecondUpdateTickedEventArgs e)
@@ -162,7 +178,7 @@ namespace Restauranteer
             if (obj is not null)
             {
                 harmony.Patch( 
-                    original: AccessTools.Constructor(obj.GetType().Assembly.GetType("LoveOfCooking.Objects.CookingMenu"), new Type[] { typeof(List<CraftingRecipe>), typeof(List<Chest>), typeof(string)  }),
+                    original: AccessTools.Constructor(obj.GetType().Assembly.GetType("LoveOfCooking.Menu.CookingMenu"), new Type[] { typeof(List<CraftingRecipe>), typeof(Dictionary<IInventory, Chest>), typeof(string)  }),
                     prefix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.LoveOfCooking_CookingMenu_Prefix))
                 );
             }
@@ -265,14 +281,14 @@ namespace Restauranteer
             );
         }
 
-        private static void LoveOfCooking_CookingMenu_Prefix(ref List<Chest> materialContainers)
+        private static void LoveOfCooking_CookingMenu_Prefix(ref Dictionary<IInventory, Chest> materialContainers)
         {
             if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name))
                 return;
             var fridge = GetFridge(Game1.currentLocation);
             if(materialContainers is null)
-                materialContainers = new List<Chest>();
-            materialContainers.Add( fridge.Value );
+                materialContainers = new Dictionary<IInventory, Chest>();
+            materialContainers.Add(fridge.Value.Items, fridge.Value);
         }
     }
 }

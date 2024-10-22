@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,7 +26,6 @@ namespace Restauranteer
                 if (c.IsVillager && !Config.IgnoredNPCs.Contains(c.Name))
                 {
                     CheckOrder(c, Game1.player.currentLocation);
-                    SellRecipesFromCurrentOrders();
                 }
                 else
                 {
@@ -47,6 +47,7 @@ namespace Restauranteer
             if(Game1.random.NextDouble() < Config.OrderChance)
             {
                 StartOrder(npc, location);
+                SellRecipesFromCurrentOrders();
             }
         }
 
@@ -92,7 +93,7 @@ namespace Restauranteer
             }
             if (!loves.Any() && !likes.Any())
                 return;
-            bool loved = true;
+            string loved = "true";
             string dish;
             if (loves.Any() && (!likes.Any() || (Game1.random.NextDouble() <= Config.LovedDishChance)))
             {
@@ -100,13 +101,16 @@ namespace Restauranteer
             }
             else
             {
-                loved = false;
+                loved = "false";
                 dish = likes[Game1.random.Next(likes.Count)];
             }
             var name = Game1.objectData[dish].Name;
+            var displayName = Game1.objectData[dish].DisplayName;
+            var texture = Game1.objectData[dish].Texture;
             int price = Game1.objectData[dish].Price;
+            int index = Game1.objectData[dish].SpriteIndex;
             Monitor.Log($"{npc.Name} is going to order {name}");
-            npc.modData[orderKey] = JsonConvert.SerializeObject(new OrderData(dish, name, price, loved));
+            npc.modData[orderKey] = JsonConvert.SerializeObject(new OrderData(dish, name, displayName, price, texture, index, loved));
             if (Config.AutoFillFridge)
             {
                 FillFridge(location);
@@ -137,6 +141,10 @@ namespace Restauranteer
             var fridge = GetFridge(__instance);
 
             fridge.Value.Items.Clear();
+            foreach (Object value in __instance.objects.Values)
+                if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
+                    chest.Items.Clear();
+
             foreach (var c in __instance.characters)
             {
                 if (c.modData.TryGetValue(orderKey, out string dataString))
@@ -151,30 +159,29 @@ namespace Restauranteer
                             {
                                 var obj = new Object(key, r.recipeList[key]);
                                 SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
-                                fridge.Value.addItem(obj);
+                                fridge.Value.Items.Add(obj);
                                 foreach (Object value in __instance.objects.Values)
                                     if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
-                                        chest.addItem(obj);
+                                        chest.Items.Add(obj);
                                 
                             }
                             else
                             {
                                 List<string> list = new List<string>();
                                 foreach (var kvp in Game1.objectData)
-                                {
-                                    if (kvp.Value.Category.ToString() == key)
+                                    if (kvp.Value.Category.ToString() == key && !kvp.Value.ContextTags.Contains("fish_legendary"))
                                     {
                                         list.Add(kvp.Key);
                                     }
-                                }
+
                                 if (list.Any())
                                 {
                                     var obj = new Object(list[Game1.random.Next(list.Count)], r.recipeList[key]);
                                     SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
-                                    fridge.Value.addItem(obj);
+                                    fridge.Value.Items.Add(obj);
                                     foreach (Object value in __instance.objects.Values)
                                         if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
-                                            chest.addItem(obj);
+                                            chest.Items.Add(obj);
                                 }
                             }
                         }
@@ -182,6 +189,7 @@ namespace Restauranteer
                 }
             }
         }
+
         public static void SellRecipesFromCurrentOrders()
         {
             if (!Config.ModEnabled && !Config.SellCurrentRecipes)
@@ -203,6 +211,14 @@ namespace Restauranteer
                     }
                 }
             }
+        }
+
+        static Dictionary<string, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
+        static Texture2D GetTexture(string imageSource)
+        {
+            if (!TextureCache.ContainsKey(imageSource))
+                TextureCache.Add(imageSource, Game1.content.Load<Texture2D>(imageSource));
+            return TextureCache[imageSource];
         }
     }
 }

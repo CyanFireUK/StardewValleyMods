@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
+using StardewValley.GameData.Shops;
 using StardewValley.Internal;
 using System;
 using System.Collections.Generic;
@@ -58,12 +59,19 @@ namespace Restauranteer
                     Point standingPixel = __instance.StandingPixel;
                     Vector2 local = Game1.GlobalToLocal(new Vector2(standingPixel.X, standingPixel.Y - __instance.Sprite.SpriteHeight * 4 - 64 + __instance.yJumpOffset));
                     Point tile = __instance.TilePoint;
-                    SpriteText.drawStringWithScrollCenteredAt(b, orderData.dishName, (int)local.X, (int)local.Y, "", 1, null, 1);
+                    if (orderData.texture == null)
+                        SpriteText.drawStringWithScrollCenteredAt(b, orderData.dishName, (int)local.X, (int)local.Y, "", 1, null, 1);
+                    else
+                        SpriteText.drawStringWithScrollCenteredAt(b, orderData.displayName, (int)local.X, (int)local.Y, "", 1, null, 1);
                 }
                 else
                 {
                     b.Draw(emoteSprite, emotePosition, new Rectangle?(new Rectangle(emoteIndex * 16 % Game1.emoteSpriteSheet.Width, emoteIndex * 16 / emoteSprite.Width * 16, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, __instance.getStandingPosition().Y / 10000f);
-                    b.Draw(Game1.objectSpriteSheet, emotePosition + new Vector2(16, 8), GameLocation.getSourceRectForObject(int.Parse(orderData.dish)), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, (__instance.getStandingPosition().Y + 1) / 10000f);
+                    if (orderData.texture == null)
+                        b.Draw(Game1.objectSpriteSheet, emotePosition + new Vector2(16, 8), GameLocation.getSourceRectForObject(int.Parse(orderData.dish)), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, (__instance.getStandingPosition().Y + 1) / 10000f);
+                    else
+                        b.Draw(GetTexture(orderData.texture), emotePosition + new Vector2(16, 8), Game1.getSquareSourceRectForNonStandardTileSheet(GetTexture(orderData.texture), 16, 16, orderData.spriteIndex), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, (__instance.getStandingPosition().Y + 1) / 10000f);
+
                 }
 
             }
@@ -176,7 +184,7 @@ namespace Restauranteer
                     int count = 0;
                     string prefix = "RestauranteerMod-";
                     var dict = SHelper.GameContent.Load<Dictionary<string, string>>($"Characters/Dialogue/{__instance.Name}");
-                    if (orderData.loved)
+                    if (orderData.loved == "true")
                     {
                         if (dict is not null && dict.TryGetValue($"{prefix}Loved-{++count}", out string r))
                         {
@@ -227,12 +235,12 @@ namespace Restauranteer
                             ((FarmerSprite)who.Sprite).animateBackwardsOnce(88, 50f);
                             break;
                     }
-                    int friendshipAmount = orderData.loved ? Config.LovedFriendshipChange : Config.LikedFriendshipChange;
+                    int friendshipAmount = orderData.loved == "true" ? Config.LovedFriendshipChange : Config.LikedFriendshipChange;
                     who.changeFriendship(friendshipAmount, __instance);
                     SMonitor.Log($"Changed friendship with {__instance.Name} by {friendshipAmount}");
                     if (Config.RevealGiftTaste)
                     {
-                        who.revealGiftTaste(__instance.Name, orderData.dish.ToString());
+                        who.revealGiftTaste(__instance.Name, orderData.dish);
                     }
                     if(Config.PriceMarkup > 0)
                     {
