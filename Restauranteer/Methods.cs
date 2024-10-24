@@ -8,6 +8,7 @@ using StardewValley.GameData.Shops;
 using StardewValley.Internal;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.TokenizableStrings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,7 +94,7 @@ namespace Restauranteer
             }
             if (!loves.Any() && !likes.Any())
                 return;
-            string loved = "true";
+            string loved = "love";
             string dish;
             if (loves.Any() && (!likes.Any() || (Game1.random.NextDouble() <= Config.LovedDishChance)))
             {
@@ -101,16 +102,14 @@ namespace Restauranteer
             }
             else
             {
-                loved = "false";
+                loved = "like";
                 dish = likes[Game1.random.Next(likes.Count)];
             }
             var name = Game1.objectData[dish].Name;
-            var displayName = Game1.objectData[dish].DisplayName;
-            var texture = Game1.objectData[dish].Texture;
+            var displayName = TokenParser.ParseText(Game1.objectData[dish].DisplayName);
             int price = Game1.objectData[dish].Price;
-            int index = Game1.objectData[dish].SpriteIndex;
             Monitor.Log($"{npc.Name} is going to order {name}");
-            npc.modData[orderKey] = JsonConvert.SerializeObject(new OrderData(dish, name, displayName, price, texture, index, loved));
+            npc.modData[orderKey] = JsonConvert.SerializeObject(new OrderData(dish, name, displayName, price, loved));
             if (Config.AutoFillFridge)
             {
                 FillFridge(location);
@@ -211,14 +210,6 @@ namespace Restauranteer
                     }
                 }
             }
-        }
-
-        static Dictionary<string, Texture2D> TextureCache = new Dictionary<string, Texture2D>();
-        static Texture2D GetTexture(string imageSource)
-        {
-            if (!TextureCache.ContainsKey(imageSource))
-                TextureCache.Add(imageSource, Game1.content.Load<Texture2D>(imageSource));
-            return TextureCache[imageSource];
         }
     }
 }

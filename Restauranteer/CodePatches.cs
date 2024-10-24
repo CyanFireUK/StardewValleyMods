@@ -6,6 +6,7 @@ using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.GameData.Shops;
 using StardewValley.Internal;
+using StardewValley.ItemTypeDefinitions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,21 +57,16 @@ namespace Restauranteer
                 emotePosition.Y -= 32 + __instance.Sprite.SpriteHeight * 4;
                 if (SHelper.Input.IsDown(Config.ModKey))
                 {
-                    Point standingPixel = __instance.StandingPixel;
-                    Vector2 local = Game1.GlobalToLocal(new Vector2(standingPixel.X, standingPixel.Y - __instance.Sprite.SpriteHeight * 4 - 64 + __instance.yJumpOffset));
-                    Point tile = __instance.TilePoint;
-                    if (orderData.texture == null)
-                        SpriteText.drawStringWithScrollCenteredAt(b, orderData.dishName, (int)local.X, (int)local.Y, "", 1, null, 1);
-                    else
-                        SpriteText.drawStringWithScrollCenteredAt(b, orderData.displayName, (int)local.X, (int)local.Y, "", 1, null, 1);
+                    SpriteText.drawStringWithScrollCenteredAt(b, orderData.dishDisplayName, (int)emotePosition.X + 32, (int)emotePosition.Y, "", 1f, default, 1);
                 }
                 else
                 {
-                    b.Draw(emoteSprite, emotePosition, new Rectangle?(new Rectangle(emoteIndex * 16 % Game1.emoteSpriteSheet.Width, emoteIndex * 16 / emoteSprite.Width * 16, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, __instance.getStandingPosition().Y / 10000f);
-                    if (orderData.texture == null)
-                        b.Draw(Game1.objectSpriteSheet, emotePosition + new Vector2(16, 8), GameLocation.getSourceRectForObject(int.Parse(orderData.dish)), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, (__instance.getStandingPosition().Y + 1) / 10000f);
-                    else
-                        b.Draw(GetTexture(orderData.texture), emotePosition + new Vector2(16, 8), Game1.getSquareSourceRectForNonStandardTileSheet(GetTexture(orderData.texture), 16, 16, orderData.spriteIndex), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, (__instance.getStandingPosition().Y + 1) / 10000f);
+                    ParsedItemData? i = ItemRegistry.GetData(orderData.dish);
+                    if (i != null)
+                    {
+                        b.Draw(emoteSprite, emotePosition, new Rectangle?(new Rectangle(emoteIndex * 16 % Game1.emoteSpriteSheet.Width, emoteIndex * 16 / emoteSprite.Width * 16, 16, 16)), Color.White, 0f, Vector2.Zero, 4f, SpriteEffects.None, __instance.StandingPixel.Y / 10000f);
+                        b.Draw(i.GetTexture(), emotePosition + new Vector2(16, 8), i.GetSourceRect(), Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, (__instance.StandingPixel.Y + 1) / 10000f);
+                    }
 
                 }
 
@@ -169,10 +165,10 @@ namespace Restauranteer
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.currentLocation.Name) || !__instance.modData.TryGetValue(orderKey, out string data))
                     return true;
                 OrderData orderData = JsonConvert.DeserializeObject<OrderData>(data);
-                if(who.ActiveObject?.ParentSheetIndex == int.Parse(orderData.dish))
+                if (who.ActiveObject?.ItemId == orderData.dish)
                 {
                     SMonitor.Log($"Fulfilling {__instance.Name}'s order of {orderData.dishName}");
-                    if(!npcOrderNumbers.Value.ContainsKey(__instance.Name))
+                    if (!npcOrderNumbers.Value.ContainsKey(__instance.Name))
                     {
                         npcOrderNumbers.Value[__instance.Name] = 1;
                     }
@@ -184,12 +180,12 @@ namespace Restauranteer
                     int count = 0;
                     string prefix = "RestauranteerMod-";
                     var dict = SHelper.GameContent.Load<Dictionary<string, string>>($"Characters/Dialogue/{__instance.Name}");
-                    if (orderData.loved == "true")
+                    if (orderData.loved == "love")
                     {
                         if (dict is not null && dict.TryGetValue($"{prefix}Loved-{++count}", out string r))
                         {
                             possibleReactions.Add(r);
-                            while(dict.TryGetValue($"{prefix}Loved-{++count}", out r))
+                            while (dict.TryGetValue($"{prefix}Loved-{++count}", out r))
                             {
                                 possibleReactions.Add(r);
                             }
@@ -206,7 +202,7 @@ namespace Restauranteer
                         if (dict is not null && dict.TryGetValue($"{prefix}Liked-{++count}", out string r))
                         {
                             possibleReactions.Add(r);
-                            while(dict.TryGetValue($"{prefix}Liked-{++count}", out r))
+                            while (dict.TryGetValue($"{prefix}Liked-{++count}", out r))
                             {
                                 possibleReactions.Add(r);
                             }
@@ -235,14 +231,14 @@ namespace Restauranteer
                             ((FarmerSprite)who.Sprite).animateBackwardsOnce(88, 50f);
                             break;
                     }
-                    int friendshipAmount = orderData.loved == "true" ? Config.LovedFriendshipChange : Config.LikedFriendshipChange;
+                    int friendshipAmount = orderData.loved == "love" ? Config.LovedFriendshipChange : Config.LikedFriendshipChange;
                     who.changeFriendship(friendshipAmount, __instance);
                     SMonitor.Log($"Changed friendship with {__instance.Name} by {friendshipAmount}");
                     if (Config.RevealGiftTaste)
                     {
                         who.revealGiftTaste(__instance.Name, orderData.dish);
                     }
-                    if(Config.PriceMarkup > 0)
+                    if (Config.PriceMarkup > 0)
                     {
                         int price = (int)Math.Round(who.ActiveObject.Price * Config.PriceMarkup);
                         who.Money += price;

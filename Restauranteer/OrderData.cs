@@ -7,20 +7,16 @@ namespace Restauranteer
     {
         public string dish;
         public string dishName;
-        public string displayName;
+        public string dishDisplayName;
         public int dishPrice;
-        public string texture;
-        public int spriteIndex;
         public string loved;
 
-        public OrderData(string dish, string dishName, string displayName, int dishPrice, string texture, int spriteIndex, string loved)
+        public OrderData(string dish, string dishName, string dishDisplayName, int dishPrice, string loved)
         {
             this.dish = dish;
             this.dishName = dishName;
-            this.displayName = displayName;
+            this.dishDisplayName = dishDisplayName;
             this.dishPrice = dishPrice;
-            this.texture = texture;
-            this.spriteIndex = spriteIndex;
             this.loved = loved;
         }
     }
