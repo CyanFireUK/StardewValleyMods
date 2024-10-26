@@ -35,6 +35,7 @@ namespace Restauranteer
                 __state = true;
                 __instance.IsEmoting = false;
             }
+
             public static void Postfix(NPC __instance, SpriteBatch b, float alpha, ref bool __state)
             {
                 if (!Config.ModEnabled || !__state)
@@ -72,6 +73,8 @@ namespace Restauranteer
 
             }
         }
+
+
         [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.checkAction))]
         public class GameLocation_checkAction_Patch
         {
@@ -98,8 +101,9 @@ namespace Restauranteer
                 return true;
             }
         }
-        [HarmonyPatch(typeof(GameLocation), "performAction", new Type[] { typeof(string), typeof(Farmer), typeof(Location) })]
 
+
+        [HarmonyPatch(typeof(GameLocation), "performAction", new Type[] { typeof(string), typeof(Farmer), typeof(Location) })]
         public class GameLocation_performAction_Patch
         {
             public static bool Prefix(GameLocation __instance, string fullActionString, Farmer who, Location tileLocation, ref bool __result)
@@ -112,13 +116,13 @@ namespace Restauranteer
                     __result = true;
                     return false;
                 }
-                var fridge = GetFridge(__instance);
 
                 __instance.ActivateKitchen();
                 __result = true;
                 return false;
             }
         }
+
 
         [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.UpdateWhenCurrentLocation))]
         public class GameLocation_UpdateWhenCurrentLocation_Patch
@@ -128,10 +132,13 @@ namespace Restauranteer
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name))
                     return;
                 var fridge = GetFridge(__instance);
+                var miniFridge = GetMiniFridge(__instance);
                 fridge.Value.updateWhenCurrentLocation(time);
+                miniFridge.updateWhenCurrentLocation(time);
             }
         }
         
+
         [HarmonyPatch(typeof(Utility), nameof(Utility.checkForCharacterInteractionAtTile))]
         public class Utility_checkForCharacterInteractionAtTile_Patch
         {
@@ -156,6 +163,7 @@ namespace Restauranteer
                 return true;
             }
         }
+
 
         [HarmonyPatch(typeof(NPC), nameof(NPC.tryToReceiveActiveObject))]
         public class NPC_tryToReceiveActiveObject_Patch
@@ -197,7 +205,7 @@ namespace Restauranteer
                             possibleReactions.Add(SHelper.Translation.Get("loved-order-reaction-3"));
                         }
                     }
-                    else
+                    else if (orderData.loved == "like")
                     {
                         if (dict is not null && dict.TryGetValue($"{prefix}Liked-{++count}", out string r))
                         {
@@ -212,6 +220,23 @@ namespace Restauranteer
                             possibleReactions.Add(SHelper.Translation.Get("liked-order-reaction-1"));
                             possibleReactions.Add(SHelper.Translation.Get("liked-order-reaction-2"));
                             possibleReactions.Add(SHelper.Translation.Get("liked-order-reaction-3"));
+                        }
+                    }
+                    else
+                    {
+                        if (dict is not null && dict.TryGetValue($"{prefix}Neutral-{++count}", out string r))
+                        {
+                            possibleReactions.Add(r);
+                            while (dict.TryGetValue($"{prefix}Neutral-{++count}", out r))
+                            {
+                                possibleReactions.Add(r);
+                            }
+                        }
+                        else
+                        {
+                            possibleReactions.Add(SHelper.Translation.Get("neutral-order-reaction-1"));
+                            possibleReactions.Add(SHelper.Translation.Get("neutral-order-reaction-2"));
+                            possibleReactions.Add(SHelper.Translation.Get("neutral-order-reaction-3"));
                         }
                     }
                     string reaction = possibleReactions[Game1.random.Next(possibleReactions.Count)];
@@ -231,7 +256,14 @@ namespace Restauranteer
                             ((FarmerSprite)who.Sprite).animateBackwardsOnce(88, 50f);
                             break;
                     }
-                    int friendshipAmount = orderData.loved == "love" ? Config.LovedFriendshipChange : Config.LikedFriendshipChange;
+                    int friendshipAmount;
+                    if (orderData.loved == "love")
+                        friendshipAmount = Config.LovedFriendshipChange;
+                    else if (orderData.loved == "like")
+                        friendshipAmount = Config.LikedFriendshipChange;
+                    else
+                        friendshipAmount = 0;
+
                     who.changeFriendship(friendshipAmount, __instance);
                     SMonitor.Log($"Changed friendship with {__instance.Name} by {friendshipAmount}");
                     if (Config.RevealGiftTaste)
@@ -246,8 +278,7 @@ namespace Restauranteer
                     }
                     who.reduceActiveItemByOne();
                     who.completelyStopAnimatingOrDoingAction();
-                    __instance.CurrentDialogue.Push(new Dialogue(__instance, null, reaction + "$h"));
-                    Game1.drawDialogue(__instance);
+                    Game1.DrawDialogue(new Dialogue(__instance, null, reaction + "$h"));
                     __instance.faceTowardFarmerForPeriod(2000, 3, false, who);
                     __instance.modData.Remove(orderKey);
                     return false;

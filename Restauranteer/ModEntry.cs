@@ -61,7 +61,6 @@ namespace Restauranteer
             npcOrderNumbers.Value = new Dictionary<string, int>();
         }
 
-
         private void GameLoop_DayStarted(object sender, StardewModdingAPI.Events.DayStartedEventArgs e)
         {
             fridgeDict.Clear();
@@ -99,17 +98,16 @@ namespace Restauranteer
                 }
             }
         }
+
         private void GameLoop_DayEnding(object sender, StardewModdingAPI.Events.DayEndingEventArgs e)
         {
             foreach (var name in Config.RestaurantLocations)
             {
                 var fridge = GetFridge(Game1.getLocationFromName(name));
+                var miniFridge = GetMiniFridge(Game1.getLocationFromName(name));
 
                 fridge.Value.Items.Clear();
-
-                foreach (Object value in Game1.getLocationFromName(name).objects.Values)
-                    if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
-                        chest.Items.Clear();
+                miniFridge.Items.Clear();
             }
             Helper.GameContent.InvalidateCache("Data/Shops");
         }
@@ -286,9 +284,11 @@ namespace Restauranteer
             if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name))
                 return;
             var fridge = GetFridge(Game1.currentLocation);
-            if(materialContainers is null)
+            var miniFridge = GetMiniFridge(Game1.currentLocation);
+            if (materialContainers is null)
                 materialContainers = new Dictionary<IInventory, Chest>();
             materialContainers.Add(fridge.Value.Items, fridge.Value);
+            materialContainers.Add(miniFridge.Items, miniFridge);
         }
     }
 }

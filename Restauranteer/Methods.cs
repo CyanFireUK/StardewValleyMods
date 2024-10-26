@@ -9,6 +9,7 @@ using StardewValley.Internal;
 using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TokenizableStrings;
+using StardewValley.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -92,18 +93,41 @@ namespace Restauranteer
                     likes.Add(str);
                 }
             }
-            if (!loves.Any() && !likes.Any())
-                return;
-            string loved = "love";
-            string dish;
-            if (loves.Any() && (!likes.Any() || (Game1.random.NextDouble() <= Config.LovedDishChance)))
+            List<string> neutral = new();
+            foreach (var str in Game1.NPCGiftTastes["Universal_Neutral"].Split(' '))
             {
+                if (Game1.objectData.ContainsKey(str) && CraftingRecipe.cookingRecipes.ContainsKey(Game1.objectData[str].Name))
+                {
+                    neutral.Add(str);
+                }
+            }
+            foreach (var str in Game1.NPCGiftTastes[npc.Name].Split('/')[9].Split(' '))
+            {
+                if (Game1.objectData.ContainsKey(str) && CraftingRecipe.cookingRecipes.ContainsKey(Game1.objectData[str].Name))
+                {
+                    neutral.Add(str);
+                }
+            }
+
+
+            if (!loves.Any() && !likes.Any() && !neutral.Any())
+                return;
+            string dish = "240";
+            string loved = "like";
+            if (loves.Any() && (Game1.random.NextDouble() < Config.LovedDishChance || !likes.Any() && !neutral.Any()))
+            {
+                loved = "love";
                 dish = loves[Game1.random.Next(loves.Count)];
             }
-            else
+            else if (likes.Any() && (Game1.random.NextDouble() < Config.LovedDishChance || !loves.Any() && !neutral.Any()))
             {
                 loved = "like";
                 dish = likes[Game1.random.Next(likes.Count)];
+            }
+            else if (neutral.Any())
+            {
+                loved = "neutral";
+                dish = neutral[Game1.random.Next(neutral.Count)];
             }
             var name = Game1.objectData[dish].Name;
             var displayName = TokenParser.ParseText(Game1.objectData[dish].DisplayName);
@@ -135,14 +159,22 @@ namespace Restauranteer
             return fridge;
         }
 
+        private static Chest GetMiniFridge(GameLocation location)
+        {
+            foreach (Object value in location.objects.Values)
+                if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value && chest.modData[fridgeKey] == "true")
+                    return chest;
+
+            return null;
+        }
+
         private void FillFridge(GameLocation __instance)
         {
             var fridge = GetFridge(__instance);
+            var miniFridge = GetMiniFridge(__instance);
 
             fridge.Value.Items.Clear();
-            foreach (Object value in __instance.objects.Values)
-                if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
-                    chest.Items.Clear();
+            miniFridge.Items.Clear();
 
             foreach (var c in __instance.characters)
             {
@@ -159,9 +191,7 @@ namespace Restauranteer
                                 var obj = new Object(key, r.recipeList[key]);
                                 SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
                                 fridge.Value.Items.Add(obj);
-                                foreach (Object value in __instance.objects.Values)
-                                    if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
-                                        chest.Items.Add(obj);
+                                miniFridge.Items.Add(obj);
                                 
                             }
                             else
@@ -178,9 +208,7 @@ namespace Restauranteer
                                     var obj = new Object(list[Game1.random.Next(list.Count)], r.recipeList[key]);
                                     SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
                                     fridge.Value.Items.Add(obj);
-                                    foreach (Object value in __instance.objects.Values)
-                                        if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value)
-                                            chest.Items.Add(obj);
+                                    miniFridge.Items.Add(obj);
                                 }
                             }
                         }
