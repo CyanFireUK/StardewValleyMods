@@ -132,7 +132,10 @@ namespace Restauranteer
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name))
                     return;
                 var fridge = GetFridge(__instance);
+                var miniFridge = GetMiniFridge(__instance);
                 fridge.Value.updateWhenCurrentLocation(time);
+                if (miniFridge != null)
+                    miniFridge.updateWhenCurrentLocation(time);
             }
         }
         

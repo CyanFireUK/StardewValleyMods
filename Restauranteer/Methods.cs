@@ -174,7 +174,9 @@ namespace Restauranteer
             var miniFridge = GetMiniFridge(__instance);
 
             fridge.Value.Items.Clear();
-            miniFridge.Items.Clear();
+
+            if (miniFridge != null)
+                miniFridge.Items.Clear();
 
             foreach (var c in __instance.characters)
             {
@@ -191,7 +193,9 @@ namespace Restauranteer
                                 var obj = new Object(key, r.recipeList[key]);
                                 SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
                                 fridge.Value.Items.Add(obj);
-                                miniFridge.Items.Add(obj);
+
+                                if (miniFridge != null)
+                                    miniFridge.Items.Add(obj);
                                 
                             }
                             else
@@ -208,7 +212,9 @@ namespace Restauranteer
                                     var obj = new Object(list[Game1.random.Next(list.Count)], r.recipeList[key]);
                                     SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
                                     fridge.Value.Items.Add(obj);
-                                    miniFridge.Items.Add(obj);
+
+                                    if (miniFridge != null)
+                                        miniFridge.Items.Add(obj);
                                 }
                             }
                         }

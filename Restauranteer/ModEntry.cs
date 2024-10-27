@@ -101,13 +101,18 @@ namespace Restauranteer
 
         private void GameLoop_DayEnding(object sender, StardewModdingAPI.Events.DayEndingEventArgs e)
         {
+            if (!Config.ModEnabled || (Config.RequireEvent && !Game1.player.eventsSeen.Contains("980558")))
+                return;
+
             foreach (var name in Config.RestaurantLocations)
             {
                 var fridge = GetFridge(Game1.getLocationFromName(name));
                 var miniFridge = GetMiniFridge(Game1.getLocationFromName(name));
 
                 fridge.Value.Items.Clear();
-                miniFridge.Items.Clear();
+
+                if (miniFridge != null)
+                    miniFridge.Items.Clear();
             }
             Helper.GameContent.InvalidateCache("Data/Shops");
         }
@@ -288,7 +293,8 @@ namespace Restauranteer
             if (materialContainers is null)
                 materialContainers = new Dictionary<IInventory, Chest>();
             materialContainers.Add(fridge.Value.Items, fridge.Value);
-            materialContainers.Add(miniFridge.Items, miniFridge);
+            if (miniFridge != null)
+                materialContainers.Add(miniFridge.Items, miniFridge);
         }
     }
 }
