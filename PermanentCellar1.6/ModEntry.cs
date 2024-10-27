@@ -252,30 +252,37 @@ namespace PermanentCellar
 
         private void OnSaving(object sender, SavingEventArgs e)
         {
-
-            if (hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
+            if (Game1.IsMasterGame)
             {
-                hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
-                Helper.WriteConfig(hostConfig_);
+                if (hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
+                {
+                    hostConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
+                    Helper.WriteConfig(hostConfig_);
+                }
+
+                if (hostConfig_.SaveGame[saveGameName_].AddCellarCasks)
+                {
+                    hostConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
+                    Helper.WriteConfig(hostConfig_);
+                }
             }
 
-            if (hostConfig_.SaveGame[saveGameName_].AddCellarCasks)
+            if (!Game1.IsMasterGame)
             {
-                hostConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
-                Helper.WriteConfig(hostConfig_);
+
+                if (clientConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
+                {
+                    clientConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
+                    Helper.WriteConfig(clientConfig_);
+                }
+
+                if (clientConfig_.SaveGame[saveGameName_].AddCellarCasks)
+                {
+                    clientConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
+                    Helper.WriteConfig(clientConfig_);
+                }
             }
 
-            if (clientConfig_.SaveGame[saveGameName_].RemoveCellarCasks)
-            {
-                clientConfig_.SaveGame[saveGameName_].RemoveCellarCasks = false;
-                Helper.WriteConfig(clientConfig_);
-            }
-
-            if (clientConfig_.SaveGame[saveGameName_].AddCellarCasks)
-            {
-                clientConfig_.SaveGame[saveGameName_].AddCellarCasks = false;
-                Helper.WriteConfig(clientConfig_);
-            }
 
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse");
             Helper.GameContent.InvalidateCache("Maps\\FarmHouse1");
