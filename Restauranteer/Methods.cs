@@ -49,7 +49,6 @@ namespace Restauranteer
             if(Game1.random.NextDouble() < Config.OrderChance)
             {
                 StartOrder(npc, location);
-                SellRecipesFromCurrentOrders();
             }
         }
 
@@ -138,6 +137,7 @@ namespace Restauranteer
             {
                 FillFridge(location);
             }
+            SellRecipesFromCurrentOrders();
         }
 
         private static NetRef<Chest> GetFridge(GameLocation location)
@@ -236,7 +236,7 @@ namespace Restauranteer
                     if (!Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
                     {
                         Game1.content.Load<Dictionary<string, ShopData>>(@"Data\Shops").TryGetValue("Saloon", out ShopData shop);
-                        if (!shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
+                        if (orderData.dish != null && shop != null && !shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
                         {
                            shop.Items.Add(new() { IsRecipe = true, ItemId = orderData.dish, Price = orderData.dishPrice, AvailableStock = 1, AvailableStockLimit = LimitedStockMode.Player, AvoidRepeat = true });
                            SMonitor.Log($"Recipe for {orderData.dishName} has been added to Saloon stock from current order.");
