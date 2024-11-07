@@ -9,11 +9,11 @@ using HarmonyLib;
 using StardewValley;
 using Microsoft.Xna.Framework.Audio;
 using StardewValley.Extensions;
-using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using System.Linq;
 using StardewModdingAPI.Utilities;
 using StardewValley.Characters;
+using StardewValley.Objects.Trinkets;
 
 
 
@@ -90,9 +90,9 @@ namespace ChangeHorseSounds
 
         private void GameLoop_SaveLoaded(object sender, SaveLoadedEventArgs e)
         {
-            thudStep = Directory.EnumerateFiles(Path.Combine(SHelper.DirectoryPath, "assets")).Where(thud => thud.EndsWith("thudstep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
-            stoneStep = Directory.EnumerateFiles(Path.Combine(SHelper.DirectoryPath, "assets")).Where(stone => stone.EndsWith("stonestep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
-            woodyStep = Directory.EnumerateFiles(Path.Combine(SHelper.DirectoryPath, "assets")).Where(woody => woody.EndsWith("woodystep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            thudStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(thud => Path.GetFileName(thud).EndsWith("_thudstep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(thud).Equals("thudstep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            stoneStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(stone => Path.GetFileName(stone).EndsWith("_stonestep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(stone).Equals("stonestep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            woodyStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(woody => Path.GetFileName(woody).EndsWith("_woodystep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(woody).EndsWith("_woodystep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
 
             if (config.ReplaceSounds == true)
@@ -101,14 +101,14 @@ namespace ChangeHorseSounds
                 {
                     foreach (var location in Game1.locations)
                         foreach (var c in location.characters)
-                    if (c is Horse && string.Equals(c.Name, FileName(thudStep[i]).Split("_")[0], StringComparison.InvariantCultureIgnoreCase) || string.Equals("thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase))
+                    if (c is Horse && string.Equals($"{c.Name}_thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase))
                     {
                         CueDefinition thudStepCueDefinition = new CueDefinition();
 
                         thudStepCueDefinition.name = $"{ModManifest.UniqueID}_{FileName(thudStep[i])}";
 
                         SoundEffect audio;
-                        string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(thudStep[i])}.wav");
+                        string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{Path.GetFileName(thudStep[i])}");
                         using (var stream = new FileStream(filePathCombined, FileMode.Open))
                             if (stream != null)
                             {
@@ -125,7 +125,7 @@ namespace ChangeHorseSounds
                 {
                     foreach (var location in Game1.locations)
                         foreach (var c in location.characters)
-                    if (c is Horse && string.Equals(c.Name, FileName(stoneStep[i]).Split("_")[0], StringComparison.InvariantCultureIgnoreCase) || string.Equals("stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase))
+                    if (c is Horse && string.Equals($"{c.Name}_stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase))
                     {
 
                         CueDefinition stoneStepCueDefinition = new CueDefinition();
@@ -133,7 +133,7 @@ namespace ChangeHorseSounds
                         stoneStepCueDefinition.name = $"{ModManifest.UniqueID}_{FileName(stoneStep[i])}";
 
                         SoundEffect audio;
-                        string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(stoneStep[i])}.wav");
+                        string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{Path.GetFileName(stoneStep[i])}");
                         using (var stream = new FileStream(filePathCombined, FileMode.Open))
                             if (stream != null)
                             {
@@ -150,14 +150,14 @@ namespace ChangeHorseSounds
                 {
                     foreach (var location in Game1.locations)
                         foreach (var c in location.characters)
-                    if (c is Horse && string.Equals(c.Name, FileName(woodyStep[i]).Split("_")[0], StringComparison.InvariantCultureIgnoreCase) || string.Equals("woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase))
+                    if (c is Horse && string.Equals($"{c.Name}_woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase))
                     {
                         CueDefinition woodyStepCueDefinition = new CueDefinition();
 
                         woodyStepCueDefinition.name = $"{ModManifest.UniqueID}_{FileName(woodyStep[i])}";
 
                         SoundEffect audio;
-                        string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{FileName(woodyStep[i])}.wav");
+                        string filePathCombined = Path.Combine(Helper.DirectoryPath, "assets", $"{Path.GetFileName(woodyStep[i])}");
                         using (var stream = new FileStream(filePathCombined, FileMode.Open))
                             if (stream != null)
                             {
@@ -211,17 +211,17 @@ namespace ChangeHorseSounds
                 foreach (Farmer farmer in __instance.farmers)
                 {
                     for (var i = 0; i < thudStep.Length; i++)
-                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_{FileName(thudStep[i])}") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && (string.Equals(farmer.mount.Name, FileName(thudStep[i]).Split("_")[0], StringComparison.InvariantCultureIgnoreCase) || string.Equals(audioName, FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase)))
+                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_{FileName(thudStep[i])}") && audioName.Equals("thudStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && (string.Equals($"{farmer.mount.Name}_thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals(audioName, FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase)))
                         {
                             audioName = $"{SModManifest.UniqueID}_{FileName(thudStep[i])}";
                         }
                     for (var i = 0; i < stoneStep.Length; i++)
-                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_{FileName(stoneStep[i])}") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && (string.Equals(farmer.mount.Name, FileName(stoneStep[i]).Split("_")[0], StringComparison.InvariantCultureIgnoreCase) || string.Equals(audioName, FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase)))
+                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_{FileName(stoneStep[i])}") && audioName.Equals("stoneStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && (string.Equals($"{farmer.mount.Name}_stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals(audioName, FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase)))
                         {
                             audioName = $"{SModManifest.UniqueID}_{FileName(stoneStep[i])}";
                         }
                     for (var i = 0; i < woodyStep.Length; i++)
-                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_{FileName(woodyStep[i])}") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && (string.Equals(farmer.mount.Name, FileName(woodyStep[i]).Split("_")[0], StringComparison.InvariantCultureIgnoreCase) || string.Equals(audioName, FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase)))
+                        if (config.ReplaceSounds == true && Game1.soundBank.Exists($"{SModManifest.UniqueID}_{FileName(woodyStep[i])}") && audioName.Equals("woodyStep", StringComparison.InvariantCultureIgnoreCase) && farmer.mount != null && farmer.mount.rider != null && position != null && farmer.mount.Tile == position && (string.Equals($"{farmer.mount.Name}_woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals(audioName, FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase)))
                         {
                             audioName = $"{SModManifest.UniqueID}_{FileName(woodyStep[i])}";
                         }
