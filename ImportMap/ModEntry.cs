@@ -52,12 +52,8 @@ namespace ImportMap
             Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
             Helper.ConsoleCommands.Add("importmap", "Import map data from import.tmx", new Action<string, string[]>(ImportMap));
             Helper.ConsoleCommands.Add("nukemap", "Nuke the map.", new Action<string, string[]>(NukeMap));
-            var harmony = new Harmony(ModManifest.UniqueID);
-
-            harmony.Patch(
-               original: AccessTools.Method(typeof(ChatBox), "runCommand"),
-               prefix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.ChatBox_runCommand_Prefix))
-            );
+            ChatCommands.Register("importmap", ImportMapChat, name => $"{name}: Import map data from import.tmx");
+            ChatCommands.Register("nukemap", NukeMapChat, name => $"{name}: Nuke the map.");
         }
 
         private void ImportMap(string arg1, string[] arg2)
@@ -65,34 +61,6 @@ namespace ImportMap
             DoImport();
         }
 
-        public static bool ChatBox_runCommand_Prefix(string command)
-        {
-            string[] array = ArgUtility.SplitBySpace(command);
-            var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
-
-            if (!Config.EnableMod)
-                return true;
-
-            switch (array[0])
-            {
-                case "nukemap":
-                    inGame = true;
-                    Game1.chatBox.clickAway();
-                    Game1.chatBox.addInfoMessage("/" + command);
-                    history.Insert(0, "/" + command);
-                    NukeMap(null, null);
-                    return false;
-
-                case "importmap":
-                    inGame = true;
-                    Game1.chatBox.clickAway();
-                    Game1.chatBox.addInfoMessage("/" + command);
-                    history.Insert(0, "/" + command);
-                    DoImport();
-                    return false;
-            }
-            return true;
-        }
         private static void NukeMap(string arg1, string[] arg2)
         {
             Game1.currentLocation.objects.Clear();
@@ -103,12 +71,36 @@ namespace ImportMap
             Game1.currentLocation.furniture.Clear();
         }
 
+        private void ImportMapChat(string[] command, ChatBox chat)
+        {
+            string message = ArgUtility.GetRemainder(command, 0);
+            var history = SHelper.Reflection.GetField<List<string>>(chat, "cheatHistory").GetValue();
+
+            inGame = true;
+            chat.clickAway();
+            chat.addInfoMessage("/" + message);
+            history.Insert(0, "/" + message);
+            DoImport();
+        }
+
+        private void NukeMapChat(string[] command, ChatBox chat)
+        {
+            string message = ArgUtility.GetRemainder(command, 0);
+            var history = SHelper.Reflection.GetField<List<string>>(chat, "cheatHistory").GetValue();
+
+            inGame = true;
+            chat.clickAway();
+            chat.addInfoMessage("/" + message);
+            history.Insert(0, "/" + message);
+            NukeMap(null, null);
+        }
+
         private void Input_ButtonsChanged(object sender, StardewModdingAPI.Events.ButtonsChangedEventArgs e)
         {
             if (Config.EnableMod && Config.ImportKey.JustPressed())
             {
                 inGame = true;
-                Monitor.Log("importing map");
+                Monitor.Log("importing map", LogLevel.Info);
                 DoImport();
             }
         }
