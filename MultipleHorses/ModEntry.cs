@@ -53,9 +53,12 @@ namespace MultipleHorses
             Helper.Events.Content.AssetRequested += OnAssetRequested;
 
 
-            helper.ConsoleCommands.Add("corral_horses", Helper.Translation.Get("command.corral_horses.description"), OnCommandReceived);
-            helper.ConsoleCommands.Add("horse_whistle", Helper.Translation.Get("command.horse_whistle.description"), OnCommandReceived);
-            helper.ConsoleCommands.Add("default_horse", Helper.Translation.Get("command.default_horse.description"), OnCommandReceived);
+            helper.ConsoleCommands.Add("corral_horses", Helper.Translation.Get("command.corral_horses.description"), OnConsoleCommandReceived);
+            helper.ConsoleCommands.Add("horse_whistle", Helper.Translation.Get("command.horse_whistle.description"), OnConsoleCommandReceived);
+            helper.ConsoleCommands.Add("default_horse", Helper.Translation.Get("command.default_horse.description"), OnConsoleCommandReceived);
+            ChatCommands.Register("corral_horses", OnChatCommandReceived, name => $"{name}: {Helper.Translation.Get("command.corral_horses.description")}");
+            ChatCommands.Register("horse_whistle", OnChatCommandReceived, name => $"{name}: {Helper.Translation.Get("command.horse_whistle.description")}");
+            ChatCommands.Register("default_horse", OnChatCommandReceived, name => $"{name}: {Helper.Translation.Get("command.default_horse.description")}");
 
             Config = Helper.ReadConfig<ModConfig>();
 
@@ -70,10 +73,6 @@ namespace MultipleHorses
                               original: AccessTools.Method(typeof(NPC), "findPlayer", Array.Empty<Type>()),
                               prefix: new HarmonyMethod(typeof(NPCPatches), nameof(NPCPatches.findPlayer_prefix))
                                 );
-            harmony.Patch(
-               original: AccessTools.Method(typeof(ChatBox), "runCommand"),
-               prefix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.ChatBox_runCommand_Prefix))
-            );
         }
 
         private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
@@ -737,124 +736,123 @@ namespace MultipleHorses
             DelayedAction.functionAfterDelay(() => tryMountHorse(who, horse, location, retryCount - 1), 200);
         }
 
-        public static bool ChatBox_runCommand_Prefix(string command)
+        internal void OnChatCommandReceived(string[] command, ChatBox chat)
         {
-                string[] array = ArgUtility.SplitBySpace(command).Select(array => array.Trim(new char[] { '"' })).ToArray();
-                var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
+            string[] array = ArgUtility.GetRemainder(command, 0).Split(" ").Select(array => array.Trim(new char[] { '"' })).ToArray();
 
-                switch (array[0])
-                {
-                    case "horse_whistle":
-                        Game1.chatBox.clickAway();
-                        if (array.Length > 1)
-                        {
+            var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
+
+            switch (array[0])
+            {
+                case "horse_whistle":
+                    chat.clickAway();
+                    if (array.Length > 1)
+                    {
                         inGame = true;
-                        history.Insert(0, "/" + command);
-                        Game1.chatBox.addInfoMessage("/" + command);
+                        history.Insert(0, "/" + array);
+                        chat.addInfoMessage("/" + array);
                         if (CallHorse(array[1]))
-                            return false;
+                            return;
                         else
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.horse_whistle.noname", new { mountName = array[1] }), LogLevel.Error);
-                            Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " +SHelper.Translation.Get("command.horse_whistle.noname", new { mountName = array[1] }), Color.Red);
-                            return false;
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.horse_whistle.noname", new { mountName = array[1] }), Color.Red);
+                            return;
                         }
-                        }
-                        else
-                        {
-                        history.Insert(0, "/" + command);
-                        Game1.chatBox.addInfoMessage("/" + command);
+                    }
+                    else
+                    {
+                        history.Insert(0, "/" + array);
+                        chat.addInfoMessage("/" + array);
                         if (CallHorse())
-                            return false;
+                            return;
                         else
                         {
                             Game1.showRedMessage(Game1.content.LoadString("Strings\\StringsFromCSFiles:HorseFlute_NoHorse"));
                             SMonitor.Log(SHelper.Translation.Get("command.horse_whistle.nohorse"), LogLevel.Error);
-                            return false;
+                            return;
                         }
-                        }
-                    case "corral_horses":
-                        Game1.chatBox.clickAway();
-                        if (array.Length > 1)
+                    }
+                case "corral_horses":
+                    chat.clickAway();
+                    if (array.Length > 1)
+                    {
+                        history.Insert(0, "/" + array);
+                        chat.addInfoMessage("/" + array);
+                        if (CorralHorses(array[1]))
                         {
-                            history.Insert(0, "/" + command);
-                            Game1.chatBox.addInfoMessage("/" + command);
-                            if (CorralHorses(array[1]))
-                            {
-                                SMonitor.Log(SHelper.Translation.Get("command.corral_horses.warped"), LogLevel.Info);
-                                Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.warped"), new Color(104, 214, byte.MaxValue));
-                                return false;
-                            }
+                            SMonitor.Log(SHelper.Translation.Get("command.corral_horses.warped"), LogLevel.Info);
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.warped"), new Color(104, 214, byte.MaxValue));
+                            return;
+                        }
 
-                            SMonitor.Log(SHelper.Translation.Get("command.corral_horses.error"), LogLevel.Warn);
-                            Game1.chatBox.addInfoMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.error"));
-                            return false;
-                        }
-                        else
+                        SMonitor.Log(SHelper.Translation.Get("command.corral_horses.error"), LogLevel.Warn);
+                        chat.addInfoMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.error"));
+                        return;
+                    }
+                    else
+                    {
+                        history.Insert(0, "/" + array);
+                        Game1.chatBox.addInfoMessage("/" + array);
+                        if (CorralHorses())
                         {
-                            history.Insert(0, "/" + command);
-                            Game1.chatBox.addInfoMessage("/" + command);
-                            if (CorralHorses())
-                            {
-                                SMonitor.Log(SHelper.Translation.Get("command.corral_horses.warped"), LogLevel.Info);
-                                Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.warped"), new Color(104, 214, byte.MaxValue));
-                                return false;
-                            }
+                            SMonitor.Log(SHelper.Translation.Get("command.corral_horses.warped"), LogLevel.Info);
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.warped"), new Color(104, 214, byte.MaxValue));
+                            return;
+                        }
 
-                            SMonitor.Log(SHelper.Translation.Get("command.corral_horses.error"), LogLevel.Warn);
-                            Game1.chatBox.addInfoMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.error"));
-                            return false;
-                        }
-                    case "default_horse":
-                        Game1.chatBox.clickAway();
-                        if (array.Length > 1)
-                        {
+                        SMonitor.Log(SHelper.Translation.Get("command.corral_horses.error"), LogLevel.Warn);
+                        chat.addInfoMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.corral_horses.error"));
+                        return;
+                    }
+                case "default_horse":
+                    chat.clickAway();
+                    if (array.Length > 1)
+                    {
                         inGame = true;
                         history.Insert(0, "/" + command);
-                        Game1.chatBox.addInfoMessage("/" + command);
+                        chat.addInfoMessage("/" + command);
                         Game1.player.modData.TryGetValue($"{SModManifest.UniqueID}.default_horse", out string defaultHorse);
                         if (SetDefaultHorse(array[1]) && array[1].ToLower() != "remove")
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.default_horse.set", new { mountName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(array[1].ToLower()) }), LogLevel.Info);
-                            Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.set", new { mountName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(array[1].ToLower()) }), new Color(104, 214, byte.MaxValue));
-                            return false;
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.set", new { mountName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(array[1].ToLower()) }), new Color(104, 214, byte.MaxValue));
+                            return;
                         }
                         else if (SetDefaultHorse(array[1]) && array[1].ToLower() == "remove")
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.default_horse.removed", new { defaultMount = defaultHorse }), LogLevel.Info);
-                            Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.removed", new { defaultMount = defaultHorse }), new Color(104, 214, byte.MaxValue));
-                            return false;
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.removed", new { defaultMount = defaultHorse }), new Color(104, 214, byte.MaxValue));
+                            return;
                         }
                         else
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.default_horse.unable"), LogLevel.Error);
-                            Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.unable"), Color.Red);
-                            return false;
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.unable"), Color.Red);
+                            return;
                         }
-                        }
-                        else
-                        {
+                    }
+                    else
+                    {
                         history.Insert(0, "/" + command);
-                        Game1.chatBox.addInfoMessage("/" + command);
+                        chat.addInfoMessage("/" + command);
                         if (SetDefaultHorse())
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.default_horse.set", new { mountName = Game1.player.mount.Name }), LogLevel.Info);
-                            Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.set", new { mountName = Game1.player.mount.Name }), new Color(104, 214, byte.MaxValue));
-                            return false;
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.set", new { mountName = Game1.player.mount.Name }), new Color(104, 214, byte.MaxValue));
+                            return;
                         }
                         else
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.default_horse.unable"), LogLevel.Error);
-                            Game1.chatBox.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.unable"), Color.Red);
-                            return false;
+                            chat.addMessage($"[{SModManifest.Name}]" + " " + SHelper.Translation.Get("command.default_horse.unable"), Color.Red);
+                            return;
                         }
-                        }
-                
-                }
-                return true;
+                    }
+            }
         }
 
-        internal void OnCommandReceived(string command, string[] args)
+        internal void OnConsoleCommandReceived(string command, string[] args)
         {
             switch (command)
             {
