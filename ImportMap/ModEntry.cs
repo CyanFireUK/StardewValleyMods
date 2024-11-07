@@ -50,49 +50,61 @@ namespace ImportMap
 
             Helper.Events.GameLoop.GameLaunched += GameLoop_GameLaunched;
             Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
-            Helper.ConsoleCommands.Add("importmap", "Import map data from import.tmx", new Action<string, string[]>(ImportMap));
-            Helper.ConsoleCommands.Add("nukemap", "Nuke the map.", new Action<string, string[]>(NukeMap));
-            ChatCommands.Register("importmap", ImportMapChat, name => $"{name}: Import map data from import.tmx");
-            ChatCommands.Register("nukemap", NukeMapChat, name => $"{name}: Nuke the map.");
+            Helper.ConsoleCommands.Add("importmap", "Import map data from import.tmx", OnConsoleCommandReceived);
+            Helper.ConsoleCommands.Add("nukemap", "Nuke the map.", OnConsoleCommandReceived);
+            ChatCommands.Register("importmap", OnChatCommandReceived, name => $"{name}: Import map data from import.tmx");
+            ChatCommands.Register("nukemap", OnChatCommandReceived, name => $"{name}: Nuke the map.");
         }
 
-        private void ImportMap(string arg1, string[] arg2)
+        internal void OnConsoleCommandReceived(string command, string[] args)
         {
-            DoImport();
+            switch (command)
+            {
+
+                case "importmap":
+                    DoImport();
+                    return;
+
+                case "nukemap":
+                    Game1.currentLocation.objects.Clear();
+                    Game1.currentLocation.terrainFeatures.Clear();
+                    Game1.currentLocation.overlayObjects.Clear();
+                    Game1.currentLocation.resourceClumps.Clear();
+                    Game1.currentLocation.largeTerrainFeatures.Clear();
+                    Game1.currentLocation.furniture.Clear();
+                    return;
+            }
         }
 
-        private static void NukeMap(string arg1, string[] arg2)
+        internal void OnChatCommandReceived(string[] command, ChatBox chat)
         {
-            Game1.currentLocation.objects.Clear();
-            Game1.currentLocation.terrainFeatures.Clear();
-            Game1.currentLocation.overlayObjects.Clear();
-            Game1.currentLocation.resourceClumps.Clear();
-            Game1.currentLocation.largeTerrainFeatures.Clear();
-            Game1.currentLocation.furniture.Clear();
-        }
+            string[] array = ArgUtility.GetRemainder(command, 0).Split(" ").Select(array => array.Trim(new char[] { '"' })).ToArray();
 
-        private void ImportMapChat(string[] command, ChatBox chat)
-        {
-            string message = ArgUtility.GetRemainder(command, 0);
-            var history = SHelper.Reflection.GetField<List<string>>(chat, "cheatHistory").GetValue();
+            var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
 
-            inGame = true;
-            chat.clickAway();
-            chat.addInfoMessage("/" + message);
-            history.Insert(0, "/" + message);
-            DoImport();
-        }
+            switch (array[0])
+            {
+                case "importmap":
+                    inGame = true;
+                    chat.clickAway();
+                    chat.addInfoMessage("/" + array);
+                    history.Insert(0, "/" + array);
+                    DoImport();
+                    return;
 
-        private void NukeMapChat(string[] command, ChatBox chat)
-        {
-            string message = ArgUtility.GetRemainder(command, 0);
-            var history = SHelper.Reflection.GetField<List<string>>(chat, "cheatHistory").GetValue();
-
-            inGame = true;
-            chat.clickAway();
-            chat.addInfoMessage("/" + message);
-            history.Insert(0, "/" + message);
-            NukeMap(null, null);
+                case "horse_whistle":
+                    inGame = true;
+                    chat.clickAway();
+                    chat.addInfoMessage("/" + array);
+                    history.Insert(0, "/" + array);
+                    Game1.currentLocation.objects.Clear();
+                    Game1.currentLocation.terrainFeatures.Clear();
+                    Game1.currentLocation.overlayObjects.Clear();
+                    Game1.currentLocation.resourceClumps.Clear();
+                    Game1.currentLocation.largeTerrainFeatures.Clear();
+                    Game1.currentLocation.furniture.Clear();
+                    return;
+            }
         }
 
         private void Input_ButtonsChanged(object sender, StardewModdingAPI.Events.ButtonsChangedEventArgs e)
