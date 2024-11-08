@@ -738,9 +738,9 @@ namespace MultipleHorses
 
         internal void OnChatCommandReceived(string[] command, ChatBox chat)
         {
-            string[] array = ArgUtility.GetRemainder(command, 0).Split(" ").Select(array => array.Trim(new char[] { '"' })).ToArray();
+            string[] array = ArgUtility.SplitBySpaceQuoteAware(ArgUtility.GetRemainder(command, 0)).Select(array => array.Trim(new char[] { '"' })).ToArray();
 
-            var history = SHelper.Reflection.GetField<List<string>>(Game1.chatBox, "cheatHistory").GetValue();
+            var history = SHelper.Reflection.GetField<List<string>>(chat, "cheatHistory").GetValue();
 
             switch (array[0])
             {
