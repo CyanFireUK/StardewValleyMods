@@ -225,7 +225,7 @@ namespace Restauranteer
 
         public static void SellRecipesFromCurrentOrders()
         {
-            if (!Config.ModEnabled && !Config.SellCurrentRecipes)
+            if (!Config.ModEnabled || !Config.SellCurrentRecipes)
                 return;
 
             foreach (var npc in Game1.getLocationFromName("Saloon").characters)

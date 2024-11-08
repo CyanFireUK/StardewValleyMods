@@ -28,6 +28,7 @@ namespace Restauranteer
         {
             private static int emoteBaseIndex = 424242;
 
+            [HarmonyPriority(int.MaxValue)]
             public static void Prefix(NPC __instance, ref bool __state)
             {
                 if (!Config.ModEnabled || !__instance.IsEmoting || __instance.CurrentEmote != emoteBaseIndex)
@@ -36,6 +37,7 @@ namespace Restauranteer
                 __instance.IsEmoting = false;
             }
 
+            [HarmonyPriority(int.MaxValue)]
             public static void Postfix(NPC __instance, SpriteBatch b, float alpha, ref bool __state)
             {
                 if (!Config.ModEnabled || !__state)
