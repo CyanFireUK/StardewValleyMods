@@ -14,6 +14,7 @@ using System.Linq;
 using StardewModdingAPI.Utilities;
 using StardewValley.Characters;
 using StardewValley.Objects.Trinkets;
+using StardewValley.Audio;
 
 
 
@@ -50,7 +51,7 @@ namespace ChangeHorseSounds
             var harmony = new Harmony(ModManifest.UniqueID);
 
             harmony.Patch(
-                              original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.localSound)),
+                              original: AccessTools.Method(typeof(Game1), nameof(GameLocation.localSound)),
                               prefix: new HarmonyMethod(typeof(SoundPatches), nameof(SoundPatches.localSound_prefix))
                                 );
 
@@ -204,7 +205,7 @@ namespace ChangeHorseSounds
         public class SoundPatches
         {
 
-            public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position)
+            public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position, int? pitch = null, SoundContext context = SoundContext.Default)
             {
                 config = SHelper.ReadConfig<ChangeHorseSoundsModConfig>();
 
