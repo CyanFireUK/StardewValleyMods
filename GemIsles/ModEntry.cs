@@ -5,6 +5,7 @@ using StardewValley;
 using StardewValley.GameData.Buildings;
 using StardewValley.GameData.Locations;
 using StardewValley.GameData.Machines;
+using StardewValley.GameData.Shops;
 using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,12 +33,6 @@ namespace GemIsles
         public static string mapAssetKey;
         private string locationPrefix;
 
-
-        public static void Log(string message, LogLevel level = LogLevel.Trace)
-        {
-            SMonitor?.Log(message, level);
-        }
-
         public override void Entry(IModHelper helper)
         {
             context = this;
@@ -62,7 +57,7 @@ namespace GemIsles
             if (e.FromModID != ModManifest.UniqueID)
                 return;
 
-            Log($"[{(Context.IsMainPlayer ? "host" : "farmhand")}] Received {e.Type} from {e.FromPlayerID}.", LogLevel.Trace);
+            SMonitor.Log($"[{(Context.IsMainPlayer ? "host" : "farmhand")}] Received {e.Type} from {e.FromPlayerID}.", LogLevel.Trace);
 
             switch (e.Type)
             {
@@ -73,6 +68,8 @@ namespace GemIsles
                         GameLocation location = new GameLocation(mapAssetKey, name) { IsOutdoors = true, IsFarm = false };
                         Game1.locations.Add(location);
                         Helper.GameContent.InvalidateCache("Data/Locations");
+                        Game1.content.Load<Dictionary<string, LocationData>>(@"Data\Locations").TryGetValue(name, out LocationData locationData);
+                        locationData.DisplayName = "Gem Isles";
                         Utils.CreateIslesMap(location);
                     }
                     break;
@@ -121,7 +118,7 @@ namespace GemIsles
 
         private void GameLoop_UpdateTicked(object sender, UpdateTickedEventArgs e)
         {
-            if (!Context.IsPlayerFree || !Game1.player.swimming.Value || (!(Game1.player.currentLocation is Beach) && !(Game1.player.currentLocation is Forest) && !Game1.currentLocation.Name.StartsWith(locationPrefix)))
+            if (!Context.IsPlayerFree || !Game1.player.swimming.Value || (!(Game1.player.currentLocation is Beach) && !(Game1.player.currentLocation is Forest) && !(Game1.player.currentLocation is IslandSouth) && !(Game1.player.currentLocation is IslandSouthEast) && !(Game1.player.currentLocation is IslandWest) && !Game1.currentLocation.Name.StartsWith(locationPrefix)))
                 return;
 
             Point pos = Game1.player.TilePoint;
@@ -142,6 +139,27 @@ namespace GemIsles
                     mapX = 0;
                     pos.X = pos.X * 128 / 120;
                 }
+                else if (Game1.player.currentLocation.Name == "IslandSouth")
+                {
+                    mapY = 1;
+                    mapX = 2;
+                    pos.X = pos.X * 128 / 43;
+
+                }
+                else if (Game1.player.currentLocation.Name == "IslandSouthEast")
+                {
+                    mapY = 1;
+                    mapX = 3;
+                    pos.X = pos.X * 128 / 43;
+
+                }
+                else if (Game1.player.currentLocation.Name == "IslandWest")
+                {
+                    mapY = 1;
+                    mapX = 4;
+                    pos.X = pos.X * 128 / 110;
+
+                }
                 WarpToGemIsles(pos.X, 0);
                 return;
             }
@@ -158,10 +176,25 @@ namespace GemIsles
                 }
                 else
                 {
-                    if (true || mapX > 0)
+                    if (mapX == 1)
                     {
                         pos.X = pos.X * 104 / 128;
                         Game1.warpFarmer("Beach", pos.X, Game1.getLocationFromName("Beach").map.DisplaySize.Height / Game1.tileSize - 2, false);
+                    }
+                    else if (mapX == 2)
+                    {
+                        pos.X = pos.X * 43 / 128;
+                        Game1.warpFarmer("IslandSouth", pos.X, Game1.getLocationFromName("IslandSouth").map.DisplaySize.Height / Game1.tileSize - 2, false);
+                    }
+                    else if (mapX == 3)
+                    {
+                        pos.X = pos.X * 43 / 128;
+                        Game1.warpFarmer("IslandSouthEast", pos.X, Game1.getLocationFromName("IslandSouthEast").map.DisplaySize.Height / Game1.tileSize - 2, false);
+                    }
+                    else if (mapX == 4)
+                    {
+                        pos.X = pos.X * 110 / 128;
+                        Game1.warpFarmer("IslandWest", pos.X, Game1.getLocationFromName("IslandWest").map.DisplaySize.Height / Game1.tileSize - 2, false);
                     }
                     else
                     {
@@ -196,6 +229,8 @@ namespace GemIsles
                 GameLocation location = new GameLocation(mapAssetKey, name) { IsOutdoors = true, IsFarm = false };
                 Game1.locations.Add(location);
                 Helper.GameContent.InvalidateCache("Data/Locations");
+                Game1.content.Load<Dictionary<string, LocationData>>(@"Data\Locations").TryGetValue(name, out LocationData locationData);
+                locationData.DisplayName = "Gem Isles";
                 Utils.CreateIslesMap(location);
             }
 
