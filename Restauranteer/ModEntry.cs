@@ -37,6 +37,7 @@ namespace Restauranteer
         public static PerScreen<Dictionary<string, int>> npcOrderNumbers = new PerScreen<Dictionary<string, int>>();
         public static Dictionary<string, NetRef<Chest>> fridgeDict = new();
         private Harmony harmony;
+        internal static IBetterCrafting BetterCraftingApi;
 
         /// <summary>The mod entry point, called after the mod is first loaded.</summary>
         /// <param name="helper">Provides simplified APIs for writing mods.</param>
@@ -53,6 +54,7 @@ namespace Restauranteer
             Helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
             Helper.Events.GameLoop.DayEnding += GameLoop_DayEnding;
             Helper.Events.GameLoop.OneSecondUpdateTicked += GameLoop_OneSecondUpdateTicked;
+            Helper.Events.Player.Warped += Player_Warped;
             Helper.Events.Content.AssetRequested += Content_AssetRequested;
 
             harmony = new Harmony(ModManifest.UniqueID);
@@ -125,6 +127,18 @@ namespace Restauranteer
             }
         }
 
+        private void Player_Warped(object sender, StardewModdingAPI.Events.WarpedEventArgs e)
+        {
+            if (Config.RestaurantLocations.Contains(e.NewLocation.Name) && BetterCraftingApi != null)
+            {
+                BetterCraftingApi.MenuSimplePopulateContainers += BetterCraftingApi_MenuSimplePopulateContainers;
+            }
+            else if (!Config.RestaurantLocations.Contains(e.NewLocation.Name) && BetterCraftingApi != null)
+            {
+                BetterCraftingApi.MenuSimplePopulateContainers -= BetterCraftingApi_MenuSimplePopulateContainers;
+            }
+        }
+
         private void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
         {
             if (!Config.ModEnabled)
@@ -185,6 +199,10 @@ namespace Restauranteer
                     prefix: new HarmonyMethod(typeof(ModEntry), nameof(ModEntry.LoveOfCooking_CookingMenu_Prefix))
                 );
             }
+
+            IBetterCrafting betterCrafting = Helper.ModRegistry.GetApi<IBetterCrafting>("leclair.bettercrafting");
+            BetterCraftingApi = betterCrafting;
+
 
             // get Generic Mod Config Menu's API (if it's installed)
             var configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
@@ -292,9 +310,22 @@ namespace Restauranteer
             var miniFridge = GetMiniFridge(Game1.currentLocation);
             if (materialContainers is null)
                 materialContainers = new Dictionary<IInventory, Chest>();
-            materialContainers.Add(fridge.Value.Items, fridge.Value);
+            materialContainers.TryAdd(fridge.Value.Items, fridge.Value);
             if (miniFridge != null)
-                materialContainers.Add(miniFridge.Items, miniFridge);
+                materialContainers.TryAdd(miniFridge.Items, miniFridge);
+        }
+
+        private void BetterCraftingApi_MenuSimplePopulateContainers(ISimplePopulateContainersEvent e)
+        {
+            if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name) || BetterCraftingApi == null)
+                return;
+
+            var fridge = GetFridge(Game1.currentLocation);
+            var miniFridge = GetMiniFridge(Game1.currentLocation);
+            e.Containers.Add(new(fridge.Value, Game1.currentLocation));
+            if (miniFridge != null)
+                e.Containers.Add(new(miniFridge, Game1.currentLocation));
+
         }
     }
 }
