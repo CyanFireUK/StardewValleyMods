@@ -14,8 +14,6 @@ using System.Linq;
 using StardewModdingAPI.Utilities;
 using StardewValley.Characters;
 using StardewValley.Objects.Trinkets;
-using StardewValley.Audio;
-
 
 
 
@@ -51,7 +49,7 @@ namespace ChangeHorseSounds
             var harmony = new Harmony(ModManifest.UniqueID);
 
             harmony.Patch(
-                              original: AccessTools.Method(typeof(Game1), nameof(GameLocation.localSound)),
+                              original: AccessTools.Method(typeof(GameLocation), nameof(GameLocation.localSound)),
                               prefix: new HarmonyMethod(typeof(SoundPatches), nameof(SoundPatches.localSound_prefix))
                                 );
 
@@ -115,7 +113,7 @@ namespace ChangeHorseSounds
                             {
                                 audio = SoundEffect.FromStream(stream, false);
 
-                                thudStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                                thudStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Footsteps"), false);
 
                                 Game1.soundBank.AddCue(thudStepCueDefinition);
                             }
@@ -140,7 +138,7 @@ namespace ChangeHorseSounds
                             {
                                 audio = SoundEffect.FromStream(stream, false);
 
-                                stoneStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                                stoneStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Footsteps"), false);
 
                                 Game1.soundBank.AddCue(stoneStepCueDefinition);
                             }
@@ -164,7 +162,7 @@ namespace ChangeHorseSounds
                             {
                                 audio = SoundEffect.FromStream(stream, false);
 
-                                woodyStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Sound"), false);
+                                woodyStepCueDefinition.SetSound(audio, Game1.audioEngine.GetCategoryIndex("Footsteps"), false);
 
                                 Game1.soundBank.AddCue(woodyStepCueDefinition);
                             }
@@ -201,11 +199,11 @@ namespace ChangeHorseSounds
             return PathUtilities.GetSegments(filePath).Last().Split(".")[0];
         }
 
+
         [HarmonyPatch(typeof(GameLocation), "localSound")]
         public class SoundPatches
         {
-
-            public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position, int? pitch = null, SoundContext context = SoundContext.Default)
+            public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position)
             {
                 config = SHelper.ReadConfig<ChangeHorseSoundsModConfig>();
 
