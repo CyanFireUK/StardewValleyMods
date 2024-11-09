@@ -738,7 +738,8 @@ namespace MultipleHorses
 
         internal void OnChatCommandReceived(string[] command, ChatBox chat)
         {
-            string[] array = ArgUtility.SplitBySpaceQuoteAware(ArgUtility.GetRemainder(command, 0)).Select(array => array.Trim(new char[] { '"' })).ToArray();
+            string raw = ArgUtility.GetRemainder(command, 0);
+            string[] array = ArgUtility.SplitBySpaceQuoteAware(raw).Select(array => array.Trim(new char[] { '"' })).ToArray();
 
             var history = SHelper.Reflection.GetField<List<string>>(chat, "cheatHistory").GetValue();
 
@@ -749,8 +750,8 @@ namespace MultipleHorses
                     if (array.Length > 1)
                     {
                         inGame = true;
-                        history.Insert(0, "/" + array);
-                        chat.addInfoMessage("/" + array);
+                        history.Insert(0, "/" + raw);
+                        chat.addInfoMessage("/" + raw);
                         if (CallHorse(array[1]))
                             return;
                         else
@@ -762,8 +763,8 @@ namespace MultipleHorses
                     }
                     else
                     {
-                        history.Insert(0, "/" + array);
-                        chat.addInfoMessage("/" + array);
+                        history.Insert(0, "/" + raw);
+                        chat.addInfoMessage("/" + raw);
                         if (CallHorse())
                             return;
                         else
@@ -777,8 +778,8 @@ namespace MultipleHorses
                     chat.clickAway();
                     if (array.Length > 1)
                     {
-                        history.Insert(0, "/" + array);
-                        chat.addInfoMessage("/" + array);
+                        history.Insert(0, "/" + raw);
+                        chat.addInfoMessage("/" + raw);
                         if (CorralHorses(array[1]))
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.corral_horses.warped"), LogLevel.Info);
@@ -792,8 +793,8 @@ namespace MultipleHorses
                     }
                     else
                     {
-                        history.Insert(0, "/" + array);
-                        Game1.chatBox.addInfoMessage("/" + array);
+                        history.Insert(0, "/" + raw);
+                        Game1.chatBox.addInfoMessage("/" + raw);
                         if (CorralHorses())
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.corral_horses.warped"), LogLevel.Info);
@@ -810,8 +811,8 @@ namespace MultipleHorses
                     if (array.Length > 1)
                     {
                         inGame = true;
-                        history.Insert(0, "/" + command);
-                        chat.addInfoMessage("/" + command);
+                        history.Insert(0, "/" + raw);
+                        chat.addInfoMessage("/" + raw);
                         Game1.player.modData.TryGetValue($"{SModManifest.UniqueID}.default_horse", out string defaultHorse);
                         if (SetDefaultHorse(array[1]) && array[1].ToLower() != "remove")
                         {
@@ -834,8 +835,8 @@ namespace MultipleHorses
                     }
                     else
                     {
-                        history.Insert(0, "/" + command);
-                        chat.addInfoMessage("/" + command);
+                        history.Insert(0, "/" + raw);
+                        chat.addInfoMessage("/" + raw);
                         if (SetDefaultHorse())
                         {
                             SMonitor.Log(SHelper.Translation.Get("command.default_horse.set", new { mountName = Game1.player.mount.Name }), LogLevel.Info);
