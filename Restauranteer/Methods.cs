@@ -65,14 +65,14 @@ namespace Restauranteer
             List<string> loves = new();
             foreach (var str in Game1.NPCGiftTastes["Universal_Love"].Split(' '))
             {
-                if (Game1.objectData.TryGetValue(str, out var data) && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
+                if (Game1.objectData.TryGetValue(str, out var data) && data != null && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
                 {
                     loves.Add(str);
                 }
             }
             foreach (var str in Game1.NPCGiftTastes[npc.Name].Split('/')[1].Split(' '))
             {
-                if (Game1.objectData.TryGetValue(str, out var data) && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
+                if (Game1.objectData.TryGetValue(str, out var data) && data != null && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
                 {
                     loves.Add(str);
                 }
@@ -80,14 +80,14 @@ namespace Restauranteer
             List<string> likes = new();
             foreach (var str in Game1.NPCGiftTastes["Universal_Like"].Split(' '))
             {
-                if (Game1.objectData.TryGetValue(str, out var data) && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
+                if (Game1.objectData.TryGetValue(str, out var data) && data != null && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
                 {
                     likes.Add(str);
                 }
             }
             foreach (var str in Game1.NPCGiftTastes[npc.Name].Split('/')[3].Split(' '))
             {
-                if (Game1.objectData.TryGetValue(str, out var data) && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
+                if (Game1.objectData.TryGetValue(str, out var data) && data != null && CraftingRecipe.cookingRecipes.ContainsKey(data.Name))
                 {
                     likes.Add(str);
                 }
@@ -95,14 +95,14 @@ namespace Restauranteer
             List<string> neutral = new();
             foreach (var str in Game1.NPCGiftTastes["Universal_Neutral"].Split(' '))
             {
-                if (Game1.objectData.ContainsKey(str) && CraftingRecipe.cookingRecipes.ContainsKey(Game1.objectData[str].Name))
+                if (str != null && Game1.objectData.ContainsKey(str) && CraftingRecipe.cookingRecipes.ContainsKey(Game1.objectData[str].Name))
                 {
                     neutral.Add(str);
                 }
             }
             foreach (var str in Game1.NPCGiftTastes[npc.Name].Split('/')[9].Split(' '))
             {
-                if (Game1.objectData.ContainsKey(str) && CraftingRecipe.cookingRecipes.ContainsKey(Game1.objectData[str].Name))
+                if (str != null && Game1.objectData.ContainsKey(str) && CraftingRecipe.cookingRecipes.ContainsKey(Game1.objectData[str].Name))
                 {
                     neutral.Add(str);
                 }
