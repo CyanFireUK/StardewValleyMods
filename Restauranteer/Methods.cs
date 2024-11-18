@@ -233,7 +233,7 @@ namespace Restauranteer
                 if (npc.modData.TryGetValue(orderKey, out string dataString))
                 {
                     OrderData orderData = JsonConvert.DeserializeObject<OrderData>(dataString);
-                    if (!Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
+                    if (orderData != null && orderData.dishName != null && !Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
                     {
                         Game1.content.Load<Dictionary<string, ShopData>>(@"Data\Shops").TryGetValue("Saloon", out ShopData shop);
                         if (orderData.dish != null && shop != null && !shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
