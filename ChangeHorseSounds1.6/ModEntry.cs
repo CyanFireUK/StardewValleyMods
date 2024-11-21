@@ -207,6 +207,9 @@ namespace ChangeHorseSounds
             {
                 config = SHelper.ReadConfig<ChangeHorseSoundsModConfig>();
 
+                if (Game1.eventUp)
+                    return;
+
                 foreach (Farmer farmer in __instance.farmers)
                 {
                     for (var i = 0; i < thudStep.Length; i++)
