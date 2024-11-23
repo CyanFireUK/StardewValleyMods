@@ -111,7 +111,7 @@ namespace Restauranteer
                 var fridge = GetFridge(Game1.getLocationFromName(name));
                 var miniFridge = GetMiniFridge(Game1.getLocationFromName(name));
 
-                fridge.Value.Items.Clear();
+                    fridge.Value.Items.Clear();
 
                 if (miniFridge != null)
                     miniFridge.Items.Clear();
@@ -322,7 +322,8 @@ namespace Restauranteer
 
             var fridge = GetFridge(Game1.currentLocation);
             var miniFridge = GetMiniFridge(Game1.currentLocation);
-            e.Containers.Add(new(fridge.Value, Game1.currentLocation));
+
+                e.Containers.Add(new(fridge.Value, Game1.currentLocation));
             if (miniFridge != null)
                 e.Containers.Add(new(miniFridge, Game1.currentLocation));
 

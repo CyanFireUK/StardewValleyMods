@@ -162,7 +162,7 @@ namespace Restauranteer
         private static Chest GetMiniFridge(GameLocation location)
         {
             foreach (Object value in location.objects.Values)
-                if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value && chest.modData[fridgeKey] == "true")
+                if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value && chest.modData.ContainsKey(fridgeKey) && chest.modData[fridgeKey] == "true")
                     return chest;
 
             return null;
@@ -173,7 +173,7 @@ namespace Restauranteer
             var fridge = GetFridge(__instance);
             var miniFridge = GetMiniFridge(__instance);
 
-            fridge.Value.Items.Clear();
+                fridge.Value.Items.Clear();
 
             if (miniFridge != null)
                 miniFridge.Items.Clear();
