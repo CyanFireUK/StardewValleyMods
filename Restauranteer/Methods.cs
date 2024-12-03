@@ -162,7 +162,7 @@ namespace Restauranteer
         private static Chest GetMiniFridge(GameLocation location)
         {
             foreach (Object value in location.objects.Values)
-                if (value.bigCraftable.Value && value is Chest chest && chest.fridge.Value && chest.modData.ContainsKey(fridgeKey) && chest.modData[fridgeKey] == "true")
+                if (value != null && value.bigCraftable.Value && value is Chest chest && chest.fridge.Value && chest.modData.ContainsKey(fridgeKey) && chest.modData[fridgeKey] == "true")
                     return chest;
 
             return null;
@@ -235,11 +235,13 @@ namespace Restauranteer
                     OrderData orderData = JsonConvert.DeserializeObject<OrderData>(dataString);
                     if (orderData != null && orderData.dishName != null && !Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
                     {
-                        Game1.content.Load<Dictionary<string, ShopData>>(@"Data\Shops").TryGetValue("Saloon", out ShopData shop);
-                        if (orderData.dish != null && shop != null && !shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
+                        if (Game1.content.Load<Dictionary<string, ShopData>>(@"Data\Shops").TryGetValue("Saloon", out ShopData shop))
                         {
-                           shop.Items.Add(new() { IsRecipe = true, ItemId = orderData.dish, Price = orderData.dishPrice, AvailableStock = 1, AvailableStockLimit = LimitedStockMode.Player, AvoidRepeat = true });
-                           SMonitor.Log($"Recipe for {orderData.dishName} has been added to Saloon stock from current order.");
+                            if (orderData.dish != null && !shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
+                            {
+                                shop.Items.Add(new() { IsRecipe = true, ItemId = orderData.dish, Price = orderData.dishPrice, AvailableStock = 1, AvailableStockLimit = LimitedStockMode.Player, AvoidRepeat = true });
+                                SMonitor.Log($"Recipe for {orderData.dishName} has been added to Saloon stock from current order.");
+                            }
                         }
                     }
                 }

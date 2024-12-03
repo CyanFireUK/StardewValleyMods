@@ -37,7 +37,7 @@ namespace Restauranteer
                 __instance.IsEmoting = false;
             }
 
-            [HarmonyPriority(int.MaxValue)]
+            [HarmonyPriority(int.MinValue)]
             public static void Postfix(NPC __instance, SpriteBatch b, float alpha, ref bool __state)
             {
                 if (!Config.ModEnabled || !__state)
@@ -80,6 +80,7 @@ namespace Restauranteer
         [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.checkAction))]
         public class GameLocation_checkAction_Patch
         {
+            [HarmonyPriority(int.MaxValue)]
             public static bool Prefix(GameLocation __instance, Location tileLocation, xTile.Dimensions.Rectangle viewport, Farmer who, ref bool __result)
             {
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name))
@@ -108,6 +109,7 @@ namespace Restauranteer
         [HarmonyPatch(typeof(GameLocation), "performAction", new Type[] { typeof(string), typeof(Farmer), typeof(Location) })]
         public class GameLocation_performAction_Patch
         {
+            [HarmonyPriority(int.MaxValue)]
             public static bool Prefix(GameLocation __instance, string fullActionString, Farmer who, Location tileLocation, ref bool __result)
             {
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name) || (fullActionString != "kitchen" && fullActionString != "restaurant"))
@@ -129,6 +131,7 @@ namespace Restauranteer
         [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.UpdateWhenCurrentLocation))]
         public class GameLocation_UpdateWhenCurrentLocation_Patch
         {
+            [HarmonyPriority(int.MinValue)]
             public static void Postfix(GameLocation __instance, GameTime time)
             {
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name))
@@ -146,6 +149,7 @@ namespace Restauranteer
         [HarmonyPatch(typeof(Utility), nameof(Utility.checkForCharacterInteractionAtTile))]
         public class Utility_checkForCharacterInteractionAtTile_Patch
         {
+            [HarmonyPriority(int.MaxValue)]
             public static bool Prefix(Vector2 tileLocation, Farmer who)
             {
                 if (!Config.ModEnabled)
@@ -172,6 +176,7 @@ namespace Restauranteer
         [HarmonyPatch(typeof(NPC), nameof(NPC.tryToReceiveActiveObject))]
         public class NPC_tryToReceiveActiveObject_Patch
         {
+            [HarmonyPriority(int.MaxValue)]
             public static bool Prefix(NPC __instance, Farmer who)
             {
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.currentLocation.Name) || !__instance.modData.TryGetValue(orderKey, out string data))
