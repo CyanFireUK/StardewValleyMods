@@ -185,13 +185,13 @@ namespace Restauranteer
                 if (who.ActiveObject?.ItemId == orderData.dish)
                 {
                     SMonitor.Log($"Fulfilling {__instance.Name}'s order of {orderData.dishName}");
-                    if (!npcOrderNumbers.Value.ContainsKey(__instance.Name))
+                    if (!npcOrderNumbers.ContainsKey(__instance.Name))
                     {
-                        npcOrderNumbers.Value[__instance.Name] = 1;
+                        npcOrderNumbers[__instance.Name] = 1;
                     }
                     else
                     {
-                        npcOrderNumbers.Value[__instance.Name]++;
+                        npcOrderNumbers[__instance.Name]++;
                     }
                     List<string> possibleReactions = new();
                     int count = 0;

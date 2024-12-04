@@ -44,7 +44,7 @@ namespace Restauranteer
                 UpdateOrder(npc, JsonConvert.DeserializeObject<OrderData>(orderData));
                 return;
             }
-            if (!Game1.NPCGiftTastes.ContainsKey(npc.Name) || npcOrderNumbers.Value.TryGetValue(npc.Name, out int amount) && amount >= Config.MaxNPCOrdersPerNight)
+            if (!Game1.NPCGiftTastes.ContainsKey(npc.Name) || npcOrderNumbers.TryGetValue(npc.Name, out int amount) && amount >= Config.MaxNPCOrdersPerNight)
                 return;
             if(Game1.random.NextDouble() < Config.OrderChance)
             {
@@ -235,7 +235,7 @@ namespace Restauranteer
                     OrderData orderData = JsonConvert.DeserializeObject<OrderData>(dataString);
                     if (orderData != null && orderData.dishName != null && !Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
                     {
-                        if (Game1.content.Load<Dictionary<string, ShopData>>(@"Data\Shops").TryGetValue("Saloon", out ShopData shop))
+                        if (DataLoader.Shops(Game1.content).TryGetValue("Saloon", out ShopData shop))
                         {
                             if (orderData.dish != null && !shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
                             {

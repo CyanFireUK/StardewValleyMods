@@ -34,7 +34,7 @@ namespace Restauranteer
         public static string fridgeKey = "aedenthorn.Restauranteer/fridge";
         public static Texture2D emoteSprite;
         public static Vector2 fridgeHideTile = new Vector2(-42000, -42000);
-        public static PerScreen<Dictionary<string, int>> npcOrderNumbers = new PerScreen<Dictionary<string, int>>();
+        public static Dictionary<string, int> npcOrderNumbers = new Dictionary<string, int>();
         public static Dictionary<string, NetRef<Chest>> fridgeDict = new();
         private Harmony harmony;
         internal static IBetterCrafting BetterCraftingApi;
@@ -60,13 +60,13 @@ namespace Restauranteer
             harmony = new Harmony(ModManifest.UniqueID);
             harmony.PatchAll(typeof(ModEntry).Assembly);
 
-            npcOrderNumbers.Value = new Dictionary<string, int>();
+            npcOrderNumbers = new Dictionary<string, int>();
         }
 
         private void GameLoop_DayStarted(object sender, StardewModdingAPI.Events.DayStartedEventArgs e)
         {
             fridgeDict.Clear();
-            npcOrderNumbers.Value.Clear();
+            npcOrderNumbers.Clear();
             emoteSprite = SHelper.ModContent.Load<Texture2D>(Path.Combine("assets", "emote.png"));
             foreach (var name in Config.RestaurantLocations)
             {
@@ -226,19 +226,22 @@ namespace Restauranteer
                 mod: ModManifest,
                 name: () => "Require Event for Saloon",
                 getValue: () => Config.RequireEvent,
-                setValue: value => Config.RequireEvent = value
+                setValue: value => Config.RequireEvent = value,
+                tooltip: () => "If enabled, requires the player to have 5 Hearts with Gus before being able to use the Saloon kitchen."
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Auto Fill Fridge",
                 getValue: () => Config.AutoFillFridge,
-                setValue: value => Config.AutoFillFridge = value
+                setValue: value => Config.AutoFillFridge = value,
+                tooltip: () => "If enabled, auto fills Saloon/custom restaurant locations fridge/mini-fridge with ingredients from requested dishes"
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Add Fridge Objects",
                 getValue: () => Config.AddFridgeObjects,
-                setValue: value => Config.AddFridgeObjects = value
+                setValue: value => Config.AddFridgeObjects = value,
+                tooltip: () => "If enabled, adds fridge to Saloon/custom restaurant locations to specified tile in map file"
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
@@ -250,55 +253,64 @@ namespace Restauranteer
                 mod: ModManifest,
                 name: () => "Sell Current Recipes",
                 getValue: () => Config.SellCurrentRecipes,
-                setValue: value => Config.SellCurrentRecipes = value
+                setValue: value => Config.SellCurrentRecipes = value,
+                tooltip: () => "If enabled, adds unowned recipes for requested dishes to Gus' shop to purchase"
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Patch Saloon Map",
                 getValue: () => Config.PatchSaloonMap,
-                setValue: value => Config.PatchSaloonMap = value
+                setValue: value => Config.PatchSaloonMap = value,
+                tooltip: () => "If enabled, patches the Saloon map to add the kitchen"
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
                 name: () => "Show Dish Name Key",
                 getValue: () => Config.ModKey,
-                setValue: value => Config.ModKey = value
+                setValue: value => Config.ModKey = value,
+                tooltip: () => "Sets the key to display the dish name instead of the image when held down"
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => "Order Chance / s",
                 getValue: () => Config.OrderChance + "",
-                setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.OrderChance = val; } }
+                setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.OrderChance = val; } },
+                tooltip: () => "Sets the global chance percentage for an NPC to request a dish"
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => "Loved Dish Order Chance",
                 getValue: () => Config.LovedDishChance + "",
-                setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.LovedDishChance = val; } }
+                setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.LovedDishChance = val; } },
+                tooltip: () => "Sets the global chance percentage for an NPC to request a loved dish over a liked/netural one"
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => "Price Multiplier",
                 getValue: () => Config.PriceMarkup + "",
-                setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.PriceMarkup = val; } }
+                setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.PriceMarkup = val; } },
+                tooltip: () => "Sets the multiplier which each dish price is timesed by to create the amount the player is paid for each fulfilled order"
             );
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => "Max NPC Orders Per Night",
                 getValue: () => Config.MaxNPCOrdersPerNight,
-                setValue: value => Config.MaxNPCOrdersPerNight = value
+                setValue: value => Config.MaxNPCOrdersPerNight = value,
+                tooltip: () => "Sets the maximum number of orders an NPC can request in one night"
             );
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => "Loved Friendship Change",
                 getValue: () => Config.LovedFriendshipChange,
-                setValue: value => Config.LovedFriendshipChange= value
+                setValue: value => Config.LovedFriendshipChange= value,
+                tooltip: () => "Sets the amount of friendship points given for a fulfilled loved order"
             );
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => "Liked Friendship Change",
                 getValue: () => Config.LikedFriendshipChange,
-                setValue: value => Config.LikedFriendshipChange = value
+                setValue: value => Config.LikedFriendshipChange = value,
+                tooltip: () => "Sets the amount of friendship points given for a fulfilled liked order"
             );
         }
 
