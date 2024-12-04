@@ -137,7 +137,7 @@ namespace Restauranteer
             {
                 FillFridge(location);
             }
-            SellRecipesFromCurrentOrders();
+            Helper.GameContent.InvalidateCache("Data/Shops");
         }
 
         private static NetRef<Chest> GetFridge(GameLocation location)
@@ -216,31 +216,6 @@ namespace Restauranteer
                                     if (miniFridge != null)
                                         miniFridge.Items.Add(obj);
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public static void SellRecipesFromCurrentOrders()
-        {
-            if (!Config.ModEnabled || !Config.SellCurrentRecipes)
-                return;
-
-            foreach (var npc in Game1.getLocationFromName("Saloon").characters)
-            {
-                if (npc.modData.TryGetValue(orderKey, out string dataString))
-                {
-                    OrderData orderData = JsonConvert.DeserializeObject<OrderData>(dataString);
-                    if (orderData != null && orderData.dishName != null && !Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
-                    {
-                        if (DataLoader.Shops(Game1.content).TryGetValue("Saloon", out ShopData shop))
-                        {
-                            if (orderData.dish != null && !shop.Items.Exists(item => item.ItemId.Equals(orderData.dish)))
-                            {
-                                shop.Items.Add(new() { IsRecipe = true, ItemId = orderData.dish, Price = orderData.dishPrice, AvailableStock = 1, AvailableStockLimit = LimitedStockMode.Player, AvoidRepeat = true });
-                                SMonitor.Log($"Recipe for {orderData.dishName} has been added to Saloon stock from current order.");
                             }
                         }
                     }

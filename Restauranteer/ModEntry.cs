@@ -2,9 +2,12 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Netcode;
+using Newtonsoft.Json;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.GameData.Shops;
+using StardewValley.Internal;
 using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
@@ -186,6 +189,39 @@ namespace Restauranteer
                     }
                 }, StardewModdingAPI.Events.AssetEditPriority.Late);
             }
+            else if (e.NameWithoutLocale.IsEquivalentTo("Data/Shops"))
+            {
+                e.Edit(
+                    asset =>
+                    {     
+                        if (!Context.IsWorldReady || !Config.ModEnabled || !Config.SellCurrentRecipes)
+                            return;
+
+                        var data = asset.AsDictionary<string, ShopData>().Data;
+
+                        foreach (var npc in Game1.getLocationFromName("Saloon").characters)
+                        {                        
+                            if (npc.modData.TryGetValue(orderKey, out string dataString))
+                            {
+                                OrderData orderData = JsonConvert.DeserializeObject<OrderData>(dataString);
+                                
+                                if (data.TryGetValue("Saloon", out var shopData) && orderData != null && orderData.dishName != null && orderData.dish != null && !Game1.player.cookingRecipes.ContainsKey(orderData.dishName))
+                                {
+                                    
+                                    var shopItem = new ShopItemData();
+                                    shopItem.IsRecipe = true;
+                                    shopItem.Price = orderData.dishPrice;
+                                    shopItem.ItemId = orderData.dish;
+                                    shopItem.AvailableStock = 1;
+                                    shopItem.AvailableStockLimit = LimitedStockMode.Player;
+                                    shopItem.AvoidRepeat = true;
+                                    shopData.Items.Add(shopItem);
+                                    SMonitor.Log($"Recipe for {orderData.dishName} has been added to Saloon stock from current order.");
+                                }
+                            }
+                        }
+                    }, StardewModdingAPI.Events.AssetEditPriority.Late);
+            }
         }
 
         private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
@@ -234,14 +270,14 @@ namespace Restauranteer
                 name: () => "Auto Fill Fridge",
                 getValue: () => Config.AutoFillFridge,
                 setValue: value => Config.AutoFillFridge = value,
-                tooltip: () => "If enabled, auto fills Saloon/custom restaurant locations fridge/mini-fridge with ingredients from requested dishes"
+                tooltip: () => "If enabled, auto fills Saloon/custom restaurant locations fridge/mini-fridge with ingredients from requested dishes."
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Add Fridge Objects",
                 getValue: () => Config.AddFridgeObjects,
                 setValue: value => Config.AddFridgeObjects = value,
-                tooltip: () => "If enabled, adds fridge to Saloon/custom restaurant locations to specified tile in map file"
+                tooltip: () => "If enabled, adds fridge to Saloon/custom restaurant locations to specified tile in map file."
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
@@ -254,63 +290,63 @@ namespace Restauranteer
                 name: () => "Sell Current Recipes",
                 getValue: () => Config.SellCurrentRecipes,
                 setValue: value => Config.SellCurrentRecipes = value,
-                tooltip: () => "If enabled, adds unowned recipes for requested dishes to Gus' shop to purchase"
+                tooltip: () => "If enabled, adds unowned recipes for requested dishes to Gus' shop to purchase."
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
                 name: () => "Patch Saloon Map",
                 getValue: () => Config.PatchSaloonMap,
                 setValue: value => Config.PatchSaloonMap = value,
-                tooltip: () => "If enabled, patches the Saloon map to add the kitchen"
+                tooltip: () => "If enabled, patches the Saloon map to add the kitchen."
             );
             configMenu.AddKeybind(
                 mod: ModManifest,
                 name: () => "Show Dish Name Key",
                 getValue: () => Config.ModKey,
                 setValue: value => Config.ModKey = value,
-                tooltip: () => "Sets the key to display the dish name instead of the image when held down"
+                tooltip: () => "Sets the key to display the dish name instead of the image when held down."
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => "Order Chance / s",
                 getValue: () => Config.OrderChance + "",
                 setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.OrderChance = val; } },
-                tooltip: () => "Sets the global chance percentage for an NPC to request a dish"
+                tooltip: () => "Sets the global chance percentage for an NPC to request a dish."
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => "Loved Dish Order Chance",
                 getValue: () => Config.LovedDishChance + "",
                 setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.LovedDishChance = val; } },
-                tooltip: () => "Sets the global chance percentage for an NPC to request a loved dish over a liked/netural one"
+                tooltip: () => "Sets the global chance percentage for an NPC to request a loved dish over a liked/netural one."
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
                 name: () => "Price Multiplier",
                 getValue: () => Config.PriceMarkup + "",
                 setValue: delegate(string value) { if (float.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out float val)){ Config.PriceMarkup = val; } },
-                tooltip: () => "Sets the multiplier which each dish price is timesed by to create the amount the player is paid for each fulfilled order"
+                tooltip: () => "Sets the value which each dish price is multiplied by to create the amount the player is paid for each fulfilled order."
             );
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => "Max NPC Orders Per Night",
                 getValue: () => Config.MaxNPCOrdersPerNight,
                 setValue: value => Config.MaxNPCOrdersPerNight = value,
-                tooltip: () => "Sets the maximum number of orders an NPC can request in one night"
+                tooltip: () => "Sets the maximum number of orders an NPC can request in one night."
             );
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => "Loved Friendship Change",
                 getValue: () => Config.LovedFriendshipChange,
                 setValue: value => Config.LovedFriendshipChange= value,
-                tooltip: () => "Sets the amount of friendship points given for a fulfilled loved order"
+                tooltip: () => "Sets the amount of friendship points given for a fulfilled loved order."
             );
             configMenu.AddNumberOption(
                 mod: ModManifest,
                 name: () => "Liked Friendship Change",
                 getValue: () => Config.LikedFriendshipChange,
                 setValue: value => Config.LikedFriendshipChange = value,
-                tooltip: () => "Sets the amount of friendship points given for a fulfilled liked order"
+                tooltip: () => "Sets the amount of friendship points given for a fulfilled liked order."
             );
         }
 
