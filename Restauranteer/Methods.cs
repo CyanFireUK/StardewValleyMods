@@ -192,10 +192,10 @@ namespace Restauranteer
                             {
                                 var obj = new Object(key, r.recipeList[key]);
                                 SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
-                                fridge.Value.Items.Add(obj);
+                                fridge.Value.addItem(obj);
 
                                 if (miniFridge != null)
-                                    miniFridge.Items.Add(obj);
+                                    miniFridge.addItem(obj);
                                 
                             }
                             else
@@ -211,10 +211,10 @@ namespace Restauranteer
                                 {
                                     var obj = new Object(list[Game1.random.Next(list.Count)], r.recipeList[key]);
                                     SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
-                                    fridge.Value.Items.Add(obj);
+                                    fridge.Value.addItem(obj);
 
                                     if (miniFridge != null)
-                                        miniFridge.Items.Add(obj);
+                                        miniFridge.addItem(obj);
                                 }
                             }
                         }

@@ -11,6 +11,7 @@ using StardewValley.Internal;
 using StardewValley.Inventories;
 using StardewValley.Locations;
 using StardewValley.Objects;
+using StardewValley.SpecialOrders;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -83,7 +84,7 @@ namespace Restauranteer
                             if (l.Map.GetLayer("Buildings").Tiles[x, y] is not null && l.Map.GetLayer("Buildings").Tiles[x, y].Properties.TryGetValue("Action", out PropertyValue p) && (p == "fridge" || p == "DropBox GusFridge"))
                             {
                                 Vector2 v = new Vector2(x, y);
-                                if (Config.AddFridgeObjects && !l.objects.TryGetValue(v, out Object obj))
+                                if (Config.AddFridgeObjects && !l.objects.TryGetValue(v, out Object obj) && !Game1.player.team.SpecialOrderActive("Gus"))
                                 {
                                     Chest fridge = new Chest("216", v, 217, 2)
                                     {
@@ -124,7 +125,7 @@ namespace Restauranteer
 
         private void GameLoop_OneSecondUpdateTicked(object sender, StardewModdingAPI.Events.OneSecondUpdateTickedEventArgs e)
         {
-            if(Config.ModEnabled && Context.IsPlayerFree && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && (!Config.RequireEvent || Game1.player.eventsSeen.Contains("980558")))
+            if(Config.ModEnabled && Context.IsPlayerFree && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && (!Config.RequireEvent || Game1.player.eventsSeen.Contains("980558")) && !Game1.player.team.SpecialOrderActive("Gus"))
             {
                 UpdateOrders();
             }
@@ -194,7 +195,7 @@ namespace Restauranteer
                 e.Edit(
                     asset =>
                     {     
-                        if (!Context.IsWorldReady || !Config.ModEnabled || !Config.SellCurrentRecipes)
+                        if (!Context.IsWorldReady || !Config.ModEnabled || !Config.SellCurrentRecipes || Game1.player.team.SpecialOrderActive("Gus"))
                             return;
 
                         var data = asset.AsDictionary<string, ShopData>().Data;
@@ -263,7 +264,7 @@ namespace Restauranteer
                 name: () => "Require Event for Saloon",
                 getValue: () => Config.RequireEvent,
                 setValue: value => Config.RequireEvent = value,
-                tooltip: () => "If enabled, requires the player to have 5 Hearts with Gus before being able to use the Saloon kitchen."
+                tooltip: () => "If enabled, requires the player to have seen Gus' 5 Hearts event before being able to use the Saloon kitchen."
             );
             configMenu.AddBoolOption(
                 mod: ModManifest,
