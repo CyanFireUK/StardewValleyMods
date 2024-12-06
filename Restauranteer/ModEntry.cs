@@ -4,21 +4,20 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
 using StardewModdingAPI;
-using StardewModdingAPI.Utilities;
 using StardewValley;
 using StardewValley.GameData.Shops;
-using StardewValley.Internal;
 using StardewValley.Inventories;
 using StardewValley.Locations;
+using StardewValley.Menus;
 using StardewValley.Objects;
-using StardewValley.SpecialOrders;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using xTile;
-using xTile.Dimensions;
 using xTile.ObjectModel;
 using Object = StardewValley.Object;
 
@@ -60,6 +59,10 @@ namespace Restauranteer
             Helper.Events.GameLoop.OneSecondUpdateTicked += GameLoop_OneSecondUpdateTicked;
             Helper.Events.Player.Warped += Player_Warped;
             Helper.Events.Content.AssetRequested += Content_AssetRequested;
+            Helper.Events.Display.MenuChanged += Display_MenuChanged;
+
+            GameLocation.RegisterTileAction($"{ModManifest.UniqueID}_kitchen", ActivateKitchen);
+            GameLocation.RegisterTileAction($"{ModManifest.UniqueID}_restaurant", ActivateKitchen);
 
             harmony = new Harmony(ModManifest.UniqueID);
             harmony.PatchAll(typeof(ModEntry).Assembly);
@@ -112,10 +115,11 @@ namespace Restauranteer
 
             foreach (var name in Config.RestaurantLocations)
             {
-                var fridge = GetFridge(Game1.getLocationFromName(name));
+                var fridge = Game1.getLocationFromName(name).GetFridge();
                 var miniFridge = GetMiniFridge(Game1.getLocationFromName(name));
 
-                    fridge.Value.Items.Clear();
+                if (fridge != null)
+                    fridge.Items.Clear();
 
                 if (miniFridge != null)
                     miniFridge.Items.Clear();
@@ -223,6 +227,49 @@ namespace Restauranteer
                         }
                     }, StardewModdingAPI.Events.AssetEditPriority.Late);
             }
+        }
+
+        private void Display_MenuChanged(object sender, StardewModdingAPI.Events.MenuChangedEventArgs e)
+        {
+            if (!Context.IsWorldReady || e.NewMenu == e.OldMenu || e.NewMenu == null)
+                return;
+
+            if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name))
+                return;
+
+
+            if (e.NewMenu is ShopMenu menu && menu.ShopId == "Saloon")
+            {
+                Helper.GameContent.InvalidateCache("Data/Shops");
+                return;
+            }
+
+            if (e.NewMenu.GetType().ToString() == "LoveOfCooking.Menu.CookingMenu" || e.NewMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
+                return;
+
+            if (e.NewMenu is CraftingPage page && page.cooking)
+            {
+                var fridge = Game1.player.currentLocation.GetFridge();
+                var miniFridge = GetMiniFridge(Game1.player.currentLocation);
+
+                List<IInventory> items = new();
+
+                if (fridge != null)
+                    items.Add(fridge.Items);
+
+                if (miniFridge != null)
+                    items.Add(miniFridge.Items);
+
+                if (!items.Any())
+                    return;
+
+                var containers = page.GetType().GetField("_materialContainers", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+                containers.SetValue(page, items);
+                return;
+            }
+
+            return;
+
         }
 
         private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
@@ -355,11 +402,12 @@ namespace Restauranteer
         {
             if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name))
                 return;
-            var fridge = GetFridge(Game1.currentLocation);
+            var fridge = Game1.currentLocation.GetFridge();
             var miniFridge = GetMiniFridge(Game1.currentLocation);
             if (materialContainers is null)
                 materialContainers = new Dictionary<IInventory, Chest>();
-            materialContainers.TryAdd(fridge.Value.Items, fridge.Value);
+            if (fridge != null)
+                materialContainers.TryAdd(fridge.Items, fridge);
             if (miniFridge != null)
                 materialContainers.TryAdd(miniFridge.Items, miniFridge);
         }
@@ -369,10 +417,11 @@ namespace Restauranteer
             if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name) || BetterCraftingApi == null)
                 return;
 
-            var fridge = GetFridge(Game1.currentLocation);
+            var fridge = Game1.currentLocation.GetFridge();
             var miniFridge = GetMiniFridge(Game1.currentLocation);
 
-                e.Containers.Add(new(fridge.Value, Game1.currentLocation));
+            if (fridge != null)
+                e.Containers.Add(new(fridge, Game1.currentLocation));
             if (miniFridge != null)
                 e.Containers.Add(new(miniFridge, Game1.currentLocation));
 

@@ -4,18 +4,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
-using StardewValley.GameData.Shops;
-using StardewValley.Internal;
 using StardewValley.ItemTypeDefinitions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using xTile.Dimensions;
 using xTile.ObjectModel;
 using xTile.Tiles;
-using static StardewValley.Minigames.CraneGame;
-using static System.Environment;
-using Object = StardewValley.Object;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Restauranteer
@@ -106,28 +100,6 @@ namespace Restauranteer
         }
 
 
-        [HarmonyPatch(typeof(GameLocation), "performAction", new Type[] { typeof(string), typeof(Farmer), typeof(Location) })]
-        public class GameLocation_performAction_Patch
-        {
-            [HarmonyPriority(int.MaxValue)]
-            public static bool Prefix(GameLocation __instance, string fullActionString, Farmer who, Location tileLocation, ref bool __result)
-            {
-                if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name) || (fullActionString != "kitchen" && fullActionString != "restaurant"))
-                    return true;
-                if (Config.RequireEvent && !Game1.player.eventsSeen.Contains("980558"))
-                {
-                    Game1.drawObjectDialogue(SHelper.Translation.Get("low-friendship"));
-                    __result = true;
-                    return false;
-                }
-
-                __instance.ActivateKitchen();
-                __result = true;
-                return false;
-            }
-        }
-
-
         [HarmonyPatch(typeof(GameLocation), nameof(GameLocation.UpdateWhenCurrentLocation))]
         public class GameLocation_UpdateWhenCurrentLocation_Patch
         {
@@ -136,15 +108,16 @@ namespace Restauranteer
             {
                 if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(__instance.Name))
                     return;
-                var fridge = GetFridge(__instance);
+                var fridge = __instance.GetFridge();
                 var miniFridge = GetMiniFridge(__instance);
 
-                fridge.Value.updateWhenCurrentLocation(time);
+                if (fridge != null)
+                    fridge.updateWhenCurrentLocation(time);
                 if (miniFridge != null)
                     miniFridge.updateWhenCurrentLocation(time);
             }
         }
-        
+
 
         [HarmonyPatch(typeof(Utility), nameof(Utility.checkForCharacterInteractionAtTile))]
         public class Utility_checkForCharacterInteractionAtTile_Patch

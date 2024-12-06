@@ -1,19 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Netcode;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using StardewValley;
-using StardewValley.GameData.Shops;
-using StardewValley.Internal;
-using StardewValley.Locations;
 using StardewValley.Objects;
 using StardewValley.TokenizableStrings;
-using StardewValley.Tools;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 using Object = StardewValley.Object;
 
 namespace Restauranteer
@@ -137,26 +128,21 @@ namespace Restauranteer
             {
                 FillFridge(location);
             }
-            Helper.GameContent.InvalidateCache("Data/Shops");
         }
 
-        private static NetRef<Chest> GetFridge(GameLocation location)
+        internal bool ActivateKitchen(GameLocation location, string[] args, Farmer player, Point point)
         {
-            if (location is FarmHouse)
-            {
-                return (location as FarmHouse).fridge;
-            }
-            if (location is IslandFarmHouse)
-            {
-                return (location as IslandFarmHouse).fridge;
-            }
-            location.objects.Remove(fridgeHideTile);
+            if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(location.Name))
+                return false;
 
-            if (!fridgeDict.TryGetValue(location.Name, out NetRef<Chest> fridge))
+            if (Config.RequireEvent && !Game1.player.eventsSeen.Contains("980558"))
             {
-                fridge = fridgeDict[location.Name] = new NetRef<Chest>(new Chest(true, "130"));
+                Game1.drawObjectDialogue(SHelper.Translation.Get("low-friendship"));
+                return false;
             }
-            return fridge;
+
+            location.ActivateKitchen();
+            return true;
         }
 
         private static Chest GetMiniFridge(GameLocation location)
@@ -170,16 +156,16 @@ namespace Restauranteer
 
         private void FillFridge(GameLocation __instance)
         {
-            var fridge = GetFridge(__instance);
+            var fridge = __instance.GetFridge();
             var miniFridge = GetMiniFridge(__instance);
 
-                fridge.Value.Items.Clear();
+            if (fridge != null)
+                fridge.Items.Clear();
 
             if (miniFridge != null)
                 miniFridge.Items.Clear();
 
             foreach (var c in __instance.characters)
-            {
                 if (c.modData.TryGetValue(orderKey, out string dataString))
                 {
                     OrderData data = JsonConvert.DeserializeObject<OrderData>(dataString);
@@ -191,12 +177,17 @@ namespace Restauranteer
                             if (Game1.objectData.ContainsKey(key))
                             {
                                 var obj = new Object(key, r.recipeList[key]);
-                                SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
-                                fridge.Value.addItem(obj);
+                                if (fridge != null)
+                                {
+                                    SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
+                                    fridge.addItem(obj);
+                                }
 
                                 if (miniFridge != null)
+                                {
+                                    SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to mini-fridge");
                                     miniFridge.addItem(obj);
-                                
+                                }
                             }
                             else
                             {
@@ -210,17 +201,22 @@ namespace Restauranteer
                                 if (list.Any())
                                 {
                                     var obj = new Object(list[Game1.random.Next(list.Count)], r.recipeList[key]);
-                                    SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
-                                    fridge.Value.addItem(obj);
+                                    if (fridge != null)
+                                    {
+                                        SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
+                                        fridge.addItem(obj);
+                                    }
 
                                     if (miniFridge != null)
+                                    {
+                                        SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to mini-fridge");
                                         miniFridge.addItem(obj);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
+                }           
         }
     }
 }
