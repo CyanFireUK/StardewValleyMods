@@ -175,7 +175,7 @@ namespace Restauranteer
                     {
                         try
                         {
-                            map.Data.GetLayer("Buildings").Tiles[tile.X, tile.Y].Properties["Action"] = "kitchen";
+                            map.Data.GetLayer("Buildings").Tiles[tile.X, tile.Y].Properties["Action"] = "aedenthorn.Restauranteer_kitchen";
                         }
                         catch { }
                     }
