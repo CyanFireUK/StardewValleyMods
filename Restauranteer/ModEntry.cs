@@ -57,7 +57,6 @@ namespace Restauranteer
             Helper.Events.GameLoop.DayStarted += GameLoop_DayStarted;
             Helper.Events.GameLoop.DayEnding += GameLoop_DayEnding;
             Helper.Events.GameLoop.OneSecondUpdateTicked += GameLoop_OneSecondUpdateTicked;
-            Helper.Events.Player.Warped += Player_Warped;
             Helper.Events.Content.AssetRequested += Content_AssetRequested;
             Helper.Events.Display.MenuChanged += Display_MenuChanged;
 
@@ -132,18 +131,6 @@ namespace Restauranteer
             if(Config.ModEnabled && Context.IsPlayerFree && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && (!Config.RequireEvent || Game1.player.eventsSeen.Contains("980558")) && !Game1.player.team.SpecialOrderActive("Gus"))
             {
                 UpdateOrders();
-            }
-        }
-
-        private void Player_Warped(object sender, StardewModdingAPI.Events.WarpedEventArgs e)
-        {
-            if (Config.RestaurantLocations.Contains(e.NewLocation.Name) && BetterCraftingApi != null)
-            {
-                BetterCraftingApi.MenuSimplePopulateContainers += BetterCraftingApi_MenuSimplePopulateContainers;
-            }
-            else if (!Config.RestaurantLocations.Contains(e.NewLocation.Name) && BetterCraftingApi != null)
-            {
-                BetterCraftingApi.MenuSimplePopulateContainers -= BetterCraftingApi_MenuSimplePopulateContainers;
             }
         }
 
@@ -244,8 +231,17 @@ namespace Restauranteer
                 return;
             }
 
-            if (e.NewMenu.GetType().ToString() == "LoveOfCooking.Menu.CookingMenu" || e.NewMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
+            if (e.NewMenu.GetType().ToString() == "LoveOfCooking.Menu.CookingMenu")
                 return;
+
+            if (e.NewMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
+            {
+                BetterCraftingApi.MenuSimplePopulateContainers += BetterCraftingApi_MenuSimplePopulateContainers;
+            }
+            else if (e.OldMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
+            {
+                BetterCraftingApi.MenuSimplePopulateContainers -= BetterCraftingApi_MenuSimplePopulateContainers;
+            }
 
             if (e.NewMenu is CraftingPage page && page.cooking)
             {
