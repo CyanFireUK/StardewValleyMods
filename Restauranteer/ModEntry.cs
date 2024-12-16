@@ -60,6 +60,7 @@ namespace Restauranteer
             Helper.Events.Content.AssetRequested += Content_AssetRequested;
             Helper.Events.Display.MenuChanged += Display_MenuChanged;
 
+
             GameLocation.RegisterTileAction($"{ModManifest.UniqueID}_kitchen", ActivateKitchen);
             GameLocation.RegisterTileAction($"{ModManifest.UniqueID}_restaurant", ActivateKitchen);
 
@@ -231,17 +232,9 @@ namespace Restauranteer
                 return;
             }
 
-            if (e.NewMenu.GetType().ToString() == "LoveOfCooking.Menu.CookingMenu")
+            if (e.NewMenu.GetType().ToString() == "LoveOfCooking.Menu.CookingMenu" || e.NewMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
                 return;
 
-            if (e.NewMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
-            {
-                BetterCraftingApi.MenuSimplePopulateContainers += BetterCraftingApi_MenuSimplePopulateContainers;
-            }
-            else if (e.OldMenu.GetType().ToString() == "Leclair.Stardew.BetterCrafting.Menus.BetterCraftingPage")
-            {
-                BetterCraftingApi.MenuSimplePopulateContainers -= BetterCraftingApi_MenuSimplePopulateContainers;
-            }
 
             if (e.NewMenu is CraftingPage page && page.cooking)
             {
@@ -282,6 +275,9 @@ namespace Restauranteer
 
             IBetterCrafting betterCrafting = Helper.ModRegistry.GetApi<IBetterCrafting>("leclair.bettercrafting");
             BetterCraftingApi = betterCrafting;
+
+            if (BetterCraftingApi is not null)
+                BetterCraftingApi.MenuSimplePopulateContainers += BetterCraftingApi_MenuSimplePopulateContainers;
 
 
             // get Generic Mod Config Menu's API (if it's installed)
@@ -410,7 +406,7 @@ namespace Restauranteer
 
         private void BetterCraftingApi_MenuSimplePopulateContainers(ISimplePopulateContainersEvent e)
         {
-            if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name) || BetterCraftingApi == null)
+            if (!Config.ModEnabled || !Config.RestaurantLocations.Contains(Game1.currentLocation.Name))
                 return;
 
             var fridge = Game1.currentLocation.GetFridge();
