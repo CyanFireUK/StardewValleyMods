@@ -126,7 +126,7 @@ namespace Restauranteer
             npc.modData[orderKey] = JsonConvert.SerializeObject(new OrderData(dish, name, displayName, price, loved));
             if (Config.AutoFillFridge)
             {
-                FillFridge(location);
+                FillFridge(location, npc);
             }
         }
 
@@ -154,19 +154,13 @@ namespace Restauranteer
             return null;
         }
 
-        private void FillFridge(GameLocation __instance)
+        private void FillFridge(GameLocation __instance, NPC npc)
         {
             var fridge = __instance.GetFridge();
             var miniFridge = GetMiniFridge(__instance);
 
-            if (fridge != null)
-                fridge.Items.Clear();
 
-            if (miniFridge != null)
-                miniFridge.Items.Clear();
-
-            foreach (var c in __instance.characters)
-                if (c.modData.TryGetValue(orderKey, out string dataString))
+                if (npc.modData.TryGetValue(orderKey, out string dataString))
                 {
                     OrderData data = JsonConvert.DeserializeObject<OrderData>(dataString);
                     CraftingRecipe r = new CraftingRecipe(data.dishName, true);
@@ -217,6 +211,72 @@ namespace Restauranteer
                         }
                     }
                 }           
+        }
+
+
+        private void RefreshIngredients(GameLocation __instance)
+        {
+            var fridge = __instance.GetFridge();
+            var miniFridge = GetMiniFridge(__instance);
+
+            if (fridge != null)
+                fridge.Items.Clear();
+
+            if (miniFridge != null)
+                miniFridge.Items.Clear();
+
+            foreach (var c in __instance.characters)
+            if (c.modData.TryGetValue(orderKey, out string dataString))
+            {
+                OrderData data = JsonConvert.DeserializeObject<OrderData>(dataString);
+                CraftingRecipe r = new CraftingRecipe(data.dishName, true);
+                if (r is not null)
+                {
+                    foreach (var key in r.recipeList.Keys)
+                    {
+                        if (Game1.objectData.ContainsKey(key))
+                        {
+                            var obj = new Object(key, r.recipeList[key]);
+                            if (fridge != null)
+                            {
+                                SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
+                                fridge.addItem(obj);
+                            }
+
+                            if (miniFridge != null)
+                            {
+                                SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to mini-fridge");
+                                miniFridge.addItem(obj);
+                            }
+                        }
+                        else
+                        {
+                            List<string> list = new List<string>();
+                            foreach (var kvp in Game1.objectData)
+                                if (kvp.Value.Category.ToString() == key && !kvp.Value.ContextTags.Contains("fish_legendary"))
+                                {
+                                    list.Add(kvp.Key);
+                                }
+
+                            if (list.Any())
+                            {
+                                var obj = new Object(list[Game1.random.Next(list.Count)], r.recipeList[key]);
+                                if (fridge != null)
+                                {
+                                    SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to fridge");
+                                    fridge.addItem(obj);
+                                }
+
+                                if (miniFridge != null)
+                                {
+                                    SMonitor.Log($"Adding {obj.Name} ({obj.ParentSheetIndex}) x{obj.Stack} to mini-fridge");
+                                    miniFridge.addItem(obj);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

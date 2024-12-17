@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Netcode;
 using Newtonsoft.Json;
 using StardewModdingAPI;
+using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.GameData.Shops;
 using StardewValley.Inventories;
@@ -59,7 +60,7 @@ namespace Restauranteer
             Helper.Events.GameLoop.OneSecondUpdateTicked += GameLoop_OneSecondUpdateTicked;
             Helper.Events.Content.AssetRequested += Content_AssetRequested;
             Helper.Events.Display.MenuChanged += Display_MenuChanged;
-
+            Helper.Events.Input.ButtonsChanged += Input_ButtonsChanged;
 
             GameLocation.RegisterTileAction($"{ModManifest.UniqueID}_kitchen", ActivateKitchen);
             GameLocation.RegisterTileAction($"{ModManifest.UniqueID}_restaurant", ActivateKitchen);
@@ -261,6 +262,14 @@ namespace Restauranteer
 
         }
 
+        private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
+        {
+            if (Config.ModEnabled && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && Config.IngredientKey.JustPressed())
+            {
+                RefreshIngredients(Game1.player.currentLocation);
+            }
+        }
+
         private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
         {
 
@@ -345,6 +354,13 @@ namespace Restauranteer
                 getValue: () => Config.ModKey,
                 setValue: value => Config.ModKey = value,
                 tooltip: () => "Sets the key to display the dish name instead of the image when held down."
+            );
+            configMenu.AddKeybindList(
+                mod: ModManifest,
+                name: () => "Reset Ingredients",
+                getValue: () => Config.IngredientKey,
+                setValue: value => Config.IngredientKey = value,
+                tooltip: () => "Sets the keybind to refresh ingredients in the fridge/mini-fridge for active orders. Useful for when player messes up an order"
             );
             configMenu.AddTextOption(
                 mod: ModManifest,
