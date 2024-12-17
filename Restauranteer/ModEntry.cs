@@ -264,7 +264,7 @@ namespace Restauranteer
 
         private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
-            if (Config.ModEnabled && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && Config.IngredientKey.JustPressed())
+            if (Config.ModEnabled && Config.AutoFillFridge && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && Config.IngredientKey.JustPressed())
             {
                 RefreshIngredients(Game1.player.currentLocation);
             }
