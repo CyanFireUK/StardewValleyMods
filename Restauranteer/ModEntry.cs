@@ -264,7 +264,7 @@ namespace Restauranteer
 
         private void Input_ButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
-            if (Config.ModEnabled && Config.AutoFillFridge && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && Config.IngredientKey.JustPressed())
+            if (Context.IsWorldReady && Config.ModEnabled && Config.AutoFillFridge && Config.RestaurantLocations.Contains(Game1.player.currentLocation.Name) && Config.IngredientKey.JustPressed())
             {
                 RefreshIngredients(Game1.player.currentLocation);
             }
@@ -357,7 +357,7 @@ namespace Restauranteer
             );
             configMenu.AddKeybindList(
                 mod: ModManifest,
-                name: () => "Reset Ingredients",
+                name: () => "Reset Ingredients Keybind",
                 getValue: () => Config.IngredientKey,
                 setValue: value => Config.IngredientKey = value,
                 tooltip: () => "Sets the keybind to refresh ingredients in the fridge/mini-fridge for active orders. Useful for when player messes up an order"
