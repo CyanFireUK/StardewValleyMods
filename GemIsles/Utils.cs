@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using xTile;
 using xTile.Layers;
+using xTile.ObjectModel;
 using xTile.Tiles;
 using Object = StardewValley.Object;
 
@@ -35,6 +36,11 @@ namespace GemIsles
         {
             location.loadMap(ModEntry.mapAssetKey, true);
             TileSheet sheet = location.map.TileSheets[0];
+
+            for (int index = 0; index < sheet.TileCount; index++)
+                if (index > 140 && index < 261)
+                    sheet.TileIndexProperties[index].RemoveWhere(p => p.Key == "Passable" && p.Value == "T");
+
 
             int isles = Game1.random.Next(1, Math.Max(1, Config.MaxIsles) + 1);
             List<Point> points = new List<Point>();
@@ -262,6 +268,7 @@ namespace GemIsles
                                 {
                                     location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 86);
                                 }
+                                location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Passable"] = "T";
                             }
                         }
                         else
@@ -329,7 +336,7 @@ namespace GemIsles
                                     location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
                                     location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                 }
-                                location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Passable"] = "T";
+                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 //location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["NPCBarrier"] = "t";
                             }
                         }
