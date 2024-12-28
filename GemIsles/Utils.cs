@@ -37,9 +37,7 @@ namespace GemIsles
             location.loadMap(ModEntry.mapAssetKey, true);
             TileSheet sheet = location.map.TileSheets[0];
 
-            for (int index = 0; index < sheet.TileCount; index++)
-                if (index > 140 && index < 261)
-                    sheet.TileIndexProperties[index].RemoveWhere(p => p.Key == "Passable" && p.Value == "T");
+
 
 
             int isles = Game1.random.Next(1, Math.Max(1, Config.MaxIsles) + 1);
@@ -278,65 +276,68 @@ namespace GemIsles
                                 if (surround[1])
                                 {
                                     if (surround[3])
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
+                                    {
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
+                                    }
                                     else if (surround[4])
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
                                     else
                                     {
-                                        if (location.map.GetLayer("Buildings").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
-                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
+                                        if (location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
+                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
                                         else
-                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
+                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
                                     }
                                 }
                                 else if (surround[6])
                                 {
                                     if (surround[3])
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                     }
                                     else if (surround[4])
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                     }
                                     else
                                     {
-                                        if (location.map.GetLayer("Buildings").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
-                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
+                                        if (location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
+                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
                                         else
-                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
+                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                     }
                                 }
                                 else if (surround[3])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 260);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 260);
                                 }
                                 else if (surround[4])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 209);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 209);
                                 }
                                 else if (surround[0])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
                                 }
                                 else if (surround[2])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
                                 }
                                 else if (surround[5])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                 }
                                 else if (surround[7])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
+                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                 }
-                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
+                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Type"] = "Dirt";
+                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Passable"] = "T";
                                 //location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["NPCBarrier"] = "t";
                             }
                         }
