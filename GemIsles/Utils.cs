@@ -207,66 +207,65 @@ namespace GemIsles
                                 {
                                     if (!surround[3])
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 51);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 51);
                                     }
                                     else if (!surround[4])
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 54);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 54);
                                     }
-                                    else if(location.map.GetLayer("Buildings").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 52)
+                                    else if(location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 52)
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 53);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 53);
                                     }
                                     else
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 52);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 52);
                                     }
                                 }
                                 else if (!surround[6])
                                 {
                                     if (!surround[3])
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 51);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 51);
                                     }
                                     else if (!surround[4])
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 54);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 54);
                                     }
-                                    else if(location.map.GetLayer("Buildings").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 52)
+                                    else if(location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 52)
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 53);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 53);
                                     }
                                     else
                                     {
-                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 52);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 52);
                                     }
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
                                 }
                                 else if (!surround[3])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 68);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 68);
                                 }
                                 else if (!surround[4])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 71);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 71);
                                 }
                                 else if (!surround[0])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 70);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 70);
                                 }
                                 else if (!surround[2])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 69);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 69);
                                 }
                                 else if (!surround[5])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 87);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 87);
                                 }
                                 else if (!surround[7])
                                 {
-                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Buildings"), sheet, BlendMode.Alpha, 86);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 86);
                                 }
-                                location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Passable"] = "T";
                             }
                         }
                         else
@@ -277,67 +276,139 @@ namespace GemIsles
                                 {
                                     if (surround[3])
                                     {
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
+                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 109);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
                                     }
                                     else if (surround[4])
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
+                                    {
+                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 109);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
+                                    }
                                     else
                                     {
-                                        if (location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
-                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
+                                        if (location.map.GetLayer("Buildings").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
+                                        {
+                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 92);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
+                                        }
                                         else
-                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
+                                        {
+                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 126);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
+                                        }
                                     }
                                 }
                                 else if (surround[6])
                                 {
                                     if (surround[3])
                                     {
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 226);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 109);
+                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
                                     }
                                     else if (surround[4])
                                     {
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 175);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 109);
+                                        location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                        location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
                                     }
                                     else
                                     {
-                                        if (location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
-                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
+                                        if (location.map.GetLayer("Buildings").Tiles[isleBox.X + x - 1, isleBox.Y + y]?.TileIndex == 141)
+                                        {
+                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 158);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 92);
+                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
+                                        }
                                         else
-                                            location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
-                                        location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                        {
+                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 141);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 126);
+                                            location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                            location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
+                                        }
                                     }
                                 }
                                 else if (surround[3])
                                 {
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 260);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 260);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 110);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 1);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
                                 else if (surround[4])
                                 {
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 209);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 209);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 110);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
                                 else if (surround[0])
                                 {
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 7);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
                                 else if (surround[2])
                                 {
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 93);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y + 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x -1, isleBox.Y + y].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y + 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
                                 else if (surround[5])
                                 {
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 243);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 7);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x + 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
                                 else if (surround[7])
                                 {
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
-                                    location.map.GetLayer("Buildings-1").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y] = CreateAnimatedTile(location, sheet, 192);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y] = new StaticTile(location.map.GetLayer("Back"), sheet, BlendMode.Alpha, 93);
+                                    location.map.GetLayer("Buildings").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties.Add("@Flip", 2);
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y].Properties["Passable"] = "T";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y - 1].TileIndexProperties["Type"] = "Dirt";
+                                    location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
-                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Type"] = "Dirt";
-                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties["Passable"] = "T";
+                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
+
                                 //location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["NPCBarrier"] = "t";
                             }
                         }
