@@ -408,8 +408,7 @@ namespace GemIsles
                                     location.map.GetLayer("Back").Tiles[isleBox.X + x - 1, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
                                 }
                                 location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["Type"] = "Dirt";
-
-                                //location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].TileIndexProperties["NPCBarrier"] = "t";
+                                location.map.GetLayer("Back").Tiles[isleBox.X + x, isleBox.Y + y].Properties["NPCBarrier"] = "t";
                             }
                         }
                     }
