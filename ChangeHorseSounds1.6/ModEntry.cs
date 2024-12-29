@@ -91,7 +91,7 @@ namespace ChangeHorseSounds
         {
             thudStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(thud => Path.GetFileName(thud).EndsWith("_thudstep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(thud).Equals("thudstep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
             stoneStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(stone => Path.GetFileName(stone).EndsWith("_stonestep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(stone).Equals("stonestep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
-            woodyStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(woody => Path.GetFileName(woody).EndsWith("_woodystep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(woody).EndsWith("_woodystep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
+            woodyStep = Directory.EnumerateFiles(Path.Combine(Helper.DirectoryPath, "assets")).Where(woody => Path.GetFileName(woody).EndsWith("_woodystep.wav", StringComparison.InvariantCultureIgnoreCase) || Path.GetFileName(woody).Equals("woodystep.wav", StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
 
             if (config.ReplaceSounds == true)
