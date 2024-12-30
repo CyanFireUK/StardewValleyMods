@@ -8,6 +8,7 @@ namespace ImportMap
     {
         public bool EnableMod { get; set; } = true;
         public KeybindList ImportKey { get; set; } = KeybindList.Parse("LeftShift + F12");
+        public KeybindList ClearImportKey { get; set; } = KeybindList.Parse("LeftShift + F11");
 
     }
 }
