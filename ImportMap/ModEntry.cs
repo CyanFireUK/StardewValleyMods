@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using StardewModdingAPI;
 using StardewModdingAPI.Utilities;
 using StardewValley;
+using StardewValley.Extensions;
 using StardewValley.GameData.Crops;
 using StardewValley.Menus;
 using StardewValley.TerrainFeatures;
@@ -171,97 +172,100 @@ namespace ImportMap
                     }
                     return;
                 }
-                Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
-                if (layersById.TryGetValue("Flooring", out Layer flooringLayer))
+                if (map.Properties.TryGetValue("Location", out var loc) && string.Equals(loc, Game1.player.currentLocation.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    for (int y = 0; y < flooringLayer.LayerHeight; y++)
+                    Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
+                    if (layersById.TryGetValue("Flooring", out Layer flooringLayer))
                     {
-                        for (int x = 0; x < flooringLayer.LayerWidth; x++)
+                        for (int y = 0; y < flooringLayer.LayerHeight; y++)
                         {
-                            if (flooringLayer.Tiles[x, y] != null && flooringLayer.Tiles[x, y].TileIndex >= 0)
+                            for (int x = 0; x < flooringLayer.LayerWidth; x++)
                             {
-                                Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
-                            }
-                        }
-                    }
-                }
-                if (trainTrackApi != null && layersById.TryGetValue("TrainTracks", out Layer trackLayer))
-                {
-
-                    for (int y = 0; y < trackLayer.LayerHeight; y++)
-                    {
-                        for (int x = 0; x < trackLayer.LayerWidth; x++)
-                        {
-                            if (trackLayer.Tiles[x, y] != null && trackLayer.Tiles[x, y].TileIndex >= 0)
-                            {
-                                trainTrackApi.RemoveTrack(Game1.player.currentLocation, new Vector2(x, y));
-                            }
-                        }
-                    }
-                }
-                if (layersById.TryGetValue("FluteBlocks", out Layer fluteLayer))
-                {
-                    for (int y = 0; y < fluteLayer.LayerHeight; y++)
-                    {
-                        for (int x = 0; x < fluteLayer.LayerWidth; x++)
-                        {
-                            if (fluteLayer.Tiles[x, y] != null && fluteLayer.Tiles[x, y].TileIndex >= 0 && Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
-                            {
-                                Game1.player.currentLocation.objects.Remove(new Vector2(x, y));
-                            }
-                        }
-                    }
-                }
-                if (layersById.TryGetValue("DrumBlocks", out Layer drumLayer))
-                {
-                    for (int y = 0; y < drumLayer.LayerHeight; y++)
-                    {
-                        for (int x = 0; x < drumLayer.LayerWidth; x++)
-                        {
-                            if (drumLayer.Tiles[x, y] != null && drumLayer.Tiles[x, y].TileIndex >= 0 && Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
-                            {
-                                Game1.player.currentLocation.objects.Remove(new Vector2(x, y));
-                            }
-                        }
-                    }
-                }
-                if (layersById.TryGetValue("Objects", out Layer objLayer))
-                {
-                    var dict = SHelper.GameContent.Load<Dictionary<string, CropData>>("Data/Crops");
-
-                    for (int y = 0; y < objLayer.LayerHeight; y++)
-                    {
-                        for (int x = 0; x < objLayer.LayerWidth; x++)
-                        {
-                            if (objLayer.Tiles[x, y] != null && objLayer.Tiles[x, y].TileIndex >= 0 && Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)) | Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
-                            {
-                                if (dict.TryGetValue(objLayer.Tiles[x, y].TileIndex.ToString(), out var cropData))
-                                {
-                                    Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
-                                    continue;
-                                }
-                                var cropkvp = dict.FirstOrDefault(kvp => kvp.Value.HarvestItemId == objLayer.Tiles[x, y].TileIndex.ToString());
-                                if (cropkvp.Value != null)
+                                if (flooringLayer.Tiles[x, y] != null && flooringLayer.Tiles[x, y].TileIndex >= 0)
                                 {
                                     Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
                                 }
-                                else
+                            }
+                        }
+                    }
+                    if (trainTrackApi != null && layersById.TryGetValue("TrainTracks", out Layer trackLayer))
+                    {
+
+                        for (int y = 0; y < trackLayer.LayerHeight; y++)
+                        {
+                            for (int x = 0; x < trackLayer.LayerWidth; x++)
+                            {
+                                if (trackLayer.Tiles[x, y] != null && trackLayer.Tiles[x, y].TileIndex >= 0)
+                                {
+                                    trainTrackApi.RemoveTrack(Game1.player.currentLocation, new Vector2(x, y));
+                                }
+                            }
+                        }
+                    }
+                    if (layersById.TryGetValue("FluteBlocks", out Layer fluteLayer))
+                    {
+                        for (int y = 0; y < fluteLayer.LayerHeight; y++)
+                        {
+                            for (int x = 0; x < fluteLayer.LayerWidth; x++)
+                            {
+                                if (fluteLayer.Tiles[x, y] != null && fluteLayer.Tiles[x, y].TileIndex >= 0 && Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
                                 {
                                     Game1.player.currentLocation.objects.Remove(new Vector2(x, y));
                                 }
                             }
                         }
                     }
-                }
-                if (layersById.TryGetValue("Trees", out Layer treeLayer))
-                {
-                    for (int y = 0; y < treeLayer.LayerHeight; y++)
+                    if (layersById.TryGetValue("DrumBlocks", out Layer drumLayer))
                     {
-                        for (int x = 0; x < treeLayer.LayerWidth; x++)
+                        for (int y = 0; y < drumLayer.LayerHeight; y++)
                         {
-                            if (treeLayer.Tiles[x, y] != null && treeLayer.Tiles[x, y].TileIndex >= 9 && Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)))
+                            for (int x = 0; x < drumLayer.LayerWidth; x++)
                             {
-                                Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
+                                if (drumLayer.Tiles[x, y] != null && drumLayer.Tiles[x, y].TileIndex >= 0 && Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
+                                {
+                                    Game1.player.currentLocation.objects.Remove(new Vector2(x, y));
+                                }
+                            }
+                        }
+                    }
+                    if (layersById.TryGetValue("Objects", out Layer objLayer))
+                    {
+                        var dict = SHelper.GameContent.Load<Dictionary<string, CropData>>("Data/Crops");
+
+                        for (int y = 0; y < objLayer.LayerHeight; y++)
+                        {
+                            for (int x = 0; x < objLayer.LayerWidth; x++)
+                            {
+                                if (objLayer.Tiles[x, y] != null && objLayer.Tiles[x, y].TileIndex >= 0 && Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)) | Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
+                                {
+                                    if (dict.TryGetValue(objLayer.Tiles[x, y].TileIndex.ToString(), out var cropData))
+                                    {
+                                        Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
+                                        continue;
+                                    }
+                                    var cropkvp = dict.FirstOrDefault(kvp => kvp.Value.HarvestItemId == objLayer.Tiles[x, y].TileIndex.ToString());
+                                    if (cropkvp.Value != null)
+                                    {
+                                        Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
+                                    }
+                                    else
+                                    {
+                                        Game1.player.currentLocation.objects.Remove(new Vector2(x, y));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (layersById.TryGetValue("Trees", out Layer treeLayer))
+                    {
+                        for (int y = 0; y < treeLayer.LayerHeight; y++)
+                        {
+                            for (int x = 0; x < treeLayer.LayerWidth; x++)
+                            {
+                                if (treeLayer.Tiles[x, y] != null && treeLayer.Tiles[x, y].TileIndex >= 9 && Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)))
+                                {
+                                    Game1.player.currentLocation.terrainFeatures.Remove(new Vector2(x, y));
+                                }
                             }
                         }
                     }
@@ -297,160 +301,163 @@ namespace ImportMap
                             }
                             return;
                         }
-                        Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
-                        if (layersById.TryGetValue("Flooring", out Layer flooringLayer))
+                if (map.Properties.TryGetValue("Location", out var loc) && string.Equals(loc, Game1.player.currentLocation.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
+                    if (layersById.TryGetValue("Flooring", out Layer flooringLayer))
+                    {
+                        for (int y = 0; y < flooringLayer.LayerHeight; y++)
                         {
-                            for (int y = 0; y < flooringLayer.LayerHeight; y++)
+                            for (int x = 0; x < flooringLayer.LayerWidth; x++)
                             {
-                                for (int x = 0; x < flooringLayer.LayerWidth; x++)
+                                if (flooringLayer.Tiles[x, y] != null && flooringLayer.Tiles[x, y].TileIndex >= 0)
                                 {
-                                    if (flooringLayer.Tiles[x, y] != null && flooringLayer.Tiles[x, y].TileIndex >= 0)
-                                    {
-                                        Game1.player.currentLocation.terrainFeatures[new Vector2(x, y)] = new Flooring(flooringLayer.Tiles[x, y].TileIndex.ToString());
-                                    }
+                                    Game1.player.currentLocation.terrainFeatures[new Vector2(x, y)] = new Flooring(flooringLayer.Tiles[x, y].TileIndex.ToString());
                                 }
                             }
                         }
-                        if (trainTrackApi != null && layersById.TryGetValue("TrainTracks", out Layer trackLayer))
-                        {
+                    }
+                    if (trainTrackApi != null && layersById.TryGetValue("TrainTracks", out Layer trackLayer))
+                    {
 
-                            for (int y = 0; y < trackLayer.LayerHeight; y++)
+                        for (int y = 0; y < trackLayer.LayerHeight; y++)
+                        {
+                            for (int x = 0; x < trackLayer.LayerWidth; x++)
                             {
-                                for (int x = 0; x < trackLayer.LayerWidth; x++)
+                                if (trackLayer.Tiles[x, y] != null && trackLayer.Tiles[x, y].TileIndex >= 0)
                                 {
-                                    if (trackLayer.Tiles[x, y] != null && trackLayer.Tiles[x, y].TileIndex >= 0)
+                                    PropertyValue switchData;
+                                    PropertyValue speedData;
+                                    trackLayer.Tiles[x, y].Properties.TryGetValue("Switches", out switchData);
+                                    if (switchData != null)
                                     {
-                                        PropertyValue switchData;
-                                        PropertyValue speedData;
-                                        trackLayer.Tiles[x, y].Properties.TryGetValue("Switches", out switchData);
-                                        if (switchData != null)
-                                        {
-                                            SMonitor.Log($"Got switch data for tile {x},{y}: {switchData}");
-                                        }
-                                        trackLayer.Tiles[x, y].Properties.TryGetValue("Speed", out speedData);
-                                        int speed = -1;
-                                        if (speedData != null && int.TryParse(speedData, out speed))
-                                        {
-                                            SMonitor.Log($"Got speed for tile {x},{y}: {speed}");
-                                        }
-                                        trainTrackApi.TryPlaceTrack(Game1.currentLocation, new Vector2(x, y), trackLayer.Tiles[x, y].TileIndex, switchData == null ? null : switchData.ToString(), speed, true);
+                                        SMonitor.Log($"Got switch data for tile {x},{y}: {switchData}");
                                     }
+                                    trackLayer.Tiles[x, y].Properties.TryGetValue("Speed", out speedData);
+                                    int speed = -1;
+                                    if (speedData != null && int.TryParse(speedData, out speed))
+                                    {
+                                        SMonitor.Log($"Got speed for tile {x},{y}: {speed}");
+                                    }
+                                    trainTrackApi.TryPlaceTrack(Game1.currentLocation, new Vector2(x, y), trackLayer.Tiles[x, y].TileIndex, switchData == null ? null : switchData.ToString(), speed, true);
                                 }
                             }
                         }
-                        if (layersById.TryGetValue("FluteBlocks", out Layer fluteLayer))
+                    }
+                    if (layersById.TryGetValue("FluteBlocks", out Layer fluteLayer))
+                    {
+                        for (int y = 0; y < fluteLayer.LayerHeight; y++)
                         {
-                            for (int y = 0; y < fluteLayer.LayerHeight; y++)
+                            for (int x = 0; x < fluteLayer.LayerWidth; x++)
                             {
-                                for (int x = 0; x < fluteLayer.LayerWidth; x++)
+                                if (fluteLayer.Tiles[x, y] != null && fluteLayer.Tiles[x, y].TileIndex >= 0 && !Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
                                 {
-                                    if (fluteLayer.Tiles[x, y] != null && fluteLayer.Tiles[x, y].TileIndex >= 0 && !Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
+                                    var block = new Object("464", 1, false, -1, 0);
+                                    block.TileLocation = new Vector2(x, y);
+                                    block.preservedParentSheetIndex.Value = (fluteLayer.Tiles[x, y].TileIndex % 24 * 100).ToString();
+                                    if (fluteBlockApi != null)
                                     {
-                                        var block = new Object("464", 1, false, -1, 0);
-                                        block.TileLocation = new Vector2(x, y);
-                                        block.preservedParentSheetIndex.Value = (fluteLayer.Tiles[x, y].TileIndex % 24 * 100).ToString();
-                                        if (fluteBlockApi != null)
+                                        var tone = fluteBlockApi.GetFluteBlockToneFromIndex(fluteLayer.Tiles[x, y].TileIndex / 24);
+                                        if (tone != null)
                                         {
-                                            var tone = fluteBlockApi.GetFluteBlockToneFromIndex(fluteLayer.Tiles[x, y].TileIndex / 24);
-                                            if (tone != null)
-                                            {
-                                                block.modData["aedenthorn.AdvancedFluteBlocks/tone"] = tone;
-                                            }
+                                            block.modData["aedenthorn.AdvancedFluteBlocks/tone"] = tone;
                                         }
-                                        Game1.player.currentLocation.objects[new Vector2(x, y)] = block;
                                     }
+                                    Game1.player.currentLocation.objects[new Vector2(x, y)] = block;
                                 }
                             }
                         }
-                        if (layersById.TryGetValue("DrumBlocks", out Layer drumLayer))
+                    }
+                    if (layersById.TryGetValue("DrumBlocks", out Layer drumLayer))
+                    {
+                        for (int y = 0; y < drumLayer.LayerHeight; y++)
                         {
-                            for (int y = 0; y < drumLayer.LayerHeight; y++)
+                            for (int x = 0; x < drumLayer.LayerWidth; x++)
                             {
-                                for (int x = 0; x < drumLayer.LayerWidth; x++)
+                                if (drumLayer.Tiles[x, y] != null && drumLayer.Tiles[x, y].TileIndex >= 0 && !Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
                                 {
-                                    if (drumLayer.Tiles[x, y] != null && drumLayer.Tiles[x, y].TileIndex >= 0 && !Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
-                                    {
-                                        var block = new Object("463", 1, false, -1, 0);
-                                        block.TileLocation = new Vector2(x, y);
-                                        block.preservedParentSheetIndex.Value = drumLayer.Tiles[x, y].TileIndex.ToString();
-                                        Game1.player.currentLocation.objects[new Vector2(x, y)] = block;
-                                    }
+                                    var block = new Object("463", 1, false, -1, 0);
+                                    block.TileLocation = new Vector2(x, y);
+                                    block.preservedParentSheetIndex.Value = drumLayer.Tiles[x, y].TileIndex.ToString();
+                                    Game1.player.currentLocation.objects[new Vector2(x, y)] = block;
                                 }
                             }
                         }
-                        if (layersById.TryGetValue("Objects", out Layer objLayer))
-                        {
-                            var dict = SHelper.GameContent.Load<Dictionary<string, CropData>>("Data/Crops");
+                    }
+                    if (layersById.TryGetValue("Objects", out Layer objLayer))
+                    {
+                        var dict = SHelper.GameContent.Load<Dictionary<string, CropData>>("Data/Crops");
 
-                            for (int y = 0; y < objLayer.LayerHeight; y++)
-                            {
-                                for (int x = 0; x < objLayer.LayerWidth; x++)
-                                {
-                                    if (objLayer.Tiles[x, y] != null && objLayer.Tiles[x, y].TileIndex >= 0 && !Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)) && !Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
-                                    {
-                                        if (dict.TryGetValue(objLayer.Tiles[x, y].TileIndex.ToString(), out var cropData))
-                                        {
-                                            Crop crop = new Crop(objLayer.Tiles[x, y].TileIndex.ToString(), x, y, Game1.player.currentLocation);
-                                            HoeDirt dirt = new HoeDirt(1, crop);
-                                            Game1.player.currentLocation.terrainFeatures.Add(new Vector2(x, y), dirt);
-                                            continue;
-                                        }
-                                        var cropkvp = dict.FirstOrDefault(kvp => kvp.Value.HarvestItemId == objLayer.Tiles[x, y].TileIndex.ToString());
-                                        if (cropkvp.Value != null)
-                                        {
-                                            Crop crop = new Crop(cropkvp.Key, x, y, Game1.player.currentLocation);
-                                            crop.growCompletely();
-                                            HoeDirt dirt = new HoeDirt(1, crop);
-                                            Game1.player.currentLocation.terrainFeatures.Add(new Vector2(x, y), dirt);
-                                        }
-                                        else
-                                        {
-                                            var obj = new Object(objLayer.Tiles[x, y].TileIndex.ToString(), 1, false, -1, 0);
-                                            obj.TileLocation = new Vector2(x, y);
-                                            Game1.player.currentLocation.objects[new Vector2(x, y)] = obj;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if (layersById.TryGetValue("Trees", out Layer treeLayer))
+                        for (int y = 0; y < objLayer.LayerHeight; y++)
                         {
-                            for (int y = 0; y < treeLayer.LayerHeight; y++)
+                            for (int x = 0; x < objLayer.LayerWidth; x++)
                             {
-                                for (int x = 0; x < treeLayer.LayerWidth; x++)
+                                if (objLayer.Tiles[x, y] != null && objLayer.Tiles[x, y].TileIndex >= 0 && !Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)) && !Game1.player.currentLocation.objects.ContainsKey(new Vector2(x, y)))
                                 {
-                                    Tree tree;
-                                    if (treeLayer.Tiles[x, y] != null && treeLayer.Tiles[x, y].TileIndex >= 9 && !Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)))
+                                    if (dict.TryGetValue(objLayer.Tiles[x, y].TileIndex.ToString(), out var cropData))
                                     {
-                                        switch (treeLayer.Tiles[x, y].TileIndex)
-                                        {
-                                            case 9:
-                                                tree = new Tree("1", 5);
-                                                break;
-                                            case 10:
-                                                tree = new Tree("2", 5);
-                                                break;
-                                            case 11:
-                                                tree = new Tree("3", 5);
-                                                break;
-                                            case 12:
-                                                tree = new Tree("6", 5);
-                                                break;
-                                            case 31:
-                                                tree = new Tree("7", 5);
-                                                break;
-                                            case 32:
-                                                tree = new Tree("9", 5);
-                                                break;
-                                            default:
-                                                continue;
-                                        }
-                                        Game1.player.currentLocation.terrainFeatures[new Vector2(x, y)] = tree;
+                                        Crop crop = new Crop(objLayer.Tiles[x, y].TileIndex.ToString(), x, y, Game1.player.currentLocation);
+                                        HoeDirt dirt = new HoeDirt(1, crop);
+                                        Game1.player.currentLocation.terrainFeatures.Add(new Vector2(x, y), dirt);
+                                        continue;
+                                    }
+                                    var cropkvp = dict.FirstOrDefault(kvp => kvp.Value.HarvestItemId == objLayer.Tiles[x, y].TileIndex.ToString());
+                                    if (cropkvp.Value != null)
+                                    {
+                                        Crop crop = new Crop(cropkvp.Key, x, y, Game1.player.currentLocation);
+                                        crop.growCompletely();
+                                        HoeDirt dirt = new HoeDirt(1, crop);
+                                        Game1.player.currentLocation.terrainFeatures.Add(new Vector2(x, y), dirt);
+                                    }
+                                    else
+                                    {
+                                        var obj = new Object(objLayer.Tiles[x, y].TileIndex.ToString(), 1, false, -1, 0);
+                                        obj.TileLocation = new Vector2(x, y);
+                                        Game1.player.currentLocation.objects[new Vector2(x, y)] = obj;
                                     }
                                 }
                             }
                         }
                     }
+                    if (layersById.TryGetValue("Trees", out Layer treeLayer))
+                    {
+                        for (int y = 0; y < treeLayer.LayerHeight; y++)
+                        {
+                            for (int x = 0; x < treeLayer.LayerWidth; x++)
+                            {
+                                Tree tree;
+                                if (treeLayer.Tiles[x, y] != null && treeLayer.Tiles[x, y].TileIndex >= 9 && !Game1.player.currentLocation.terrainFeatures.ContainsKey(new Vector2(x, y)))
+                                {
+                                    switch (treeLayer.Tiles[x, y].TileIndex)
+                                    {
+                                        case 9:
+                                            tree = new Tree("1", 5);
+                                            break;
+                                        case 10:
+                                            tree = new Tree("2", 5);
+                                            break;
+                                        case 11:
+                                            tree = new Tree("3", 5);
+                                            break;
+                                        case 12:
+                                            tree = new Tree("6", 5);
+                                            break;
+                                        case 31:
+                                            tree = new Tree("7", 5);
+                                            break;
+                                        case 32:
+                                            tree = new Tree("9", 5);
+                                            break;
+                                        default:
+                                            continue;
+                                    }
+                                    Game1.player.currentLocation.terrainFeatures[new Vector2(x, y)] = tree;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void GameLoop_GameLaunched(object sender, StardewModdingAPI.Events.GameLaunchedEventArgs e)
