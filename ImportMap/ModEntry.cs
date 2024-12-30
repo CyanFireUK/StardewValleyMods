@@ -172,7 +172,7 @@ namespace ImportMap
                     }
                     return;
                 }
-                if (map.Properties.TryGetValue("Location", out var loc) && string.Equals(loc, Game1.player.currentLocation.Name, StringComparison.InvariantCultureIgnoreCase))
+                if (map.Properties.TryGetValue("Location", out var loc) && string.Equals(loc, Game1.player.currentLocation.NameOrUniqueName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
                     if (layersById.TryGetValue("Flooring", out Layer flooringLayer))
@@ -301,7 +301,7 @@ namespace ImportMap
                             }
                             return;
                         }
-                if (map.Properties.TryGetValue("Location", out var loc) && string.Equals(loc, Game1.player.currentLocation.Name, StringComparison.InvariantCultureIgnoreCase))
+                if (map.Properties.TryGetValue("Location", out var loc) && string.Equals(loc, Game1.player.currentLocation.NameOrUniqueName, StringComparison.InvariantCultureIgnoreCase))
                 {
                     Dictionary<string, Layer> layersById = AccessTools.FieldRefAccess<Map, Dictionary<string, Layer>>(map, "m_layersById");
                     if (layersById.TryGetValue("Flooring", out Layer flooringLayer))
