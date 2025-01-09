@@ -160,7 +160,7 @@ namespace MultipleHorses
             var saveAnywhereApi = Helper.ModRegistry.GetApi<ISaveAnywhereApi>("Omegasis.SaveAnywhere");
 
             foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in location.characters.OfType<Horse>())
+                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
                     foreach (Stable stable in location.buildings.OfType<Stable>())
                         if (stable == horse.TryFindStable() && !string.IsNullOrEmpty(horse.Name) && saveAnywhereApi == null)
                         {
@@ -182,7 +182,7 @@ namespace MultipleHorses
         private void OnAfterLoad(object sender, EventArgs e)
         {
             foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in location.characters.OfType<Horse>())
+                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
                     foreach (Stable stable in location.buildings.OfType<Stable>())
                         if (stable == horse.TryFindStable() && !string.IsNullOrEmpty(horse.Name))
                         {
@@ -205,7 +205,7 @@ namespace MultipleHorses
         {
 
             foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in location.characters.OfType<Horse>())
+                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
                     foreach (Stable stable in location.buildings.OfType<Stable>())
                     {
                         if (Context.IsMainPlayer)
@@ -285,8 +285,7 @@ namespace MultipleHorses
                 return;
             }
 
-            foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in location.characters.OfType<Horse>())
+           foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
             if (string.Equals(horseName, horse.Name, StringComparison.InvariantCultureIgnoreCase))
             {
                 return;
@@ -313,8 +312,6 @@ namespace MultipleHorses
 
         }
 
-
-        [HarmonyPatch(typeof(NPC), "findPlayer")]
         public class NPCPatches
         {
             public static bool findPlayer_prefix(NPC __instance, ref Farmer __result)
@@ -338,10 +335,7 @@ namespace MultipleHorses
 
         internal static bool CallHorse(string name = null)
         {
-
-            foreach (GameLocation location in Game1.locations)
-            {
-                List<Horse> taxis = location.characters.OfType<Horse>().ToList();
+                List<Horse> taxis = Utility.getAllCharacters().OfType<Horse>().ToList();
                 taxis.Reverse();
                 foreach (Horse taxi in taxis)
                 {
@@ -420,14 +414,14 @@ namespace MultipleHorses
                         Game1.MusicDuckTimer = 2000f;
                         Game1.playSound("horse_flute");
                         Game1.player.FarmerSprite.animateOnce(new FarmerSprite.AnimationFrame[6]
-{
+                        {
                               new (98, 400, true, false),
                               new (99, 200, true, false),
                               new (100, 200, true, false),
                               new (99, 200, true, false),
                               new (98, 400, true, false),
                               new (99, 200, true, false)
-});
+                        });
                         Game1.player.freezePause = 1500;
                         DelayedAction.functionAfterDelay(() =>
                         {
@@ -519,18 +513,14 @@ namespace MultipleHorses
                         return true;
                     }
                     if (Game1.player.mount != null)
-                        return true;
+                        return true;         
                 }
-            }
             return false;
         }
 
         internal static bool SetDefaultHorse(string name = null)
         {
-
-            foreach (GameLocation location in Game1.locations)
-            {
-                List<Horse> taxis = location.characters.OfType<Horse>().ToList();
+                List<Horse> taxis = Utility.getAllCharacters().OfType<Horse>().ToList();
                 taxis.Reverse();
                 foreach (Horse taxi in taxis)
                 {
@@ -552,7 +542,7 @@ namespace MultipleHorses
                         return true;
                     }
                 }
-            }
+            
 
             if (name != null && name.Equals("Remove", StringComparison.InvariantCultureIgnoreCase))
             {
@@ -587,8 +577,7 @@ namespace MultipleHorses
             if (name == null)
             {
                 List<Horse> horses = new();
-                foreach (GameLocation location in Game1.locations)
-                    foreach (Horse horse in location.characters.OfType<Horse>())
+                    foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>())
                         if (horse.ownerId.Value == Game1.player.UniqueMultiplayerID && !string.IsNullOrEmpty(horse.Name))
                             horses.Add(horse);
 
