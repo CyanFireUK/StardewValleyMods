@@ -27,10 +27,10 @@
 "Pixi.Description":"Um refrigerante de limão feito pela Joja. É tão doce que mal se pode sentir o sabor do limão.",
 "VineyardeSparkling.DisplayName":"Uva Espumante",
 "VineyardeSparkling.Description":"Rumores dizem que este é o sabor de uva fracassado da Joja, relançado como um refrigerante 'chique'. O sabor é decepcionantemente ruim.",
-"config.FishingTrashPool.name": "Add sodas as fishable trash",
+"config.FishingTrashPool.name": "Adicione refrigerantes como lixo pescável",
    "config.FishingTrashPool.values.true": "true",
    "config.FishingTrashPool.values.false": "false",
-"config.GarbageCanPool.name": "Add sodas as possible garbage can items",
+"config.GarbageCanPool.name": "Adicione refrigerantes como possíveis itens de lixo",
    "config.GarbageCanPool.values.true": "true",
    "config.GarbageCanPool.values.false": "false",
 }
