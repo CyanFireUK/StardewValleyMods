@@ -1,0 +1,13 @@
+{
+  "Name": "[CP] Joja Cola Restock",
+  "Author": "lycanglass",
+  "Version": "1.1.0-unofficial.3-CyanFire",
+  "Description": "Adds a variety of news sodas to the game, most of which can be accessed from Joja Mart & vending machines all over Stardew Valley.",
+  "UniqueID": "lycanglass.JojaColaRestockCP",
+  "MinimumApiVersion": "4.0.0",
+  "UpdateKeys": [ "Nexus:21834" ],
+  "ContentPackFor": {
+    "UniqueID": "Pathoschild.ContentPatcher",
+    "MinimumVersion": "2.0.0"
+  }
+}
