@@ -71,6 +71,7 @@ namespace Restauranteer
             npcOrderNumbers = new Dictionary<string, int>();
         }
 
+        [EventPriority((EventPriority)int.MinValue)]
         private void GameLoop_DayStarted(object sender, StardewModdingAPI.Events.DayStartedEventArgs e)
         {
             fridgeDict.Clear();
@@ -136,6 +137,7 @@ namespace Restauranteer
             }
         }
 
+        [EventPriority((EventPriority)int.MinValue)]
         private void Content_AssetRequested(object sender, StardewModdingAPI.Events.AssetRequestedEventArgs e)
         {
             if (!Config.ModEnabled)
