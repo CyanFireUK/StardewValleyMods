@@ -98,9 +98,8 @@ namespace ChangeHorseSounds
             {
                 for (var i = 0; i < thudStep.Length; i++)
                 {
-                    foreach (var location in Game1.locations)
-                        foreach (var c in location.characters)
-                    if (c is Horse && string.Equals($"{c.Name}_thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase))
+                  foreach (var c in Utility.getAllCharacters().OfType<Horse>())
+                    if (string.Equals($"{c.Name}_thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("thudstep", FileName(thudStep[i]), StringComparison.InvariantCultureIgnoreCase))
                     {
                         CueDefinition thudStepCueDefinition = new CueDefinition();
 
@@ -122,9 +121,8 @@ namespace ChangeHorseSounds
 
                 for (var i = 0; i < stoneStep.Length; i++)
                 {
-                    foreach (var location in Game1.locations)
-                        foreach (var c in location.characters)
-                    if (c is Horse && string.Equals($"{c.Name}_stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase))
+                  foreach (var c in Utility.getAllCharacters().OfType<Horse>())
+                    if (string.Equals($"{c.Name}_stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("stonestep", FileName(stoneStep[i]), StringComparison.InvariantCultureIgnoreCase))
                     {
 
                         CueDefinition stoneStepCueDefinition = new CueDefinition();
@@ -147,9 +145,8 @@ namespace ChangeHorseSounds
 
                 for (var i = 0; i < woodyStep.Length; i++)
                 {
-                    foreach (var location in Game1.locations)
-                        foreach (var c in location.characters)
-                    if (c is Horse && string.Equals($"{c.Name}_woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase))
+                  foreach (var c in Utility.getAllCharacters().OfType<Horse>())
+                    if (string.Equals($"{c.Name}_woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase) || string.Equals("woodystep", FileName(woodyStep[i]), StringComparison.InvariantCultureIgnoreCase))
                     {
                         CueDefinition woodyStepCueDefinition = new CueDefinition();
 
@@ -200,7 +197,6 @@ namespace ChangeHorseSounds
         }
 
 
-        [HarmonyPatch(typeof(GameLocation), "localSound")]
         public class SoundPatches
         {
             public static void localSound_prefix(GameLocation __instance, ref string audioName, Vector2? position)
@@ -231,10 +227,9 @@ namespace ChangeHorseSounds
             }
         }
 
-            [HarmonyPatch(typeof(FarmerSprite), "checkForFootstep")]
+
             public class FarmerSpritePatches
             {
-
                 public static void checkForFootstep_postfix(FarmerSprite __instance)
                 {
 
