@@ -527,34 +527,7 @@ namespace PermanentCellar
         [EventPriority((EventPriority)int.MinValue)]
         private void CreateCellarEntrance(FarmHouse farmHouse)
         {
-
-            if (Cellar0Exit != null && Cellar0Exit != "" && Cellar0Exit != " ")
-            {
-                string[] CE0xyVals = Cellar0Exit.ToString().Split();
-                CE0XPosition1 = float.Parse(CE0xyVals[0]);
-                CE0YPosition1 = float.Parse(CE0xyVals[1]);
-                try
-                {
-                    CE0XPosition2 = float.Parse(CE0xyVals[2]);
-                    CE0YPosition2 = float.Parse(CE0xyVals[3]);
-                }
-                catch { }
-            }
-
-
-            if (Cellar1Exit != null && Cellar1Exit != "" && Cellar1Exit != " ")
-            {
-                string[] CE1xyVals = Cellar1Exit.ToString().Split();
-                CE1XPosition1 = float.Parse(CE1xyVals[0]);
-                CE1YPosition1 = float.Parse(CE1xyVals[1]);
-                try
-                {
-                    CE1XPosition2 = float.Parse(CE1xyVals[2]);
-                    CE1YPosition2 = float.Parse(CE1xyVals[3]);
-                }
-                catch { }
-
-            }
+            GetCellarExitProperty();
 
 
             if (farmHouse.upgradeLevel >= 3)
@@ -601,33 +574,7 @@ namespace PermanentCellar
                 Helper.ModContent.GetPatchHelper(cellarStairsMap0).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar0Exit);
                 Helper.ModContent.GetPatchHelper(cellarStairsMap1).AsMap().Data.Properties.TryGetValue("CellarExit", out Cellar1Exit);
 
-                if (Cellar0Exit != null && Cellar0Exit != "" && Cellar0Exit != " ")
-                {
-                    string[] CE0xyVals = Cellar0Exit.ToString().Split();
-                    CE0XPosition1 = float.Parse(CE0xyVals[0]);
-                    CE0YPosition1 = float.Parse(CE0xyVals[1]);
-                    try
-                    {
-                        CE0XPosition2 = float.Parse(CE0xyVals[2]);
-                        CE0YPosition2 = float.Parse(CE0xyVals[3]);
-                    }
-                    catch { }
-                }
-
-                if (Cellar1Exit != null && Cellar1Exit != "" && Cellar1Exit != " ")
-                {
-                    string[] CE1xyVals = Cellar1Exit.ToString().Split();
-                    CE1XPosition1 = float.Parse(CE1xyVals[0]);
-                    CE1YPosition1 = float.Parse(CE1xyVals[1]);
-                    try
-                    {
-                        CE1XPosition2 = float.Parse(CE1xyVals[2]);
-                        CE1YPosition2 = float.Parse(CE1xyVals[3]);
-                    }
-                    catch { }
-
-                }
-
+                GetCellarExitProperty();
 
 
                 if (farmHouse.upgradeLevel == 0)
@@ -668,6 +615,36 @@ namespace PermanentCellar
                         warps.Item2.TargetY = (int)CE1YPosition2;
                     }
                 }
+            }
+        }
+
+        private void GetCellarExitProperty()
+        {
+            if (Cellar0Exit != null && Cellar0Exit != "" && Cellar0Exit != " ")
+            {
+                string[] CE0xyVals = Cellar0Exit.ToString().Split();
+                CE0XPosition1 = float.Parse(CE0xyVals[0]);
+                CE0YPosition1 = float.Parse(CE0xyVals[1]);
+                try
+                {
+                    CE0XPosition2 = float.Parse(CE0xyVals[2]);
+                    CE0YPosition2 = float.Parse(CE0xyVals[3]);
+                }
+                catch { }
+            }
+
+            if (Cellar1Exit != null && Cellar1Exit != "" && Cellar1Exit != " ")
+            {
+                string[] CE1xyVals = Cellar1Exit.ToString().Split();
+                CE1XPosition1 = float.Parse(CE1xyVals[0]);
+                CE1YPosition1 = float.Parse(CE1xyVals[1]);
+                try
+                {
+                    CE1XPosition2 = float.Parse(CE1xyVals[2]);
+                    CE1YPosition2 = float.Parse(CE1xyVals[3]);
+                }
+                catch { }
+
             }
         }
 
