@@ -1,0 +1,664 @@
+{
+   "Format": "2.4.0",
+
+	"ConfigSchema": {
+
+		"FishingTrashPool" : {
+			"AllowValues" : "true, false",
+                                                "Default": "true"
+		},
+		"GarbageCanPool" : {
+			"AllowValues" : "true, false",
+                                                "Default": "true"
+                }
+	},
+
+
+    "Changes": [
+
+     {
+      "LogName": "Joja Cola Restock Textures",
+      "Action": "Load",
+      "Target": "Mods/{{ModId}}/Objects",
+      "FromFile": "assets/jojacolaobjects.png"
+     },
+     {
+      "LogName": "Add Vending Machine Saloon",
+      "Action": "EditMap",
+      "Target": "Maps/Saloon",
+      "FromFile": "assets/Saloon.tbin",
+      "FromArea": { "X": 0, "Y": 0, "Width": 2, "Height": 2 },
+      "ToArea": { "X": 37, "Y": 16, "Width": 2, "Height": 2 },
+     },
+     {
+      "LogName": "Add Vending Machine Boarding House",
+      "Action": "EditMap",
+      "Target": "Maps/Custom_BoardingHouse_BoardingHouseSecondFloor",
+      "FromFile": "assets/Saloon.tbin",
+      "FromArea": { "X": 0, "Y": 0, "Width": 2, "Height": 2 },
+      "ToArea": { "X": 44, "Y": 10, "Width": 2, "Height": 2 },
+      "When": { "HasMod": "CPBoardingHouse" } 
+     },
+     {
+      "LogName": "Add Vending Machine Stardew Aquarium",
+      "Action": "EditMap",
+      "Target": "Maps/RSVRoom",
+      "FromFile": "assets/Saloon.tbin",
+      "FromArea": { "X": 0, "Y": 0, "Width": 2, "Height": 2 },
+      "ToArea": { "X": 7, "Y": 5, "Width": 2, "Height": 2 },
+      "When": { "HasMod": "Gervig91.StardewAquariumCP" } 
+     },
+       {
+            "Action": "EditImage",
+            "Target": "Maps/springobjects",
+            "FromFile": "assets/soda.png",
+            "ToArea": {
+                "X": 368,
+                "Y": 96,
+                "Width": 16,
+                "Height": 16
+            }
+        },
+        {
+            "Action": "EditData",
+            "Target": "Strings/Objects",
+            "Entries": {
+                "{{ModId}}_CaféJoja_Name": "{{i18n:CaféJoja.DisplayName}}",
+                "{{ModId}}_CaféJoja_Description": "{{i18n:CaféJoja.Description}}",
+                "{{ModId}}_DoctorJo_Name": "{{i18n:DoctorJo.DisplayName}}",
+                "{{ModId}}_DoctorJo_Description": "{{i18n:DoctorJo.Description}}",
+                "{{ModId}}_JojaBerri_Name": "{{i18n:JojaBerri.DisplayName}}",
+                "{{ModId}}_JojaBerri_Description": "{{i18n:JojaBerri.Description}}",
+                "{{ModId}}_JojaBluu_Name": "{{i18n:JojaBluu.DisplayName}}",
+                "{{ModId}}_JojaBluu_Description": "{{i18n:JojaBluu.Description}}",
+                "{{ModId}}_JojaColaAMPED_Name": "{{i18n:JojaColaAMPED.DisplayName}}",
+                "{{ModId}}_JojaColaAMPED_Description": "{{i18n:JojaColaAMPED.Description}}",
+                "{{ModId}}_JojaNil_Name": "{{i18n:JojaNil.DisplayName}}",
+                "{{ModId}}_JojaNil_Description": "{{i18n:JojaNil.Description}}",
+                "{{ModId}}_JojaPine_Name": "{{i18n:JojaPine.DisplayName}}",
+                "{{ModId}}_JojaPine_Description": "{{i18n:JojaPine.Description}}",
+                "{{ModId}}_JojaVanilla_Name": "{{i18n:JojaVanilla.DisplayName}}",
+                "{{ModId}}_JojaVanilla_Description": "{{i18n:JojaVanilla.Description}}",
+                "{{ModId}}_JojAid_Name": "{{i18n:JojAid.DisplayName}}",
+                "{{ModId}}_JojAid_Description": "{{i18n:JojAid.Description}}",
+                "{{ModId}}_Kyūrei_Name": "{{i18n:Kyūrei.DisplayName}}",
+                "{{ModId}}_Kyūrei_Description": "{{i18n:Kyūrei.Description}}",
+                "{{ModId}}_NewJoja_Name": "{{i18n:NewJoja.DisplayName}}",
+                "{{ModId}}_NewJoja_Description": "{{i18n:NewJoja.Description}}",
+                "{{ModId}}_OranJoja_Name": "{{i18n:OranJoja.DisplayName}}",
+                "{{ModId}}_OranJoja_Description": "{{i18n:OranJoja.Description}}",
+                "{{ModId}}_Pixi_Name": "{{i18n:Pixi.DisplayName}}",
+                "{{ModId}}_Pixi_Description": "{{i18n:Pixi.Description}}",
+                "{{ModId}}_VineyardeSparkling_Name": "{{i18n:VineyardeSparkling.DisplayName}}",
+                "{{ModId}}_VineyardeSparkling_Description": "{{i18n:VineyardeSparkling.Description}}"
+            }
+        },
+        {
+            "LogName": "Joja Cola Restock Products",
+            "Action": "EditData",
+            "Target": "Data/Objects",
+            "Entries": {
+                "{{ModId}}_CaféJoja": {
+                    "Name": "{{ModId}}_CaféJoja",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_CaféJoja_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_CaféJoja_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 0,
+                    "Edibility": 4,
+                    "IsDrink": true,
+                    "Buffs": [
+                        {
+                            "Id": "{{ModId}}_CaféJoja",
+                            "Duration": 100,
+                            "IsDebuff": false,
+                            "CustomAttributes": {
+                                "Speed": 2
+                            }
+                        }
+                    ]
+                },
+                "{{ModId}}_DoctorJo": {
+                    "Name": "{{ModId}}_DoctorJo",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_DoctorJo_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_DoctorJo_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 1,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_JojaBerri": {
+                    "Name": "{{ModId}}_JojaBerri",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojaBerri_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojaBerri_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 2,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_JojaBluu": {
+                    "Name": "{{ModId}}_JojaBluu",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojaBluu_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojaBluu_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 3,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_JojaColaAMPED": {
+                    "Name": "{{ModId}}_JojaColaAMPED",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojaColaAMPED_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojaColaAMPED_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 4,
+                    "Edibility": 4,
+                    "IsDrink": true,
+                    "Buffs": [
+                        {
+                            "Id": "{{ModId}}_JojaColaAMPED",
+                            "Duration": 100,
+                            "IsDebuff": false,
+                            "CustomAttributes": {
+                                "MagnetRadius": 1,
+                                "MaxStamina": 10
+                            }
+                        }
+                    ]
+                },
+                "{{ModId}}_JojaNil": {
+                    "Name": "{{ModId}}_JojaNil",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojaNil_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojaNil_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 5,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_JojaPine": {
+                    "Name": "{{ModId}}_JojaPine",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojaPine_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojaPine_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 6,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_JojaVanilla": {
+                    "Name": "{{ModId}}_JojaVanilla",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojaVanilla_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojaVanilla_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 7,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_JojAid": {
+                    "Name": "{{ModId}}_JojAid",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_JojAid_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_JojAid_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 8,
+                    "Edibility": 4,
+                    "IsDrink": true,
+                    "Buffs": [
+                        {
+                            "Id": "{{ModId}}_JojAid",
+                            "Duration": 100,
+                            "IsDebuff": false,
+                            "CustomAttributes": {
+                                "MaxStamina": 20
+                            }
+                        }
+                    ]
+                },
+                "{{ModId}}_Kyūrei": {
+                    "Name": "{{ModId}}_Kyūrei",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_Kyūrei_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_Kyūrei_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 100,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 9,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_NewJoja": {
+                    "Name": "{{ModId}}_NewJoja",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_NewJoja_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_NewJoja_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 100,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 10,
+                    "Edibility": 4,
+                    "IsDrink": true,
+                    "Buffs": [
+                        {
+                            "Id": "{{ModId}}_NewJoja",
+                            "Duration": 100,
+                            "IsDebuff": false,
+                            "CustomAttributes": {
+                                "LuckLevel": 1
+                            }
+                        }
+                    ]
+                },
+                "{{ModId}}_OranJoja": {
+                    "Name": "{{ModId}}_OranJoja",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_OranJoja_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_OranJoja_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 11,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_Pixi": {
+                    "Name": "{{ModId}}_Pixi",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_Pixi_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_Pixi_Description]",
+                    "Type": "Trash",
+                    "Category": -20,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 12,
+                    "Edibility": 4,
+                    "IsDrink": true
+                },
+                "{{ModId}}_VineyardeSparkling": {
+                    "Name": "{{ModId}}_VineyardeSparkling",
+                    "Displayname": "[LocalizedText Strings\\Objects:{{ModId}}_VineyardeSparkling_Name]",
+                    "Description": "[LocalizedText Strings\\Objects:{{ModId}}_VineyardeSparkling_Description]",
+                    "Type": "ArtisanGoods",
+                    "Category": -26,
+                    "Price": 35,
+                    "Texture": "Mods/{{ModId}}/Objects",
+                    "SpriteIndex": 13,
+                    "Edibility": 4,
+                    "IsDrink": true
+                }
+            }
+        },
+    {
+        "Action": "EditData",
+        "Target": "Data/Shops",
+        "TargetField": [ "Joja", "Items" ],
+        "Entries": {
+            "{{ModId}}_CaféJoja": {
+                "Id": "{{ModId}}_CaféJoja",
+                "ItemId": "(O){{ModId}}_CaféJoja",
+                "Price": 75,
+            },
+            "{{ModId}}_DoctorJo": {
+                "Id": "{{ModId}}_DoctorJo",
+                "ItemId": "(O){{ModId}}_DoctorJo",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaColaAMPED": {
+                "Id": "{{ModId}}_JojaColaAMPED",
+                "ItemId": "(O){{ModId}}_JojaColaAMPED",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaBerri": {
+                "Id": "{{ModId}}_JojaBerri",
+                "ItemId": "(O){{ModId}}_JojaBerri",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaBluu": {
+                "Id": "{{ModId}}_JojaBluu",
+                "ItemId": "(O){{ModId}}_JojaBluu",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaNil": {
+                "Id": "{{ModId}}_JojaNil",
+                "ItemId": "(O){{ModId}}_JojaNil",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaPine": {
+                "Id": "{{ModId}}_JojaPine",
+                "ItemId": "(O){{ModId}}_JojaPine",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaVanilla": {
+                "Id": "{{ModId}}_JojaVanilla",
+                "ItemId": "(O){{ModId}}_JojaVanilla",
+                "Price": 75,
+            },
+            "{{ModId}}_JojAid": {
+                "Id": "{{ModId}}_JojAid",
+                "ItemId": "(O){{ModId}}_JojAid",
+                "Price": 75,
+            },
+            "{{ModId}}_OranJoja": {
+                "Id": "{{ModId}}_OranJoja",
+                "ItemId": "(O){{ModId}}_OranJoja",
+                "Price": 75,
+            },
+            "{{ModId}}_Pixi": {
+                "Id": "{{ModId}}_Pixi",
+                "ItemId": "(O){{ModId}}_Pixi",
+                "Price": 75,
+            },
+            "{{ModId}}_VineyardeSparkling": {
+                "Id": "{{ModId}}_VineyardeSparkling",
+                "ItemId": "(O){{ModId}}_VineyardeSparkling",
+                "Price": 120,
+            },
+        }
+    },
+    {
+        "Action": "EditData",
+        "Target": "Data/Shops",
+        "TargetField": [ "Sandy", "Items" ],
+        "Entries": {
+            "{{ModId}}_Kyūrei": {
+                "Id": "{{ModId}}_Kyūrei",
+                "ItemId": "(O){{ModId}}_Kyūrei",
+                "Price": 500,
+            },
+            "{{ModId}}_NewJoja": {
+                "Id": "{{ModId}}_NewJoja",
+                "ItemId": "(O){{ModId}}_NewJoja",
+                "Price": 500,
+            }
+        }
+    },
+        {
+            "Action": "EditData",
+            "Target": "Data/Shops",
+            "Entries": {
+                "{{ModId}}_JojaVending": {
+                    "Owners": [
+                        {
+                            "Name": "None",
+                            "Dialogues": [
+
+                                {
+                                    "Id": "{{ModId}}_Default",
+                                    "Dialogue": ""
+                                }
+                            ]
+                        }
+                    ],
+
+                    "Items": [
+
+                        {
+                            "Id": "{{ModId}}_JojaCola",
+                            "ItemId": "(O)167",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_CaféJoja",
+                            "ItemId": "(O){{ModId}}_CaféJoja",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_DoctorJo",
+                            "ItemId": "(O){{ModId}}_DoctorJo",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojaColaAMPED",
+                            "ItemId": "(O){{ModId}}_JojaColaAMPED",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojaBerri",
+                            "ItemId": "(O){{ModId}}_JojaBerri",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojaBluu",
+                            "ItemId": "(O){{ModId}}_JojaBluu",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojaNil",
+                            "ItemId": "(O){{ModId}}_JojaNil",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojaPine",
+                            "ItemId": "(O){{ModId}}_JojaPine",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojaVanilla",
+                            "ItemId": "(O){{ModId}}_JojaVanilla",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_JojAid",
+                            "ItemId": "(O){{ModId}}_JojAid",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_OranJoja",
+                            "ItemId": "(O){{ModId}}_OranJoja",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_Pixi",
+                            "ItemId": "(O){{ModId}}_Pixi",
+                            "Price": 75,
+                        },
+                        {
+                            "Id": "{{ModId}}_VineyardeSparkling",
+                            "ItemId": "(O){{ModId}}_VineyardeSparkling",
+                            "Price": 120,
+                        },
+
+                    ]
+                }
+            }
+        },
+    {
+        "Action": "EditData",
+        "Target": "Data/Shops",
+        "TargetField": [ "DTZ.DowntownZuzuSTF_JojaCafe", "Items" ],
+        "Entries": {
+            "{{ModId}}_CaféJoja": {
+                "Id": "{{ModId}}_CaféJoja",
+                "ItemId": "(O){{ModId}}_CaféJoja",
+                "Price": 75,
+            },
+            "{{ModId}}_DoctorJo": {
+                "Id": "{{ModId}}_DoctorJo",
+                "ItemId": "(O){{ModId}}_DoctorJo",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaBerri": {
+                "Id": "{{ModId}}_JojaBerri",
+                "ItemId": "(O){{ModId}}_JojaBerri",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaBluu": {
+                "Id": "{{ModId}}_JojaBluu",
+                "ItemId": "(O){{ModId}}_JojaBluu",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaNil": {
+                "Id": "{{ModId}}_JojaNil",
+                "ItemId": "(O){{ModId}}_JojaNil",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaPine": {
+                "Id": "{{ModId}}_JojaPine",
+                "ItemId": "(O){{ModId}}_JojaPine",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaVanilla": {
+                "Id": "{{ModId}}_JojaVanilla",
+                "ItemId": "(O){{ModId}}_JojaVanilla",
+                "Price": 75,
+            },
+            "{{ModId}}_OranJoja": {
+                "Id": "{{ModId}}_OranJoja",
+                "ItemId": "(O){{ModId}}_OranJoja",
+                "Price": 75,
+            },
+            "{{ModId}}_Pixi": {
+                "Id": "{{ModId}}_Pixi",
+                "ItemId": "(O){{ModId}}_Pixi",
+                "Price": 75,
+            },
+            "{{ModId}}_VineyardeSparkling": {
+                "Id": "{{ModId}}_VineyardeSparkling",
+                "ItemId": "(O){{ModId}}_VineyardeSparkling",
+                "Price": 120,
+            }
+        },
+      "When": { "HasMod": "DTZ.DowntownZuzuCP" }
+    },
+    {
+        "Action": "EditData",
+        "Target": "Data/Shops",
+        "TargetField": [ "DTZ.DowntownZuzuSTF_JojaEnergy", "Items" ],
+        "Entries": {
+            "{{ModId}}_CaféJoja": {
+                "Id": "{{ModId}}_CaféJoja",
+                "ItemId": "(O){{ModId}}_CaféJoja",
+                "Price": 75,
+            },
+            "{{ModId}}_JojaColaAMPED": {
+                "Id": "{{ModId}}_JojaColaAMPED",
+                "ItemId": "(O){{ModId}}_JojaColaAMPED",
+                "Price": 75,
+            },
+            "{{ModId}}_JojAid": {
+                "Id": "{{ModId}}_JojAid",
+                "ItemId": "(O){{ModId}}_JojAid",
+                "Price": 75,
+            },
+            "{{ModId}}_Kyūrei": {
+                "Id": "{{ModId}}_Kyūrei",
+                "ItemId": "(O){{ModId}}_Kyūrei",
+                "Price": 500,
+            },
+            "{{ModId}}_NewJoja": {
+                "Id": "{{ModId}}_NewJoja",
+                "ItemId": "(O){{ModId}}_NewJoja",
+                "Price": 500,
+            }
+        },
+      "When": { "HasMod": "DTZ.DowntownZuzuCP" }
+    },
+        {
+            "Action": "EditData",
+            "Target": "Data/GarbageCans",
+            "TargetField": [ "GarbageCans", "JojaMart", "Items" ],
+            "Entries": {              
+                "{{ModId}}_TrashGarbageMart": {
+                    "Condition": "SYNCED_RANDOM day garbage_joja 0.2, !PLAYER_HAS_SEEN_EVENT Any 191393",
+                    "Id": "{{ModId}}_TrashGarbageMart",
+                    "RandomItemId": [ 
+                      "(O){{ModId}}_CaféJoja", 
+                      "(O){{ModId}}_DoctorJo",
+                      "(O){{ModId}}_JojaColaAMPED", 
+                      "(O){{ModId}}_JojaBerri", 
+                      "(O){{ModId}}_JojaBluu", 
+                      "(O){{ModId}}_JojaNil", 
+                      "(O){{ModId}}_JojaPine", 
+                      "(O){{ModId}}_JojaVanilla",
+                      "(O){{ModId}}_JojAid",
+                      "(O){{ModId}}_OranJoja",  
+                      "(O){{ModId}}_Pixi"
+                    ]
+                }
+            },
+            "MoveEntries": [
+                { "ID": "{{ModId}}_TrashGarbageMart", "BeforeId": "Base_JojaCola" }
+             ],
+             "When": { "GarbageCanPool": true }
+        },
+        {
+            "Action": "EditData",
+            "Target": "Data/GarbageCans",
+            "TargetField": [ "AfterAll" ],
+            "Entries": {              
+                "{{ModId}}_TrashGarbageAll": {
+                    "Id": "{{ModId}}_TrashGarbageAll",
+                    "RandomItemId": [
+                      "(O){{ModId}}_CaféJoja",
+                      "(O){{ModId}}_DoctorJo",
+                      "(O){{ModId}}_JojaColaAMPED",
+                      "(O){{ModId}}_JojaBerri", 
+                      "(O){{ModId}}_JojaBluu",
+                      "(O){{ModId}}_JojaNil", 
+                      "(O){{ModId}}_JojaPine",
+                      "(O){{ModId}}_JojaVanilla",
+                      "(O){{ModId}}_JojAid",
+                      "(O){{ModId}}_OranJoja",
+                      "(O){{ModId}}_Pixi"
+                    ]
+                }
+            },
+            "MoveEntries": [
+                { "ID": "{{ModId}}_TrashGarbageAll", "BeforeId": "Base_Fallback" }
+             ],
+             "When": { "GarbageCanPool": true }
+        },
+        {
+            "Action": "EditData",
+            "Target": "Data/Locations",
+            "TargetField": [
+                "Default",
+                "Fish",
+            ],
+            "Entries": {
+                "{{ModId}}_TrashFishing": {
+                    "Chance": 0.1,
+                    "Id": "{{ModId}}_TrashFishing",
+                    "RandomItemId": [ 
+                      "(O){{ModId}}_CaféJoja",
+                      "(O){{ModId}}_DoctorJo",
+                      "(O){{ModId}}_JojaColaAMPED", 
+                      "(O){{ModId}}_JojaBerri", 
+                      "(O){{ModId}}_JojaBluu", 
+                      "(O){{ModId}}_JojaNil", 
+                      "(O){{ModId}}_JojaPine2", 
+                      "(O){{ModId}}_JojaVanilla",
+                      "(O){{ModId}}_JojAid",
+                      "(O){{ModId}}_OranJoja", 
+                      "(O){{ModId}}_Pixi"
+                    ]
+                }
+            },
+            "When": { "FishingTrashPool": true }
+        }
+  ]
+}
+
+
+
