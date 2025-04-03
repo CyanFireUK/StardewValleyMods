@@ -160,7 +160,7 @@ namespace MultipleHorses
             var saveAnywhereApi = Helper.ModRegistry.GetApi<ISaveAnywhereApi>("Omegasis.SaveAnywhere");
 
             foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
+                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>())
                     foreach (Stable stable in location.buildings.OfType<Stable>())
                         if (stable == horse.TryFindStable() && !string.IsNullOrEmpty(horse.Name) && saveAnywhereApi == null)
                         {
@@ -182,7 +182,7 @@ namespace MultipleHorses
         private void OnAfterLoad(object sender, EventArgs e)
         {
             foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
+                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>())
                     foreach (Stable stable in location.buildings.OfType<Stable>())
                         if (stable == horse.TryFindStable() && !string.IsNullOrEmpty(horse.Name))
                         {
@@ -204,14 +204,16 @@ namespace MultipleHorses
         private void OnButtonPressed(object sender, ButtonPressedEventArgs e)
         {
 
+            if ((!e.Button.Equals(SButton.MouseRight) || (!e.Button.Equals(SButton.ControllerA)) || !e.Button.IsActionButton()))
+                return;
+
             foreach (GameLocation location in Game1.locations)
-                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>().ToList())
+                foreach (Horse horse in Utility.getAllCharacters().OfType<Horse>())
                     foreach (Stable stable in location.buildings.OfType<Stable>())
                     {
                         if (Context.IsMainPlayer)
                         {
-                            if ((e.Button.Equals(SButton.MouseRight) || (e.Button.Equals(SButton.ControllerA)) || e.Button.IsActionButton()) &&
-                                horse.withinPlayerThreshold(2) && stable == horse.TryFindStable() && string.IsNullOrEmpty(horse.Name))
+                            if (horse.withinPlayerThreshold(2) && stable == horse.TryFindStable() && string.IsNullOrEmpty(horse.Name))
                             {
                                 horseToBeNamed = horse;
                                 stableToBeAssigned = stable;
@@ -222,8 +224,7 @@ namespace MultipleHorses
                         }
                         else
                         {
-                            if ((e.Button.Equals(SButton.MouseRight) || (e.Button.Equals(SButton.ControllerA)) || e.Button.IsActionButton()) &&
-                                horse.withinPlayerThreshold(2) && stable == horse.TryFindStable() && horse.ownerId.Value == 0 && string.IsNullOrEmpty(horse.Name))
+                            if (horse.withinPlayerThreshold(2) && stable == horse.TryFindStable() && horse.ownerId.Value == 0 && string.IsNullOrEmpty(horse.Name))
                             {
                                 horseToBeNamed = horse;
                                 stableToBeAssigned = stable;
